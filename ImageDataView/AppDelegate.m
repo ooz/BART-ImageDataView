@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "BAImageDataViewController.h"
 
 @implementation AppDelegate
 
@@ -19,7 +20,11 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    // Insert code here to initialize your application
+    BAImageDataViewController* imageDataViewController = [[BAImageDataViewController alloc] initWithNibName:@"BAImageDataView" bundle:nil];
+//    system("pwd");
+    [imageDataViewController loadView];
+    
+    [self.window setContentView:[imageDataViewController view]];
 }
 
 @end

@@ -7,7 +7,25 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <Quartz/Quartz.h>
 
-@interface BAImageData : NSViewController
+@interface BAImageDataViewController : NSViewController {
+    
+    // Bottom controls
+    
+
+}
+
+@property (readonly) IBOutlet NSScrollView* mScrollView;
+@property (readonly) IBOutlet IKImageView* mBrainImage;
+
+@property (readonly) IBOutlet NSSegmentedControl* mOrientationSelect;
+@property (readonly) IBOutlet id mGridSizeSelect;
+@property (readonly) IBOutlet id mSliceSelect;
+@property (readonly) IBOutlet id mSliceSelectSlider;
+
+-(IBAction)setOrientation:(id)sender;
+-(IBAction)setGridSize:(id)sender;
+-(IBAction)selectSlice:(id)sender;
 
 @end
