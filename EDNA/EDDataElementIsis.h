@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "EDDataElement.h"
 #import "DataStorage/image.hpp"
-#include "Adapter/itkAdapter.hpp"
+//#include "Adapter/itkAdapter.hpp"
 
 
 @interface EDDataElementIsis : EDDataElement {
@@ -19,7 +19,7 @@
 	//isis::data::ChunkList mChunkList;
 	std::list<isis::data::Chunk> mChunkList;
     
-    isis::adapter::itkAdapter* mITKAdapter;
+//    isis::adapter::itkAdapter* mITKAdapter;
 	
 }
 

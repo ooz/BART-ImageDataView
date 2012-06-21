@@ -25,7 +25,7 @@
 {
     if (self = [super init]) {
         self->mImageSize = nil;
-        self->mITKAdapter = NULL;
+//        self->mITKAdapter = NULL;
     }
     
     return self;    
@@ -110,9 +110,9 @@
 }
 -(void)dealloc
 {
-    if (self->mITKAdapter != NULL) {
-        delete self->mITKAdapter;
-    }
+//    if (self->mITKAdapter != NULL) {
+//        delete self->mITKAdapter;
+//    }
     if (self->mIsisImage != NULL) {
         delete self->mIsisImage;
     }
@@ -667,73 +667,6 @@
     std::pair<float, float> minMax = mIsisImage->getMinMaxAs<float>();
     NSArray *ret = [NSArray arrayWithObjects:[NSNumber numberWithFloat:minMax.first], [NSNumber numberWithFloat:minMax.second], nil];
     return ret;
-}
-
--(ITKImage::Pointer)asITKImage
-{
-    if (self->mITKAdapter != NULL)  {
-        delete self->mITKAdapter;
-    }
-        
-    self->mITKAdapter = new isis::adapter::itkAdapter;
-    ITKImage::Pointer itkImage = self->mITKAdapter->makeItkImageObject<ITKImage>(*mIsisImage);
-    return itkImage;
-}
-
--(ITKImage4D::Pointer)asITKImage4D
-{
-    if (self->mITKAdapter != NULL)  {
-        delete self->mITKAdapter;
-    }
-    
-    self->mITKAdapter = new isis::adapter::itkAdapter;
-    ITKImage4D::Pointer itkImage = self->mITKAdapter->makeItkImageObject<ITKImage4D>(*mIsisImage);
-    return itkImage;
-}
-
--(EDDataElement*)convertFromITKImage:(ITKImage::Pointer)itkImg
-{
-    if (self->mITKAdapter != NULL) {
-        std::list<isis::data::Image> imgList = self->mITKAdapter->makeIsisImageObject<ITKImage>(itkImg);
-
-        if (imgList.size() > 0) {
-            return [[[EDDataElementIsis alloc] initFromImage:imgList.front() 
-                                                 ofImageType:IMAGE_ANADATA] 
-                    autorelease];
-        }
-    }
-    
-    return nil;
-}
-
--(EDDataElement*)convertFromITKImage4D:(ITKImage4D::Pointer)itkImg4D
-{
-    if (self->mITKAdapter != NULL) {
-        std::list<isis::data::Image> imgList = self->mITKAdapter->makeIsisImageObject<ITKImage4D>(itkImg4D);
-        
-        if (imgList.size() > 0) {
-            return [[[EDDataElementIsis alloc] initFromImage:imgList.front() 
-                                                 ofImageType:IMAGE_FCTDATA] 
-                    autorelease];
-        }
-    }
-    
-    return nil;
-}
-
--(void)updateFromITKImage:(ITKImage::Pointer)itkImg
-{
-    // TODO
-}
-
--(void)updateFromITKImage4D:(ITKImage4D::Pointer)itkImg4D
-{
-    // TODO
-}
-
--(ITKImage::Pointer)asITKImage:(unsigned int)timestep
-{
-    return nil;
 }
 
 @end

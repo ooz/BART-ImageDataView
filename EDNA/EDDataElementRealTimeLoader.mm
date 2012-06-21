@@ -11,7 +11,7 @@
 #import "DataStorage/io_factory.hpp"
 #import "DataStorage/image.hpp"
 #import "EDDataElementIsis.h"
-#import "BARTNotifications.h"
+//#import "BARTNotifications.h"
 #import "EDDataElementRealTimeLoader.h"
 
 @interface EDDataElementRealTimeLoader ()
@@ -71,10 +71,12 @@
         [[NSThread currentThread] cancel];
         NSLog(@"cancel thread now");
         if (1 < [mDataElementInterest getImageSize].timesteps){
-            [[NSNotificationCenter defaultCenter] postNotificationName:BARTScannerSentTerminusNotification object:mDataElementInterest];
+//            [[NSNotificationCenter defaultCenter] postNotificationName:BARTScannerSentTerminusNotification object:mDataElementInterest];
+            NSLog(@"Should have sent BARTScannerSentTerminusNotification");
         }
         else{
-            [[NSNotificationCenter defaultCenter] postNotificationName:BARTScannerSentTerminusNotification object:nil];
+//            [[NSNotificationCenter defaultCenter] postNotificationName:BARTScannerSentTerminusNotification object:nil];
+            NSLog(@"Should have sent BARTScannerSentTerminusNotification");
         }
 		
         //TODO : decide by isEmpty()
@@ -88,7 +90,8 @@
     for (it = tempList.begin(); it != tempList.end(); it++) {
 		if (TRUE == [self isImage:*it ofImageType:imgType]){
             [mDataElementInterest appendVolume:*it];
-			[[NSNotificationCenter defaultCenter] postNotificationName:BARTDidLoadNextDataNotification object:mDataElementInterest];
+//			[[NSNotificationCenter defaultCenter] postNotificationName:BARTDidLoadNextDataNotification object:mDataElementInterest];
+            NSLog(@"Should have sent BARTDidLoadNextDataNotification");
 			
         }
 		else {
