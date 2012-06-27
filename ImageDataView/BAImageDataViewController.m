@@ -147,7 +147,11 @@ static const float MAX_ALPHA = 1.0f;
         [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
         CGImageRef cgImage = imageRep.CGImage;
 //        NSLog(@"%@", ciImage);
-        [self->mImageView setImage:cgImage imageProperties:NULL];
+        NSImage* nsImage = [[NSImage alloc] initWithCGImage:cgImage size:ciImageSize];
+//        [self->mImageView setImage:cgImage imageProperties:NULL];
+        [self->mImageView setImage:nsImage];
+        
+        [nsImage release];
         
         [ciImage release];
         free(sliceImageData);

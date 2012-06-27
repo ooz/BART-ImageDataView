@@ -21,7 +21,7 @@
 }
 
 @property (readonly) IBOutlet NSScrollView* mScrollView;
-@property (readonly) IBOutlet IKImageView* mImageView;
+@property (readonly) IBOutlet NSImageView* mImageView;
 
 @property (readonly) IBOutlet NSSegmentedControl* mOrientationSelect;
 @property (readonly) IBOutlet id mGridSizeSelect;
