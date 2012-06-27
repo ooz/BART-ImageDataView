@@ -57,7 +57,6 @@
 						<string key="NSFrame">{{397, 18}, {121, 21}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSSliderCell" key="NSCell" id="918279472">
@@ -191,7 +190,7 @@
 												<bool key="autohidesScrollers">NO</bool>
 												<bool key="supportsDragAndDrop">YES</bool>
 												<bool key="editable">NO</bool>
-												<bool key="doubleClickOpensImageEditPanel">YES</bool>
+												<bool key="doubleClickOpensImageEditPanel">NO</bool>
 												<object class="NSColor" key="backgroundColor">
 													<int key="NSColorSpace">2</int>
 													<bytes key="NSRGB">MC41MDAwMjI4OSAwLjUwMDAyMjg5IDAuNTAwMDIyODkAA</bytes>
