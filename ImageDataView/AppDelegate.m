@@ -9,6 +9,8 @@
 #import "AppDelegate.h"
 #import "BAImageDataViewController.h"
 
+#import "EDDataElement.h"
+
 @implementation AppDelegate
 
 @synthesize window = _window;
@@ -25,6 +27,18 @@
     [imageDataViewController loadView];
     
     [self.window setContentView:[imageDataViewController view]];
+    
+    
+    
+    
+    // TODO: hardcoded image
+    EDDataElement* image = [[EDDataElement alloc] initWithDataFile:@"/Users/olli/test/reg3d_test/mni_lipsia.nii" 
+                                                         andSuffix:@"" 
+                                                        andDialect:@"" 
+                                                       ofImageType:IMAGE_ANADATA];
+    
+    [imageDataViewController showImage:image];
+    
 }
 
 @end

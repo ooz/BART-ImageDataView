@@ -9,23 +9,34 @@
 #import <Cocoa/Cocoa.h>
 #import <Quartz/Quartz.h>
 
+@class EDDataElement;
+
 @interface BAImageDataViewController : NSViewController {
     
-    // Bottom controls
-    
+    EDDataElement* mImage;
+    uint mCurrentSlice;
+    uint mSliceCount;
+    uint mCurrentTimestep;
 
 }
 
 @property (readonly) IBOutlet NSScrollView* mScrollView;
-@property (readonly) IBOutlet IKImageView* mBrainImage;
+@property (readonly) IBOutlet IKImageView* mImageView;
 
 @property (readonly) IBOutlet NSSegmentedControl* mOrientationSelect;
 @property (readonly) IBOutlet id mGridSizeSelect;
-@property (readonly) IBOutlet id mSliceSelect;
-@property (readonly) IBOutlet id mSliceSelectSlider;
+@property (readonly) IBOutlet NSTextField* mSliceSelect;
+@property (readonly) IBOutlet NSSlider*    mSliceSelectSlider;
 
 -(IBAction)setOrientation:(id)sender;
 -(IBAction)setGridSize:(id)sender;
 -(IBAction)selectSlice:(id)sender;
+
+
+-(void)showImage:(EDDataElement*)image;
+-(void)showImage:(EDDataElement*)image
+         slice:(uint)sliceNr
+    atTimestep:(uint)tstep;
+
 
 @end

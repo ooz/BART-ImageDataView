@@ -273,8 +273,8 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
-					"$(inherited)",
 					"_GLIBCXX_FULLY_DYNAMIC_STRING=1",
+					"$(inherited)",
 					"_ENABLE_LOG=1",
 					"_ENABLE_DEBUG=1",
 				);
@@ -297,6 +297,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-D_GLIBCXX_FULLY_DYNAMIC_STRING";
 				OTHER_LDFLAGS = (
 					"-lisis_core.0.4.5",
 					"-lboost_date_time-mt",
@@ -317,6 +318,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"_ENABLE_LOG=0",
 					"_ENABLE_DEBUG=0",
@@ -339,6 +341,7 @@
 					/usr/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				OTHER_CFLAGS = "-D_GLIBCXX_FULLY_DYNAMIC_STRING";
 				OTHER_LDFLAGS = (
 					"-lisis_core.0.4.5",
 					"-lboost_date_time-mt",
