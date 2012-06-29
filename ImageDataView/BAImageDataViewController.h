@@ -20,7 +20,6 @@
 
 }
 
-@property (readonly) IBOutlet NSScrollView* mScrollView;
 @property (readonly) IBOutlet NSImageView* mImageView;
 
 @property (readonly) IBOutlet NSSegmentedControl* mOrientationSelect;

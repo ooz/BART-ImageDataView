@@ -23,7 +23,6 @@ static const float MAX_ALPHA = 1.0f;
 
 @implementation BAImageDataViewController
 
-@synthesize mScrollView;
 @synthesize mImageView;
 
 @synthesize mOrientationSelect;
