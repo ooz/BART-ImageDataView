@@ -15,6 +15,9 @@ static const float MAX_ALPHA = 1.0f;
 
 @interface BAImageDataViewController (__privateMethods__)
 
+-(void)activateSliceSelectors;
+-(void)deactivateSliceSelectors;
+
 -(void)updateSliceSelectors;
 -(void)updateSliceTextField;
 -(void)updateSliceSlider;
@@ -40,10 +43,8 @@ static const float MAX_ALPHA = 1.0f;
         self->mCurrentTimestep = 0;
         
         [self.mSliceSelectSlider setMinValue:1];
-//        NSView* content = [[NSView alloc] init];
-//        [content add]
-//        self.mImageView.hasVerticalScroller = YES;
-//        [self.mScrollView setContentView:self.mImageView];
+        
+        [self deactivateSliceSelectors];
     }
     
     return self;
@@ -63,14 +64,21 @@ static const float MAX_ALPHA = 1.0f;
     if (sender == self.mOrientationSelect) {
         NSLog(@"Selected segment (orientation selector): %li", [self.mOrientationSelect selectedSegment]);
 //        [self.mImageView setImageWithURL:[NSURL URLWithString:@"http://www.cbs.mpg.de/institute/building/mpi3n"]];
-        [self showImage:self->mImage slice:self->mCurrentSlice atTimestep:self->mCurrentTimestep];
+//        [self showImage:self->mImage slice:self->mCurrentSlice atTimestep:self->mCurrentTimestep];
     }
 }
 
 -(IBAction)setGridSize:(id)sender
 {
     if (sender == self.mGridSizeSelect) {
-        NSLog(@"GridSize changed");
+        long selectedIndex = [self.mGridSizeSelect indexOfSelectedItem];
+        NSLog(@"GridSize changed: %ld", selectedIndex);
+        
+//        if (selectedIndex == 0) {
+//            [self activateSliceSelectors];
+//        } else {
+//            [self deactivateSliceSelectors];
+//        }
     }
 }
 
@@ -93,13 +101,19 @@ static const float MAX_ALPHA = 1.0f;
            slice:(uint)sliceNr
       atTimestep:(uint)tstep
 {
-    if (image != nil) {
-        if (self->mImage != nil) {
-            [self->mImage release];
-        }
+    if (self->mImage != nil) {
+        [self->mImage release];
+    }
+    
+    
+    if (image == nil) {
+        self->mImage = nil;
+        [self deactivateSliceSelectors];
+        
+    } else {
         self->mImage = image;
         [self->mImage retain];
-        
+   
         BARTImageSize* imageSize = [self->mImage getImageSize];
         size_t rows = imageSize.rows;
         size_t cols = imageSize.columns;
@@ -149,12 +163,26 @@ static const float MAX_ALPHA = 1.0f;
         NSImage* nsImage = [[NSImage alloc] initWithCGImage:cgImage size:ciImageSize];
 //        [self->mImageView setImage:cgImage imageProperties:NULL];
         [self->mImageView setImage:nsImage];
+        [self activateSliceSelectors];
         
         [nsImage release];
         
         [ciImage release];
         free(sliceImageData);
     }
+}
+
+
+-(void)activateSliceSelectors
+{
+    [self.mSliceSelect setEnabled:YES];
+    [self.mSliceSelectSlider setEnabled:YES];
+}
+
+-(void)deactivateSliceSelectors
+{
+    [self.mSliceSelect setEnabled:NO];
+    [self.mSliceSelectSlider setEnabled:NO];
 }
 
 -(void)updateSliceSelectors
