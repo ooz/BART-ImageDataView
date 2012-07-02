@@ -19,6 +19,8 @@ static const float MAX_ALPHA = 1.0f;
 
 @interface BAImageDataViewController (__privateMethods__)
 
+-(NSImage*)renderImage;
+
 -(void)updateSliceSelectors;
 -(void)updateSliceTextField;
 -(void)updateSliceSlider;
@@ -125,63 +127,71 @@ static const float MAX_ALPHA = 1.0f;
         self->mImage = image;
         [self->mImage retain];
    
-        BARTImageSize* imageSize = [self->mImage getImageSize];
-        size_t rows = imageSize.rows;
-        size_t cols = imageSize.columns;
-        size_t slices = imageSize.slices;
-//        size_t timesteps = imageSize.timesteps;
-//        NSLog(@"%zu, %zu, %zu, %zu", cols, rows, slices, timesteps);
         
+        BARTImageSize* imageSize = [self->mImage getImageSize];        
         self->mCurrentSlice    = sliceNr;
-        self->mSliceCount      = slices;
+        self->mSliceCount      = imageSize.slices;
         self->mCurrentTimestep = tstep;
         [self updateSliceSelectors];
+        
+        
+        NSImage* renderedSlices = [self renderImage];
 
-        float* sliceData = [self->mImage getSliceData:sliceNr atTimestep:tstep];
-        
-        NSArray* minMax = [self->mImage getMinMaxOfDataElement];
-        NSNumber* max = [minMax objectAtIndex:1];
-//        NSLog(@"Min: %f, max: %f", [min floatValue], [max floatValue]);
-        
-        float* sliceImageData = malloc(sizeof(float) * cols * rows * NUMBER_OF_CHANNELS);
-        
-        float normalized = 0.0f;
-        for (int i = 0; i < rows * cols; i++) {
-            normalized = sliceData[i] / [max floatValue];
-            sliceImageData[i * NUMBER_OF_CHANNELS]     = normalized;
-            sliceImageData[i * NUMBER_OF_CHANNELS + 1] = normalized;
-            sliceImageData[i * NUMBER_OF_CHANNELS + 2] = normalized;
-            sliceImageData[i * NUMBER_OF_CHANNELS + 3] = MAX_ALPHA;
-//            sliceData[i] =
-//            NSLog(@"%f", *(sliceData++));
-        }
-        
-//        NSLog(@"foo");
-        
-        NSSize ciImageSize;
-        ciImageSize.width = cols;
-        ciImageSize.height = rows;
-        CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:sliceImageData length:cols * rows * sizeof(float) * NUMBER_OF_CHANNELS]
-                                                   bytesPerRow:cols * sizeof(float) * NUMBER_OF_CHANNELS
-                                                          size:ciImageSize 
-                                                        format:kCIFormatRGBAf 
-                                                    colorSpace:CGColorSpaceCreateDeviceRGB()];
-        
-        NSBitmapImageRep* imageRep = 
-        [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
-        CGImageRef cgImage = imageRep.CGImage;
-//        NSLog(@"%@", ciImage);
-        NSImage* nsImage = [[NSImage alloc] initWithCGImage:cgImage size:ciImageSize];
 //        [self->mImageView setImage:cgImage imageProperties:NULL];
-        [self->mImageView setImage:nsImage];
+        [self->mImageView setImage:renderedSlices];
         
-        [nsImage release];
-        
-        [ciImage release];
-        free(sliceImageData);
+        [renderedSlices release];
     }
     
     [self updateControlEnabledStates];
+}
+
+-(NSImage*)renderImage
+{
+    float* sliceData = [self->mImage getSliceData:self->mCurrentSlice 
+                                       atTimestep:self->mCurrentTimestep];
+    
+    BARTImageSize* imageSize = [self->mImage getImageSize];
+    size_t rows = imageSize.rows;
+    size_t cols = imageSize.columns;
+    
+    NSArray* minMax = [self->mImage getMinMaxOfDataElement];
+    NSNumber* max = [minMax objectAtIndex:1];
+//    NSLog(@"Min: %f, max: %f", [min floatValue], [max floatValue]);
+    
+    float* sliceImageData = malloc(sizeof(float) * cols * rows * NUMBER_OF_CHANNELS);
+    
+    float normalized = 0.0f;
+    for (int i = 0; i < rows * cols; i++) {
+        normalized = sliceData[i] / [max floatValue];
+        sliceImageData[i * NUMBER_OF_CHANNELS]     = normalized;
+        sliceImageData[i * NUMBER_OF_CHANNELS + 1] = normalized;
+        sliceImageData[i * NUMBER_OF_CHANNELS + 2] = normalized;
+        sliceImageData[i * NUMBER_OF_CHANNELS + 3] = MAX_ALPHA;
+        //            sliceData[i] =
+        //            NSLog(@"%f", *(sliceData++));
+    }
+    
+    //        NSLog(@"foo");
+    
+    NSSize ciImageSize;
+    ciImageSize.width = cols;
+    ciImageSize.height = rows;
+    CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:sliceImageData length:cols * rows * sizeof(float) * NUMBER_OF_CHANNELS]
+                                               bytesPerRow:cols * sizeof(float) * NUMBER_OF_CHANNELS
+                                                      size:ciImageSize 
+                                                    format:kCIFormatRGBAf 
+                                                colorSpace:CGColorSpaceCreateDeviceRGB()];
+    
+    NSBitmapImageRep* imageRep = 
+    [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
+    CGImageRef cgImage = imageRep.CGImage;
+    NSImage* nsImage = [[NSImage alloc] initWithCGImage:cgImage size:ciImageSize];
+    
+    [ciImage release];
+    free(sliceImageData);
+    
+    return nsImage;
 }
 
 -(void)updateSliceSelectors
