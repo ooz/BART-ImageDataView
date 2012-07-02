@@ -37,8 +37,6 @@
                                                         andDialect:@"" 
                                                        ofImageType:IMAGE_ANADATA];
     
-    [imageDataViewController showImage:nil];
-    sleep(15);
     [imageDataViewController showImage:image];
     
 }
