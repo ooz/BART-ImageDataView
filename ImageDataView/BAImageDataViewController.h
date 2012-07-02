@@ -9,7 +9,9 @@
 #import <Cocoa/Cocoa.h>
 #import <Quartz/Quartz.h>
 
+
 @class EDDataElement;
+
 
 @interface BAImageDataViewController : NSViewController {
     
@@ -17,10 +19,11 @@
     uint mCurrentSlice;
     uint mSliceCount;
     uint mCurrentTimestep;
-    
-    BOOL mIsSingleSliceView;
+   
+    NSSize mGridSize;
 
 }
+
 
 @property (readonly) IBOutlet NSImageView* mImageView;
 

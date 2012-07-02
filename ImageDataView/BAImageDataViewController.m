@@ -12,8 +12,11 @@
 
 
 
-static const int NUMBER_OF_CHANNELS = 4;
+static const int   NUMBER_OF_CHANNELS = 4;
 static const float MAX_ALPHA = 1.0f;
+
+static const CGFloat DEFAULT_GRID_SIZE = 1.0f;
+static const CGFloat GRID_SIZE_SIX = 6.0f;
 
 
 
@@ -51,7 +54,7 @@ static const float MAX_ALPHA = 1.0f;
         self->mSliceCount   = 1;
         self->mCurrentTimestep = 0;
         
-        self->mIsSingleSliceView = YES;
+        self->mGridSize = (NSSize) {DEFAULT_GRID_SIZE, DEFAULT_GRID_SIZE};
         
         [self.mSliceSelectSlider setMinValue:1];
         
@@ -83,13 +86,17 @@ static const float MAX_ALPHA = 1.0f;
 {
     if (sender == self.mGridSizeSelect) {
         long selectedIndex = [self.mGridSizeSelect indexOfSelectedItem];
-        NSLog(@"GridSize changed: %ld", selectedIndex);
+//        NSLog(@"GridSize changed: %ld", selectedIndex);
         
         if (selectedIndex == 0) {
-            self->mIsSingleSliceView = YES;
-        } else {
-            self->mIsSingleSliceView = NO;
+            self->mGridSize = (NSSize) { DEFAULT_GRID_SIZE
+                                       , DEFAULT_GRID_SIZE };
+        } else if (selectedIndex == 1) {
+            self->mGridSize = (NSSize) { GRID_SIZE_SIX
+                                       , GRID_SIZE_SIX };
         }
+        
+//        NSLog(@"Grid size: %2.0f, %2.0f", self->mGridSize.width, self->mGridSize.height);
         
         [self updateControlEnabledStates];
     }
@@ -224,7 +231,8 @@ static const float MAX_ALPHA = 1.0f;
         // Activate orientation selection, slice grid selection
         [self setOrientationAndGridSizeSelectorStates:YES];
         
-        if (self->mIsSingleSliceView == YES) {
+        if (   self->mGridSize.width  == DEFAULT_GRID_SIZE 
+            && self->mGridSize.height == DEFAULT_GRID_SIZE) {
             [self setSliceSelectorStates:YES];
         } else {
             [self setSliceSelectorStates:NO];
