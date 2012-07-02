@@ -10,19 +10,26 @@
 
 #import "EDDataElement.h"
 
+
+
 static const int NUMBER_OF_CHANNELS = 4;
 static const float MAX_ALPHA = 1.0f;
 
-@interface BAImageDataViewController (__privateMethods__)
 
--(void)activateSliceSelectors;
--(void)deactivateSliceSelectors;
+
+@interface BAImageDataViewController (__privateMethods__)
 
 -(void)updateSliceSelectors;
 -(void)updateSliceTextField;
 -(void)updateSliceSlider;
 
+-(void)updateControlEnabledStates;
+-(void)setOrientationAndGridSizeSelectorStates:(BOOL)enabled;
+-(void)setSliceSelectorStates:(BOOL)enabled;
+
 @end
+
+
 
 @implementation BAImageDataViewController
 
@@ -42,9 +49,11 @@ static const float MAX_ALPHA = 1.0f;
         self->mSliceCount   = 1;
         self->mCurrentTimestep = 0;
         
+        self->mIsSingleSliceView = YES;
+        
         [self.mSliceSelectSlider setMinValue:1];
         
-        [self deactivateSliceSelectors];
+        [self updateControlEnabledStates];
     }
     
     return self;
@@ -74,11 +83,13 @@ static const float MAX_ALPHA = 1.0f;
         long selectedIndex = [self.mGridSizeSelect indexOfSelectedItem];
         NSLog(@"GridSize changed: %ld", selectedIndex);
         
-//        if (selectedIndex == 0) {
-//            [self activateSliceSelectors];
-//        } else {
-//            [self deactivateSliceSelectors];
-//        }
+        if (selectedIndex == 0) {
+            self->mIsSingleSliceView = YES;
+        } else {
+            self->mIsSingleSliceView = NO;
+        }
+        
+        [self updateControlEnabledStates];
     }
 }
 
@@ -108,7 +119,7 @@ static const float MAX_ALPHA = 1.0f;
     
     if (image == nil) {
         self->mImage = nil;
-        [self deactivateSliceSelectors];
+        [self->mImageView setImage:nil];
         
     } else {
         self->mImage = image;
@@ -163,26 +174,14 @@ static const float MAX_ALPHA = 1.0f;
         NSImage* nsImage = [[NSImage alloc] initWithCGImage:cgImage size:ciImageSize];
 //        [self->mImageView setImage:cgImage imageProperties:NULL];
         [self->mImageView setImage:nsImage];
-        [self activateSliceSelectors];
         
         [nsImage release];
         
         [ciImage release];
         free(sliceImageData);
     }
-}
-
-
--(void)activateSliceSelectors
-{
-    [self.mSliceSelect setEnabled:YES];
-    [self.mSliceSelectSlider setEnabled:YES];
-}
-
--(void)deactivateSliceSelectors
-{
-    [self.mSliceSelect setEnabled:NO];
-    [self.mSliceSelectSlider setEnabled:NO];
+    
+    [self updateControlEnabledStates];
 }
 
 -(void)updateSliceSelectors
@@ -202,6 +201,37 @@ static const float MAX_ALPHA = 1.0f;
 {
     [self.mSliceSelectSlider setIntValue:(self->mCurrentSlice + 1)];        // Same thing with the slider
     [self.mSliceSelectSlider setMaxValue:self->mSliceCount];
+}
+
+-(void)updateControlEnabledStates
+{
+    if (self->mImage == nil) {
+        // Deactivate all controls
+        [self setOrientationAndGridSizeSelectorStates:NO];
+        [self setSliceSelectorStates:NO];
+        
+    } else {
+        // Activate orientation selection, slice grid selection
+        [self setOrientationAndGridSizeSelectorStates:YES];
+        
+        if (self->mIsSingleSliceView == YES) {
+            [self setSliceSelectorStates:YES];
+        } else {
+            [self setSliceSelectorStates:NO];
+        }
+    }
+}
+
+-(void)setOrientationAndGridSizeSelectorStates:(BOOL)enabled
+{
+    [self.mOrientationSelect setEnabled:enabled];
+    [self.mGridSizeSelect setEnabled:enabled];
+}
+
+-(void)setSliceSelectorStates:(BOOL)enabled
+{
+    [self.mSliceSelect setEnabled:enabled];
+    [self.mSliceSelectSlider setEnabled:enabled];
 }
 
 @end

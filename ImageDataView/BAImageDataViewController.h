@@ -17,6 +17,8 @@
     uint mCurrentSlice;
     uint mSliceCount;
     uint mCurrentTimestep;
+    
+    BOOL mIsSingleSliceView;
 
 }
 
