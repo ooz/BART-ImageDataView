@@ -16,7 +16,7 @@ static const int   NUMBER_OF_CHANNELS = 4;
 static const float MAX_ALPHA = 1.0f;
 
 static const CGFloat DEFAULT_GRID_SIZE = 1.0f;
-static const CGFloat GRID_SIZE_SIX = 6.0f;
+static const CGFloat GRID_SIZE_SIX = 5.0f;
 
 
 
@@ -98,7 +98,9 @@ static const CGFloat GRID_SIZE_SIX = 6.0f;
         
 //        NSLog(@"Grid size: %2.0f, %2.0f", self->mGridSize.width, self->mGridSize.height);
         
-        [self updateControlEnabledStates];
+        [self showImage:self->mImage slice:self->mCurrentSlice atTimestep:self->mCurrentTimestep];
+        
+//        [self updateControlEnabledStates];
     }
 }
 
@@ -155,48 +157,86 @@ static const CGFloat GRID_SIZE_SIX = 6.0f;
 
 -(NSImage*)renderImage
 {
-    float* sliceData = [self->mImage getSliceData:self->mCurrentSlice 
-                                       atTimestep:self->mCurrentTimestep];
-    
     BARTImageSize* imageSize = [self->mImage getImageSize];
-    size_t rows = imageSize.rows;
-    size_t cols = imageSize.columns;
+
+    size_t rows       = imageSize.rows;
+    size_t cols       = imageSize.columns;
+    size_t gridWidth  = self->mGridSize.width;
+    size_t gridHeight = self->mGridSize.height;
     
-    NSArray* minMax = [self->mImage getMinMaxOfDataElement];
-    NSNumber* max = [minMax objectAtIndex:1];
-//    NSLog(@"Min: %f, max: %f", [min floatValue], [max floatValue]);
+    size_t renderImageDataLength =   cols
+                                   * rows 
+                                   * gridWidth
+                                   * gridHeight
+                                   * NUMBER_OF_CHANNELS
+                                   * sizeof(float);
+    float* renderImageData = malloc(renderImageDataLength);
     
-    float* sliceImageData = malloc(sizeof(float) * cols * rows * NUMBER_OF_CHANNELS);
-    
+    NSArray*  minMax = [self->mImage getMinMaxOfDataElement];
+    NSNumber* max    = [minMax objectAtIndex:1];
     float normalized = 0.0f;
-    for (int i = 0; i < rows * cols; i++) {
-        normalized = sliceData[i] / [max floatValue];
-        sliceImageData[i * NUMBER_OF_CHANNELS]     = normalized;
-        sliceImageData[i * NUMBER_OF_CHANNELS + 1] = normalized;
-        sliceImageData[i * NUMBER_OF_CHANNELS + 2] = normalized;
-        sliceImageData[i * NUMBER_OF_CHANNELS + 3] = MAX_ALPHA;
-        //            sliceData[i] =
-        //            NSLog(@"%f", *(sliceData++));
+    
+    if (   gridWidth == 1
+        && gridHeight == 1) {
+        // Single slice view
+        
+        float* sliceData = [self->mImage getSliceData:self->mCurrentSlice 
+                                           atTimestep:self->mCurrentTimestep];
+    
+        for (int i = 0; i < rows * cols; i++) {
+            normalized = sliceData[i] / [max floatValue];
+            renderImageData[i * NUMBER_OF_CHANNELS]     = normalized;
+            renderImageData[i * NUMBER_OF_CHANNELS + 1] = normalized;
+            renderImageData[i * NUMBER_OF_CHANNELS + 2] = normalized;
+            renderImageData[i * NUMBER_OF_CHANNELS + 3] = MAX_ALPHA;
+        }
+    
+    } else {
+        // Many slice view
+        // TODO: much space for parallelization here
+        
+        for (int gridRow = 0; gridRow < gridHeight; gridRow++) {
+            for (int gridCol = 0; gridCol < gridWidth; gridCol++) {
+            
+                size_t sliceNr     = gridRow * gridWidth + gridCol;
+                float* sliceData   = [self->mImage getSliceData:sliceNr
+                                                     atTimestep:self->mCurrentTimestep];
+                
+                size_t sliceOffset = ((gridRow * gridWidth * cols * rows) + gridCol * cols) * NUMBER_OF_CHANNELS;
+//                NSLog(@"SliceNr: %ld, sliceOffset: %ld (rows: %ld, cols: %ld", sliceNr, sliceOffset, rows, cols);
+                
+                for (int row = 0; row < rows; row++) {
+                    for (int col = 0; col < cols; col++) {
+                        normalized = sliceData[row * cols + col] / [max floatValue];
+                        renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS]     = normalized;
+                        renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 1] = normalized;
+                        renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 2] = normalized;
+                        renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 3] = MAX_ALPHA;
+                    }
+                    
+                }
+            }
+        }
     }
     
-    //        NSLog(@"foo");
-    
     NSSize ciImageSize;
-    ciImageSize.width = cols;
-    ciImageSize.height = rows;
-    CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:sliceImageData length:cols * rows * sizeof(float) * NUMBER_OF_CHANNELS]
-                                               bytesPerRow:cols * sizeof(float) * NUMBER_OF_CHANNELS
+    ciImageSize.width  = gridWidth  * cols;
+    ciImageSize.height = gridHeight * rows;
+    CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:renderImageData 
+                                                                          length:renderImageDataLength]
+                                               bytesPerRow:gridWidth * cols * NUMBER_OF_CHANNELS * sizeof(float)
                                                       size:ciImageSize 
                                                     format:kCIFormatRGBAf 
                                                 colorSpace:CGColorSpaceCreateDeviceRGB()];
     
-    NSBitmapImageRep* imageRep = 
-    [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
-    CGImageRef cgImage = imageRep.CGImage;
-    NSImage* nsImage = [[NSImage alloc] initWithCGImage:cgImage size:ciImageSize];
+    NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
+    CGImageRef        cgImage = imageRep.CGImage;
+    
+    NSImage*          nsImage = [[NSImage alloc] initWithCGImage:cgImage 
+                                                            size:ciImageSize];
     
     [ciImage release];
-    free(sliceImageData);
+//    free(renderImageData);
     
     return nsImage;
 }
