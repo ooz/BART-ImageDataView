@@ -147,6 +147,15 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
         NSImage* renderedSlices = [self renderImage];
 
 //        [self->mImageView setImage:cgImage imageProperties:NULL];
+        
+        // Hack to enable scaling down of the NSImage in the ImageView
+        [renderedSlices setScalesWhenResized:YES];
+        NSSize minSize;
+        NSSize actualSize = [renderedSlices size];
+        minSize.width = actualSize.width * 0.1f;
+        minSize.height = actualSize.height * 0.1f;
+        [renderedSlices setSize:minSize];
+        
         [self->mImageView setImage:renderedSlices];
     }
     
