@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4720DC4F15A7247900C5B981 /* BABrainImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4720DC4E15A7247900C5B981 /* BABrainImageView.m */; };
 		4737CE05159230DD00E0D0FD /* EDDataElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4737CDF8159230DD00E0D0FD /* EDDataElement.mm */; };
 		4737CE06159230DD00E0D0FD /* EDDataElement.mm.orig in Resources */ = {isa = PBXBuildFile; fileRef = 4737CDF9159230DD00E0D0FD /* EDDataElement.mm.orig */; };
 		4737CE07159230DD00E0D0FD /* EDDataElementIsis.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4737CDFB159230DD00E0D0FD /* EDDataElementIsis.mm */; };
@@ -26,6 +27,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4720DC4D15A7247900C5B981 /* BABrainImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BABrainImageView.h; sourceTree = "<group>"; };
+		4720DC4E15A7247900C5B981 /* BABrainImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BABrainImageView.m; sourceTree = "<group>"; };
 		4737CDF7159230DD00E0D0FD /* EDDataElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EDDataElement.h; sourceTree = "<group>"; };
 		4737CDF8159230DD00E0D0FD /* EDDataElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EDDataElement.mm; sourceTree = "<group>"; };
 		4737CDF9159230DD00E0D0FD /* EDDataElement.mm.orig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EDDataElement.mm.orig; sourceTree = "<group>"; };
@@ -136,6 +139,8 @@
 				4737CE2015934F1F00E0D0FD /* BAImageDataViewController.h */,
 				4737CE2115934F1F00E0D0FD /* BAImageDataViewController.m */,
 				4737CE2215934F1F00E0D0FD /* BAImageDataView.xib */,
+				4720DC4D15A7247900C5B981 /* BABrainImageView.h */,
+				4720DC4E15A7247900C5B981 /* BABrainImageView.m */,
 				47F8414B1592195B00048830 /* Supporting Files */,
 			);
 			path = ImageDataView;
@@ -228,6 +233,7 @@
 				4737CE0A159230DD00E0D0FD /* EDDataElementRealTimeLoader.mm in Sources */,
 				4737CE0C159230DD00E0D0FD /* EDIsisImage.cpp in Sources */,
 				4737CE2315934F1F00E0D0FD /* BAImageDataViewController.m in Sources */,
+				4720DC4F15A7247900C5B981 /* BABrainImageView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
