@@ -148,8 +148,6 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
 
 //        [self->mImageView setImage:cgImage imageProperties:NULL];
         [self->mImageView setImage:renderedSlices];
-        
-        [renderedSlices release];
     }
     
     [self updateControlEnabledStates];
@@ -222,20 +220,22 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
     NSSize ciImageSize;
     ciImageSize.width  = gridWidth  * cols;
     ciImageSize.height = gridHeight * rows;
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:renderImageData 
                                                                           length:renderImageDataLength]
                                                bytesPerRow:gridWidth * cols * NUMBER_OF_CHANNELS * sizeof(float)
                                                       size:ciImageSize 
                                                     format:kCIFormatRGBAf 
-                                                colorSpace:CGColorSpaceCreateDeviceRGB()];
+                                                colorSpace:colorSpace];
     
     NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
     CGImageRef        cgImage = imageRep.CGImage;
     
-    NSImage*          nsImage = [[NSImage alloc] initWithCGImage:cgImage 
-                                                            size:ciImageSize];
+    NSImage*          nsImage = [[[NSImage alloc] initWithCGImage:cgImage 
+                                                            size:ciImageSize] autorelease];
     
     [ciImage release];
+    CGColorSpaceRelease(colorSpace);
 //    free(renderImageData);
     
     return nsImage;
