@@ -22,6 +22,8 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
+    [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationNone];
+    
     [super drawRect:dirtyRect];
 }
 
