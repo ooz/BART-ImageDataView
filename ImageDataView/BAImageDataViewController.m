@@ -23,7 +23,7 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
 @interface BAImageDataViewController (__privateMethods__)
 
 -(NSImage*)renderSagittalImage;
--(NSImage*)renderImage;
+-(NSImage*)renderAxialImage;
 -(NSImage*)renderCoronarImage;
 
 -(void)updateSliceSelectors;
@@ -146,7 +146,7 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
         [self updateSliceSelectors];
         
         
-        NSImage* renderedSlices = [self renderImage];
+        NSImage* renderedSlices = [self renderAxialImage];
 
 //        [self->mImageView setImage:cgImage imageProperties:NULL];
         
@@ -164,7 +164,7 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
     [self updateControlEnabledStates];
 }
 
--(NSImage*)renderImage
+-(NSImage*)renderAxialImage
 {
     BARTImageSize* imageSize = [self->mImage getImageSize];
 
