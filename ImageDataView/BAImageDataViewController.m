@@ -197,6 +197,8 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
             renderImageData[i * NUMBER_OF_CHANNELS + 2] = normalized;
             renderImageData[i * NUMBER_OF_CHANNELS + 3] = MAX_ALPHA;
         }
+        
+        free(sliceData);
     
     } else {
         // Many slice view
@@ -222,6 +224,8 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
                     }
                     
                 }
+                
+                free(sliceData);
             }
         }
     }
@@ -245,7 +249,7 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
     
     [ciImage release];
     CGColorSpaceRelease(colorSpace);
-//    free(renderImageData);
+    free(renderImageData);
     
     return nsImage;
 }
