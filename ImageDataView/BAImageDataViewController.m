@@ -155,9 +155,24 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
         [self->mImage retain];
    
         
-        BARTImageSize* imageSize = [self->mImage getImageSize];        
-        self->mCurrentSlice    = sliceNr;
-        self->mSliceCount      = imageSize.slices;
+        BARTImageSize* imageSize = [self->mImage getImageSize];
+        
+        switch (self->mOrientation) {
+            case AXIAL:
+                self->mSliceCount      = imageSize.slices;
+                self->mCurrentSlice    = sliceNr;
+                break;
+            case CORONAR:
+                self->mSliceCount = imageSize.rows;
+                self->mCurrentSlice = (sliceNr < imageSize.rows) ? sliceNr : 0;
+                break;
+            default:
+                self->mSliceCount = imageSize.columns;
+                self->mCurrentSlice = (sliceNr < imageSize.columns) ? sliceNr : 0;
+                break;
+        }
+        
+        
         self->mCurrentTimestep = tstep;
         [self updateSliceSelectors];
         
@@ -285,7 +300,74 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
 
 -(NSImage*)renderSagittalImage
 {
-    return nil;
+    // TODO: too much c&p from renderAxialImage ;)
+    
+    BARTImageSize* imageSize = [self->mImage getImageSize];
+    
+    size_t rows       = imageSize.rows;
+    size_t cols       = imageSize.columns;
+    size_t slices     = imageSize.slices;
+    size_t gridWidth  = self->mGridSize.width;
+    size_t gridHeight = self->mGridSize.height;
+    
+    size_t renderImageDataLength =    rows
+                                    * slices 
+                                    * gridWidth
+                                    * gridHeight
+                                    * NUMBER_OF_CHANNELS
+                                    * sizeof(float);
+    float* renderImageData = malloc(renderImageDataLength);
+    
+    NSArray*  minMax = [self->mImage getMinMaxOfDataElement];
+    NSNumber* max    = [minMax objectAtIndex:1];
+    float normalized = 0.0f;
+    
+    if (   gridWidth == 1
+        && gridHeight == 1) {
+        // Single slice view
+        
+        int j = 0;
+        for (int slice = 0; slice < slices; slice++) {
+            float* sliceData = [self->mImage getSliceData:slice
+                                               atTimestep:self->mCurrentTimestep];
+            for (int i = 0; i < rows; i++) {
+                normalized = sliceData[i * cols + self->mCurrentSlice] / [max floatValue];
+                renderImageData[j++]     = normalized;
+                renderImageData[j++] = normalized;
+                renderImageData[j++] = normalized;
+                renderImageData[j++] = MAX_ALPHA;
+            }
+            
+            free(sliceData);
+        }
+        
+    } else {
+        // Many slice view
+        // TODO: much space for parallelization here
+    }
+    
+    NSSize ciImageSize;
+    ciImageSize.width  = gridWidth  * rows;
+    ciImageSize.height = gridHeight * slices;
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:renderImageData 
+                                                                          length:renderImageDataLength]
+                                               bytesPerRow:gridWidth * rows * NUMBER_OF_CHANNELS * sizeof(float)
+                                                      size:ciImageSize 
+                                                    format:kCIFormatRGBAf 
+                                                colorSpace:colorSpace];
+    
+    NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
+    CGImageRef        cgImage = imageRep.CGImage;
+    
+    NSImage*          nsImage = [[[NSImage alloc] initWithCGImage:cgImage 
+                                                             size:ciImageSize] autorelease];
+    
+    [ciImage release];
+    CGColorSpaceRelease(colorSpace);
+    free(renderImageData);
+    
+    return nsImage;
 }
 
 -(NSImage*)renderCoronarImage
