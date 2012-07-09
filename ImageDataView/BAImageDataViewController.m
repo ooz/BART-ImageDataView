@@ -22,7 +22,9 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
 
 @interface BAImageDataViewController (__privateMethods__)
 
+-(NSImage*)renderSagittalImage;
 -(NSImage*)renderImage;
+-(NSImage*)renderCoronarImage;
 
 -(void)updateSliceSelectors;
 -(void)updateSliceTextField;
@@ -252,6 +254,16 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
     free(renderImageData);
     
     return nsImage;
+}
+
+-(NSImage*)renderSagittalImage
+{
+    return nil;
+}
+
+-(NSImage*)renderCoronarImage
+{
+    return nil;
 }
 
 -(void)updateSliceSelectors
