@@ -13,6 +13,13 @@
 @class EDDataElement;
 
 
+typedef enum ImageOrientationEnum {
+    SAGITTAL,
+    AXIAL,
+    CORONAR
+} ImageOrientation;
+
+
 @interface BAImageDataViewController : NSViewController {
     
     EDDataElement* mImage;
@@ -20,6 +27,7 @@
     uint mSliceCount;
     uint mCurrentTimestep;
    
+    ImageOrientation mOrientation;
     NSSize mGridSize;
 
 }

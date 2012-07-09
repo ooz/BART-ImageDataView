@@ -56,7 +56,8 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
         self->mSliceCount   = 1;
         self->mCurrentTimestep = 0;
         
-        self->mGridSize = (NSSize) {DEFAULT_GRID_SIZE, DEFAULT_GRID_SIZE};
+        self->mOrientation = SAGITTAL;
+        self->mGridSize    = (NSSize) {DEFAULT_GRID_SIZE, DEFAULT_GRID_SIZE};
         
         [self.mSliceSelectSlider setMinValue:1];
         
@@ -78,9 +79,24 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
 -(IBAction)setOrientation:(id)sender
 {
     if (sender == self.mOrientationSelect) {
-        NSLog(@"Selected segment (orientation selector): %li", [self.mOrientationSelect selectedSegment]);
+        NSInteger orientationSelectionIndex = [self.mOrientationSelect selectedSegment];
+//        NSLog(@"Selected segment (orientation selector): %li", orientationSelectionIndex);
+        
+        switch (orientationSelectionIndex) {
+            case 1:
+                self->mOrientation = AXIAL;
+                break;
+            case 2:
+                self->mOrientation = CORONAR;
+                break;
+            default:
+                self->mOrientation = SAGITTAL;
+                break;
+        }
+        
 //        [self.mImageView setImageWithURL:[NSURL URLWithString:@"http://www.cbs.mpg.de/institute/building/mpi3n"]];
-//        [self showImage:self->mImage slice:self->mCurrentSlice atTimestep:self->mCurrentTimestep];
+        
+        [self showImage:self->mImage slice:self->mCurrentSlice atTimestep:self->mCurrentTimestep];
     }
 }
 
@@ -146,7 +162,18 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
         [self updateSliceSelectors];
         
         
-        NSImage* renderedSlices = [self renderAxialImage];
+        NSImage* renderedSlices = nil;
+        switch (self->mOrientation) {
+            case AXIAL:
+                renderedSlices = [self renderAxialImage];
+                break;
+            case CORONAR:
+                renderedSlices = [self renderCoronarImage];
+                break;
+            default:
+                renderedSlices = [self renderSagittalImage];
+                break;
+        }
 
 //        [self->mImageView setImage:cgImage imageProperties:NULL];
         
