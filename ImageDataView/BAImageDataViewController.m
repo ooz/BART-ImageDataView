@@ -326,16 +326,16 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
         && gridHeight == 1) {
         // Single slice view
         
-        int j = 0;
+        int renderIndex = 0;
         for (int slice = 0; slice < slices; slice++) {
             float* sliceData = [self->mImage getSliceData:slice
                                                atTimestep:self->mCurrentTimestep];
             for (int i = 0; i < rows; i++) {
                 normalized = sliceData[i * cols + self->mCurrentSlice] / [max floatValue];
-                renderImageData[j++]     = normalized;
-                renderImageData[j++] = normalized;
-                renderImageData[j++] = normalized;
-                renderImageData[j++] = MAX_ALPHA;
+                renderImageData[renderIndex++] = normalized;
+                renderImageData[renderIndex++] = normalized;
+                renderImageData[renderIndex++] = normalized;
+                renderImageData[renderIndex++] = MAX_ALPHA;
             }
             
             free(sliceData);
@@ -344,6 +344,31 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
     } else {
         // Many slice view
         // TODO: much space for parallelization here
+        
+        int renderIndex = 0;
+        for (int slice = 0; slice < slices; slice++) {
+            float* sliceData = [self->mImage getSliceData:slice
+                                               atTimestep:self->mCurrentTimestep];
+            for (int row = 0; row < rows; row++) {
+                // the column number in the target (sagittal) image equals the row number in the source (axial) data
+                for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
+                    // gridIndex equals one column of data in the original axial slice data
+                    if (gridIndex < slices) {
+                        normalized = sliceData[row * cols + gridIndex] / [max floatValue];
+                    } else {
+                        normalized = 0.0f;
+                    }
+                    // ((gridRow * gridWidth * cols * rows) + gridCol * cols)
+                    renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * rows + (gridIndex % gridWidth) * rows + (slice * gridWidth * rows + row)) * NUMBER_OF_CHANNELS;
+                    renderImageData[renderIndex++] = normalized;
+                    renderImageData[renderIndex++] = normalized;
+                    renderImageData[renderIndex++] = normalized;
+                    renderImageData[renderIndex]   = MAX_ALPHA;
+                }
+            }
+            
+            free(sliceData);
+        }
     }
     
     NSSize ciImageSize;
