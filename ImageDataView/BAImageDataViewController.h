@@ -23,6 +23,7 @@ typedef enum ImageOrientationEnum {
 @interface BAImageDataViewController : NSViewController {
     
     EDDataElement* mImage;
+    NSArray*       mImageMinMax;
     uint mCurrentSlice;
     uint mSliceCount;
     uint mCurrentTimestep;

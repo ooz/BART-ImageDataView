@@ -52,6 +52,7 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
 {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         self->mImage = nil;
+        self->mImageMinMax = nil;
         self->mCurrentSlice = 0;
         self->mSliceCount   = 1;
         self->mCurrentTimestep = 0;
@@ -71,6 +72,9 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
 {
     if (self->mImage != nil) {
         [self->mImage release];
+    }
+    if (self->mImageMinMax != nil) {
+        [self->mImageMinMax release];
     }
     
     [super dealloc];
@@ -147,10 +151,21 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
     
     
     if (image == nil) {
+        if (self->mImageMinMax != nil) {
+            [self->mImageMinMax release];
+            self->mImageMinMax = nil;
+        }
         self->mImage = nil;
         [self->mImageView setImage:nil];
         
     } else {
+        if (self->mImage != image) {
+            if (self->mImageMinMax != nil) {
+                [self->mImageMinMax release];
+            }
+            self->mImageMinMax = [[image getMinMaxOfDataElement] retain];
+        }
+        
         self->mImage = image;
         [self->mImage retain];
    
@@ -223,8 +238,7 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
                                    * sizeof(float);
     float* renderImageData = malloc(renderImageDataLength);
     
-    NSArray*  minMax = [self->mImage getMinMaxOfDataElement];
-    NSNumber* max    = [minMax objectAtIndex:1];
+    NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
     float normalized = 0.0f;
     
     if (   gridWidth == 1
@@ -318,8 +332,7 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
                                     * sizeof(float);
     float* renderImageData = malloc(renderImageDataLength);
     
-    NSArray*  minMax = [self->mImage getMinMaxOfDataElement];
-    NSNumber* max    = [minMax objectAtIndex:1];
+    NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
     float normalized = 0.0f;
     
     if (   gridWidth == 1
