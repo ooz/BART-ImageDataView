@@ -18,9 +18,17 @@ static const float MAX_ALPHA = 1.0f;
 static const CGFloat DEFAULT_GRID_SIZE = 1.0f;
 static const CGFloat GRID_SIZE_SIX = 5.0f;
 
+static NSString* PROP_VOXELGAP  = @"voxelgap";
+static NSString* PROP_VOXELSIZE = @"voxelsize";
+
+static NSString* PROP_COLUMNVEC = @"columnvec";
+static NSString* PROP_ROWVEC    = @"rowvec";
+
 
 
 @interface BAImageDataViewController (__privateMethods__)
+
+-(void)fetchPropsIfUpdated:(EDDataElement*)image;
 
 -(NSImage*)renderSagittalImage;
 -(NSImage*)renderAxialImage;
@@ -51,8 +59,15 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
                bundle:(NSBundle *)nibBundleOrNil
 {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-        self->mImage = nil;
+        self->mImage       = nil;
         self->mImageMinMax = nil;
+        self->mVoxelGap    = nil;
+        self->mVoxelSize   = nil;
+        
+        self->mPropList = [NSArray arrayWithObjects: PROP_VOXELGAP
+                                                   , PROP_VOXELSIZE
+                                                   , nil];
+        
         self->mCurrentSlice = 0;
         self->mSliceCount   = 1;
         self->mCurrentTimestep = 0;
@@ -70,12 +85,10 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
 
 -(void)dealloc
 {
-    if (self->mImage != nil) {
-        [self->mImage release];
-    }
-    if (self->mImageMinMax != nil) {
-        [self->mImageMinMax release];
-    }
+    if (self->mImage != nil)       [self->mImage release];
+    if (self->mImageMinMax != nil) [self->mImageMinMax release];
+    if (self->mVoxelGap != nil)    [self->mVoxelGap release];
+    if (self->mVoxelSize != nil)   [self->mVoxelSize release];
     
     [super dealloc];
 }
@@ -159,16 +172,10 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
         [self->mImageView setImage:nil];
         
     } else {
-        if (self->mImage != image) {
-            if (self->mImageMinMax != nil) {
-                [self->mImageMinMax release];
-            }
-            self->mImageMinMax = [[image getMinMaxOfDataElement] retain];
-        }
+        [self fetchPropsIfUpdated:image];
         
         self->mImage = image;
         [self->mImage retain];
-   
         
         BARTImageSize* imageSize = [self->mImage getImageSize];
         
@@ -219,6 +226,25 @@ static const CGFloat GRID_SIZE_SIX = 5.0f;
     }
     
     [self updateControlEnabledStates];
+}
+
+-(void)fetchPropsIfUpdated:(EDDataElement*)image
+{
+    if (self->mImage != image) {
+        if (self->mImageMinMax != nil) [self->mImageMinMax release];
+        self->mImageMinMax = [[image getMinMaxOfDataElement] retain];
+        
+        NSDictionary* imageProps = [image getProps:self->mPropList];
+        
+        if (self->mVoxelGap != nil) [self->mVoxelGap release];
+        self->mVoxelGap = [[imageProps valueForKey:PROP_VOXELGAP] retain];
+        
+        if (self->mVoxelSize != nil) [self->mVoxelSize release];
+        self->mVoxelSize = [[imageProps valueForKey:PROP_VOXELSIZE] retain];
+        
+        NSLog(@"VoxelGap  %@", self->mVoxelGap);
+        NSLog(@"VoxelSize %@", self->mVoxelSize);
+    }
 }
 
 -(NSImage*)renderAxialImage

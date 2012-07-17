@@ -24,6 +24,10 @@ typedef enum ImageOrientationEnum {
     
     EDDataElement* mImage;
     NSArray*       mImageMinMax;
+    NSArray*       mVoxelGap;
+    NSArray*       mVoxelSize;
+    NSArray*       mPropList;
+    
     uint mCurrentSlice;
     uint mSliceCount;
     uint mCurrentTimestep;
