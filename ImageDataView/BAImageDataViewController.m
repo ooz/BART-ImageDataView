@@ -61,9 +61,13 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         self->mImageMinMax = nil;
         self->mVoxelGap    = nil;
         self->mVoxelSize   = nil;
+        self->mColumnVec   = nil;
+        self->mRowVec      = nil;
         
         self->mPropList = [NSArray arrayWithObjects: PROP_VOXELGAP
                                                    , PROP_VOXELSIZE
+                                                   , PROP_COLUMNVEC
+                                                   , PROP_ROWVEC
                                                    , nil];
         
         self->mCurrentSlice = 0;
@@ -87,6 +91,8 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     if (self->mImageMinMax != nil) [self->mImageMinMax release];
     if (self->mVoxelGap != nil)    [self->mVoxelGap release];
     if (self->mVoxelSize != nil)   [self->mVoxelSize release];
+    if (self->mColumnVec != nil)   [self->mColumnVec release];
+    if (self->mRowVec != nil)      [self->mRowVec release];
     
     [super dealloc];
 }
@@ -240,8 +246,16 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         if (self->mVoxelSize != nil) [self->mVoxelSize release];
         self->mVoxelSize = [[imageProps valueForKey:PROP_VOXELSIZE] retain];
         
-        NSLog(@"VoxelGap  %@", self->mVoxelGap);
-        NSLog(@"VoxelSize %@", self->mVoxelSize);
+        if (self->mColumnVec != nil) [self->mColumnVec release];
+        self->mColumnVec = [[imageProps valueForKey:PROP_COLUMNVEC] retain];
+        
+        if (self->mRowVec != nil) [self->mRowVec release];
+        self->mRowVec = [[imageProps valueForKey:PROP_ROWVEC] retain];
+
+        NSLog(@"VoxelGap  %@",  self->mVoxelGap);
+        NSLog(@"VoxelSize %@",  self->mVoxelSize);
+        NSLog(@"ColumnVec  %@", self->mColumnVec);
+        NSLog(@"RowVec %@",     self->mRowVec);
     }
 }
 
@@ -273,6 +287,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                                            atTimestep:self->mCurrentTimestep];
     
         for (int i = 0; i < rows * cols; i++) {
+            // TODO: bad access with dataset01/data.nii switch from sagi to axial
             normalized = sliceData[i] / [max floatValue];
             renderImageData[i * NUMBER_OF_CHANNELS]     = normalized;
             renderImageData[i * NUMBER_OF_CHANNELS + 1] = normalized;

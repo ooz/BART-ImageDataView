@@ -17,6 +17,8 @@
     NSArray*       mVoxelGap;
     NSArray*       mVoxelSize;
     NSArray*       mPropList;
+    NSArray*       mColumnVec;
+    NSArray*       mRowVec;
     
     uint mCurrentSlice;
     uint mSliceCount;
