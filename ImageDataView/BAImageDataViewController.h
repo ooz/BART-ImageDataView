@@ -8,17 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <Quartz/Quartz.h>
-
-
-@class EDDataElement;
-
-
-typedef enum ImageOrientationEnum {
-    SAGITTAL,
-    AXIAL,
-    CORONAR
-} ImageOrientation;
-
+#import "EDDataElement.h"
 
 @interface BAImageDataViewController : NSViewController {
     
@@ -32,7 +22,7 @@ typedef enum ImageOrientationEnum {
     uint mSliceCount;
     uint mCurrentTimestep;
    
-    ImageOrientation mOrientation;
+    enum ImageOrientation mOrientation;
     NSSize mGridSize;
 
 }

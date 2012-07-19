@@ -8,8 +8,6 @@
 
 #import "BAImageDataViewController.h"
 
-#import "EDDataElement.h"
-
 
 
 static const int   NUMBER_OF_CHANNELS = 4;
@@ -72,7 +70,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         self->mSliceCount   = 1;
         self->mCurrentTimestep = 0;
         
-        self->mOrientation = SAGITTAL;
+        self->mOrientation = ORIENT_SAGITTAL;
         self->mGridSize    = (NSSize) {DEFAULT_GRID_SIZE, DEFAULT_GRID_SIZE};
         
         [self.mSliceSelectSlider setMinValue:1];
@@ -101,13 +99,13 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         
         switch (orientationSelectionIndex) {
             case 1:
-                self->mOrientation = AXIAL;
+                self->mOrientation = ORIENT_AXIAL;
                 break;
             case 2:
-                self->mOrientation = CORONAR;
+                self->mOrientation = ORIENT_CORONAL;
                 break;
             default:
-                self->mOrientation = SAGITTAL;
+                self->mOrientation = ORIENT_SAGITTAL;
                 break;
         }
         
@@ -180,11 +178,11 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         BARTImageSize* imageSize = [self->mImage getImageSize];
         
         switch (self->mOrientation) {
-            case AXIAL:
+            case ORIENT_AXIAL:
                 self->mSliceCount      = imageSize.slices;
                 self->mCurrentSlice    = sliceNr;
                 break;
-            case CORONAR:
+            case ORIENT_CORONAL:
                 self->mSliceCount = imageSize.rows;
                 self->mCurrentSlice = (sliceNr < imageSize.rows) ? sliceNr : 0;
                 break;
@@ -201,10 +199,10 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         
         NSImage* renderedSlices = nil;
         switch (self->mOrientation) {
-            case AXIAL:
+            case ORIENT_AXIAL:
                 renderedSlices = [self renderAxialImage];
                 break;
-            case CORONAR:
+            case ORIENT_CORONAL:
                 renderedSlices = [self renderCoronarImage];
                 break;
             default:

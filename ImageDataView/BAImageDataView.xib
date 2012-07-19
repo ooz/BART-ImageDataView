@@ -82,6 +82,7 @@
 						<string key="NSFrame">{{397, 18}, {121, 21}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSSliderCell" key="NSCell" id="918279472">
@@ -175,7 +176,7 @@
 								</object>
 								<object class="NSSegmentItem">
 									<double key="NSSegmentItemWidth">55</double>
-									<string key="NSSegmentItemLabel">coronar</string>
+									<string key="NSSegmentItemLabel">coronal</string>
 									<int key="NSSegmentItemImageScaling">0</int>
 								</object>
 							</array>
