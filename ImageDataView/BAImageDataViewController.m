@@ -8,13 +8,17 @@
 
 #import "BAImageDataViewController.h"
 
+#include <math.h>
+
 
 
 static const int   NUMBER_OF_CHANNELS = 4;
 static const float MAX_ALPHA = 1.0f;
 
+static const float MIN_SCALE_FACTOR = 0.1f;
+
 static const CGFloat DEFAULT_GRID_SIZE = 1.0f;
-static const CGFloat GRID_SIZE_SIX = 5.0f;
+static const CGFloat GRID_SIZE_SIX = 6.0f;
 
 static NSString* PROP_VOXELGAP  = @"voxelgap";
 static NSString* PROP_VOXELSIZE = @"voxelsize";
@@ -31,6 +35,9 @@ static NSString* PROP_ROWVEC    = @"rowvec";
 -(NSImage*)renderSagittalImage;
 -(NSImage*)renderAxialImage;
 -(NSImage*)renderCoronarImage;
+
+-(NSImage*)fixSizeOf:(NSImage*)image 
+                with:(BARTImageSize*)dataSize;
 
 -(void)updateSliceSelectors;
 -(void)updateSliceTextField;
@@ -188,7 +195,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         switch (self->mViewOrientation) {
             case ORIENT_AXIAL:
                 self->mSliceCount      = imageSize.slices;
-                self->mCurrentSlice    = sliceNr;
+                self->mCurrentSlice    = (sliceNr < imageSize.slices) ? sliceNr : 0;
                 break;
             case ORIENT_CORONAL:
                 self->mSliceCount = imageSize.rows;
@@ -218,20 +225,134 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                 break;
         }
 
-//        [self->mImageView setImage:cgImage imageProperties:NULL];
-        
-        // Hack to enable scaling down of the NSImage in the ImageView
-        [renderedSlices setScalesWhenResized:YES];
-        NSSize minSize;
-        NSSize actualSize = [renderedSlices size];
-        minSize.width = actualSize.width * 0.1f;
-        minSize.height = actualSize.height * 0.1f;
-        [renderedSlices setSize:minSize];
+        renderedSlices = [self fixSizeOf:renderedSlices with:imageSize];
         
         [self->mImageView setImage:renderedSlices];
     }
     
     [self updateControlEnabledStates];
+}
+
+-(NSImage*)fixSizeOf:(NSImage*)image 
+                with:(BARTImageSize*)dataSize
+{
+    NSSize correctedDataSize;
+    float voxGapX = 0.0f;
+    float voxGapY = 0.0f;
+    float voxSizeX = 1.0f;
+    float voxSizeY = 1.0f;
+    
+    BOOL isMainAxial    = self->mMainOrientation == ORIENT_AXIAL    || self->mMainOrientation == ORIENT_REVAXIAL;
+    BOOL isMainCoronal  = self->mMainOrientation == ORIENT_CORONAL  || self->mMainOrientation == ORIENT_REVCORONAL;
+    BOOL isMainSagittal = self->mMainOrientation == ORIENT_SAGITTAL || self->mMainOrientation == ORIENT_REVSAGITTAL;
+    // Find the above parameters depending on image data orientation (mMainOrientation)
+    //                                  and view display orientation (mViewOrientation)
+    // TODO: reduce to actual 6 non-redundant cases!
+    if (isMainAxial) {
+        switch (self->mViewOrientation) {
+            case ORIENT_AXIAL:
+                correctedDataSize.width  = dataSize.columns;
+                correctedDataSize.height = dataSize.rows;
+                voxGapX  = [[self->mVoxelGap  objectAtIndex:0] floatValue];
+                voxGapY  = [[self->mVoxelGap  objectAtIndex:1] floatValue];
+                voxSizeX = [[self->mVoxelSize objectAtIndex:0] floatValue]; 
+                voxSizeY = [[self->mVoxelSize objectAtIndex:1] floatValue];
+                break;
+            case ORIENT_CORONAL:
+                correctedDataSize.width  = dataSize.columns;
+                correctedDataSize.height = dataSize.slices;
+                voxGapX  = [[self->mVoxelGap  objectAtIndex:0] floatValue];
+                voxGapY  = [[self->mVoxelGap  objectAtIndex:2] floatValue];
+                voxSizeX = [[self->mVoxelSize objectAtIndex:0] floatValue]; 
+                voxSizeY = [[self->mVoxelSize objectAtIndex:2] floatValue];
+                break;
+            default:
+                correctedDataSize.width  = dataSize.rows;
+                correctedDataSize.height = dataSize.slices;
+                voxGapX  = [[self->mVoxelGap  objectAtIndex:1] floatValue];
+                voxGapY  = [[self->mVoxelGap  objectAtIndex:2] floatValue];
+                voxSizeX = [[self->mVoxelSize objectAtIndex:1] floatValue]; 
+                voxSizeY = [[self->mVoxelSize objectAtIndex:2] floatValue];
+                break;
+        }
+    } else if (isMainCoronal) {
+        switch (self->mViewOrientation) {
+            case ORIENT_AXIAL:
+                correctedDataSize.width  = dataSize.columns;
+                correctedDataSize.height = dataSize.slices;
+                voxGapX  = [[self->mVoxelGap  objectAtIndex:0] floatValue];
+                voxGapY  = [[self->mVoxelGap  objectAtIndex:2] floatValue];
+                voxSizeX = [[self->mVoxelSize objectAtIndex:0] floatValue]; 
+                voxSizeY = [[self->mVoxelSize objectAtIndex:2] floatValue];
+                break;
+            case ORIENT_CORONAL:
+                correctedDataSize.width  = dataSize.columns;
+                correctedDataSize.height = dataSize.rows;
+                voxGapX  = [[self->mVoxelGap  objectAtIndex:0] floatValue];
+                voxGapY  = [[self->mVoxelGap  objectAtIndex:1] floatValue];
+                voxSizeX = [[self->mVoxelSize objectAtIndex:0] floatValue]; 
+                voxSizeY = [[self->mVoxelSize objectAtIndex:1] floatValue];
+                break;
+            default:
+                correctedDataSize.width  = dataSize.slices;
+                correctedDataSize.height = dataSize.rows;
+                voxGapX  = [[self->mVoxelGap  objectAtIndex:2] floatValue];
+                voxGapY  = [[self->mVoxelGap  objectAtIndex:1] floatValue];
+                voxSizeX = [[self->mVoxelSize objectAtIndex:2] floatValue]; 
+                voxSizeY = [[self->mVoxelSize objectAtIndex:1] floatValue];
+                break;
+        }
+    } else if (isMainSagittal) {
+        switch (self->mViewOrientation) {
+            case ORIENT_AXIAL:
+                correctedDataSize.width  = dataSize.slices;
+                correctedDataSize.height = dataSize.columns;
+                voxGapX  = [[self->mVoxelGap  objectAtIndex:2] floatValue];
+                voxGapY  = [[self->mVoxelGap  objectAtIndex:0] floatValue];
+                voxSizeX = [[self->mVoxelSize objectAtIndex:2] floatValue]; 
+                voxSizeY = [[self->mVoxelSize objectAtIndex:0] floatValue];
+                break;
+            case ORIENT_CORONAL:
+                correctedDataSize.width  = dataSize.slices;
+                correctedDataSize.height = dataSize.rows;
+                voxGapX  = [[self->mVoxelGap  objectAtIndex:2] floatValue];
+                voxGapY  = [[self->mVoxelGap  objectAtIndex:1] floatValue];
+                voxSizeX = [[self->mVoxelSize objectAtIndex:2] floatValue]; 
+                voxSizeY = [[self->mVoxelSize objectAtIndex:1] floatValue];
+                break;
+            default:
+                correctedDataSize.width  = dataSize.columns;
+                correctedDataSize.height = dataSize.rows;
+                voxGapX  = [[self->mVoxelGap  objectAtIndex:0] floatValue];
+                voxGapY  = [[self->mVoxelGap  objectAtIndex:1] floatValue];
+                voxSizeX = [[self->mVoxelSize objectAtIndex:0] floatValue]; 
+                voxSizeY = [[self->mVoxelSize objectAtIndex:1] floatValue];
+                break;
+        }
+    }
+    
+    assert(correctedDataSize.width  > 0);
+    assert(correctedDataSize.height > 0);
+ 
+    // Compute real size
+    correctedDataSize.width  = (correctedDataSize.width  * voxSizeX + (correctedDataSize.width  - 1) * voxGapX) * self->mGridSize.width;
+    correctedDataSize.height = (correctedDataSize.height * voxSizeY + (correctedDataSize.height - 1) * voxGapY) * self->mGridSize.height;
+    
+    NSSize imageSize = [image size];
+    float scale = fmin( imageSize.width  / correctedDataSize.width
+                      , imageSize.height / correctedDataSize.height);
+    
+//    NSLog(@"ImageSize: (%3.2f, %3.2f)", imageSize.width, imageSize.height);
+//    NSLog(@"CorrectedDataSize after  (%3.2f, %3.2f)", correctedDataSize.width, correctedDataSize.height);
+    
+    // Hack to enable scaling down of the NSImage in the ImageView
+    [image setScalesWhenResized:YES];
+    NSSize minSize;
+    minSize.width  = correctedDataSize.width  * scale * MIN_SCALE_FACTOR;
+    minSize.height = correctedDataSize.height * scale * MIN_SCALE_FACTOR;
+    [image setSize:minSize];
+    
+    return image;
 }
 
 -(void)fetchPropsIfUpdated:(EDDataElement*)image
@@ -292,7 +413,6 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                                            atTimestep:self->mCurrentTimestep];
     
         for (int i = 0; i < rows * cols; i++) {
-            // TODO: bad access with dataset01/data.nii switch from sagi to axial
             normalized = sliceData[i] / [max floatValue];
             renderImageData[i * NUMBER_OF_CHANNELS]     = normalized;
             renderImageData[i * NUMBER_OF_CHANNELS + 1] = normalized;
@@ -312,22 +432,24 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                 size_t sliceNr     = gridRow * gridWidth + gridCol;
                 float* sliceData   = [self->mImage getSliceData:sliceNr
                                                      atTimestep:self->mCurrentTimestep];
+                if (sliceData != NULL) {
                 
-                size_t sliceOffset = ((gridRow * gridWidth * cols * rows) + gridCol * cols) * NUMBER_OF_CHANNELS;
-//                NSLog(@"SliceNr: %ld, sliceOffset: %ld (rows: %ld, cols: %ld", sliceNr, sliceOffset, rows, cols);
-                
-                for (int row = 0; row < rows; row++) {
-                    for (int col = 0; col < cols; col++) {
-                        normalized = sliceData[row * cols + col] / [max floatValue];
-                        renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS]     = normalized;
-                        renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 1] = normalized;
-                        renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 2] = normalized;
-                        renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 3] = MAX_ALPHA;
+                    size_t sliceOffset = ((gridRow * gridWidth * cols * rows) + gridCol * cols) * NUMBER_OF_CHANNELS;
+//                    NSLog(@"SliceNr: %ld, sliceOffset: %ld (rows: %ld, cols: %ld", sliceNr, sliceOffset, rows, cols);
+                    
+                    for (int row = 0; row < rows; row++) {
+                        for (int col = 0; col < cols; col++) {
+                            normalized = sliceData[row * cols + col] / [max floatValue];
+                            renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS]     = normalized;
+                            renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 1] = normalized;
+                            renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 2] = normalized;
+                            renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 3] = MAX_ALPHA;
+                        }
+                        
                     }
                     
+                    free(sliceData);
                 }
-                
-                free(sliceData);
             }
         }
     }
