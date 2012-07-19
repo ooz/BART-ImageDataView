@@ -74,7 +74,9 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         self->mSliceCount   = 1;
         self->mCurrentTimestep = 0;
         
-        self->mOrientation = ORIENT_SAGITTAL;
+        self->mViewOrientation = ORIENT_SAGITTAL;
+        self->mMainOrientation = ORIENT_UNKNOWN;
+        
         self->mGridSize    = (NSSize) {DEFAULT_GRID_SIZE, DEFAULT_GRID_SIZE};
         
         [self.mSliceSelectSlider setMinValue:1];
@@ -105,13 +107,13 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         
         switch (orientationSelectionIndex) {
             case 1:
-                self->mOrientation = ORIENT_AXIAL;
+                self->mViewOrientation = ORIENT_AXIAL;
                 break;
             case 2:
-                self->mOrientation = ORIENT_CORONAL;
+                self->mViewOrientation = ORIENT_CORONAL;
                 break;
             default:
-                self->mOrientation = ORIENT_SAGITTAL;
+                self->mViewOrientation = ORIENT_SAGITTAL;
                 break;
         }
         
@@ -183,7 +185,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         
         BARTImageSize* imageSize = [self->mImage getImageSize];
         
-        switch (self->mOrientation) {
+        switch (self->mViewOrientation) {
             case ORIENT_AXIAL:
                 self->mSliceCount      = imageSize.slices;
                 self->mCurrentSlice    = sliceNr;
@@ -204,7 +206,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         
         
         NSImage* renderedSlices = nil;
-        switch (self->mOrientation) {
+        switch (self->mViewOrientation) {
             case ORIENT_AXIAL:
                 renderedSlices = [self renderAxialImage];
                 break;
@@ -238,6 +240,8 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         if (self->mImageMinMax != nil) [self->mImageMinMax release];
         self->mImageMinMax = [[image getMinMaxOfDataElement] retain];
         
+        self->mMainOrientation = [image getMainOrientation];
+        
         NSDictionary* imageProps = [image getProps:self->mPropList];
         
         if (self->mVoxelGap != nil) [self->mVoxelGap release];
@@ -252,6 +256,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         if (self->mRowVec != nil) [self->mRowVec release];
         self->mRowVec = [[imageProps valueForKey:PROP_ROWVEC] retain];
 
+        NSLog(@"MainOrientation %d", self->mMainOrientation);
         NSLog(@"VoxelGap  %@",  self->mVoxelGap);
         NSLog(@"VoxelSize %@",  self->mVoxelSize);
         NSLog(@"ColumnVec  %@", self->mColumnVec);

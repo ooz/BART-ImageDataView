@@ -24,7 +24,9 @@
     uint mSliceCount;
     uint mCurrentTimestep;
    
-    enum ImageOrientation mOrientation;
+    enum ImageOrientation mViewOrientation;
+    enum ImageOrientation mMainOrientation;
+    
     NSSize mGridSize;
 
 }
