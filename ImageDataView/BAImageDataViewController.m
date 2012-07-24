@@ -430,10 +430,11 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         // Many slice view
         // TODO: much space for parallelization here
         
+        NSUInteger sliceIndex = 0;
         for (int gridRow = 0; gridRow < gridHeight; gridRow++) {
             for (int gridCol = 0; gridCol < gridWidth; gridCol++) {
             
-                size_t sliceNr     = gridRow * gridWidth + gridCol;
+                size_t sliceNr     = [[self->mRelevantSlices objectAtIndex:sliceIndex++] intValue]; //gridRow * gridWidth + gridCol;
                 float* sliceData   = [self->mImage getSliceData:sliceNr
                                                      atTimestep:self->mCurrentTimestep];
                 if (sliceData != NULL) {
