@@ -7,11 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-
-@class EDDataElement;
+#import "EDDataElement.h"
 
 @interface BAImageSliceSelector : NSObject
 
--(NSArray*)select:(size_t)n slicesFrom:(EDDataElement*)image;
+-(NSArray*)select:(size_t)n 
+       slicesFrom:(EDDataElement*)image
+        alignedTo:(enum ImageOrientation)orientation;
 
 @end
