@@ -434,9 +434,14 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         for (int gridRow = 0; gridRow < gridHeight; gridRow++) {
             for (int gridCol = 0; gridCol < gridWidth; gridCol++) {
             
-                size_t sliceNr     = [[self->mRelevantSlices objectAtIndex:sliceIndex++] intValue]; //gridRow * gridWidth + gridCol;
-                float* sliceData   = [self->mImage getSliceData:sliceNr
-                                                     atTimestep:self->mCurrentTimestep];
+                size_t sliceNr   = 0;
+                float* sliceData = NULL;
+                if (sliceIndex < self->mSliceCount) {
+                    sliceNr   = [[self->mRelevantSlices objectAtIndex:sliceIndex++] intValue]; //gridRow * gridWidth + gridCol;
+                    sliceData = [self->mImage getSliceData:sliceNr
+                                                atTimestep:self->mCurrentTimestep];
+                }
+
                 if (sliceData != NULL) {
                 
                     size_t sliceOffset = ((gridRow * gridWidth * cols * rows) + gridCol * cols) * NUMBER_OF_CHANNELS;
