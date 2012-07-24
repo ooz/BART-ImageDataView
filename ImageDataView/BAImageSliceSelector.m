@@ -108,9 +108,18 @@ const size_t SLICE_DIMENSION_INDEX = 2;
         size = relevantSize;
     }
     
-    NSArray* relevantSlices = [NSMutableArray arrayWithCapacity:size]; 
+    NSMutableArray* relevantSlices = [NSMutableArray arrayWithCapacity:size]; 
 
-    // TODO
+    size_t step = relevantSize / size;
+    size_t rest = relevantSize % size;
+    
+    NSInteger i = rest / 2; // Start with a padding
+    while (i < size) {
+        if (i % step == 0) {
+            [relevantSlices addObject:[NSNumber numberWithInteger:i]];
+        }
+        i++;
+    }
     
     return relevantSlices;
 }
