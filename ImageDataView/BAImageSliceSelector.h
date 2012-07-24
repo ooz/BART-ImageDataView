@@ -30,6 +30,9 @@ enum ImageDimension {
 -(enum ImageDimension*)getDimensionsFrom:(EDDataElement*)image
                                alignedTo:(enum ImageOrientation)orientation;
 
+-(size_t)getSliceDimensionSize:(EDDataElement*)image
+                     alignedTo:(enum ImageOrientation)orientation;
+
 -(NSArray*)select:(size_t)n 
        slicesFrom:(EDDataElement*)image
         alignedTo:(enum ImageOrientation)orientation;

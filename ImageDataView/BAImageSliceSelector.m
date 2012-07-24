@@ -12,18 +12,17 @@ const size_t RELEVANT_DIMENSIONS = 3;
 const size_t SLICE_DIMENSION_INDEX = 2;
 
 
-@interface BAImageSliceSelector (__privateMethods__)
-
--(size_t)getRelevantSize:(EDDataElement*)image
-               alignedTo:(enum ImageOrientation)orientation;
-
-@end
+//@interface BAImageSliceSelector (__privateMethods__)
+//
+//
+//
+//@end
 
 
 @implementation BAImageSliceSelector
 
--(size_t)getRelevantSize:(EDDataElement*)image
-               alignedTo:(enum ImageOrientation)orientation
+-(size_t)getSliceDimensionSize:(EDDataElement*)image
+                     alignedTo:(enum ImageOrientation)orientation
 {
     BARTImageSize* imageSize = [image getImageSize]; 
     
@@ -99,7 +98,7 @@ const size_t SLICE_DIMENSION_INDEX = 2;
        slicesFrom:(EDDataElement*)image
         alignedTo:(enum ImageOrientation)orientation
 {
-    size_t relevantSize = [self getRelevantSize:image alignedTo:orientation];
+    size_t relevantSize = [self getSliceDimensionSize:image alignedTo:orientation];
     
     size_t size;
     if (n <= relevantSize) {
