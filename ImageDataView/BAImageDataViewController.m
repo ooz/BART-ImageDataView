@@ -8,6 +8,8 @@
 
 #import "BAImageDataViewController.h"
 
+#import "BAImageSliceSelector.h"
+
 #include <math.h>
 
 
@@ -31,6 +33,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
 @interface BAImageDataViewController (__privateMethods__)
 
 -(void)fetchPropsIfUpdated:(EDDataElement*)image;
+-(void)fetchRelevantSlices:(EDDataElement*)image;
 
 -(NSImage*)renderSagittalImage;
 -(NSImage*)renderAxialImage;
@@ -77,6 +80,8 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                                                    , PROP_ROWVEC
                                                    , nil];
         
+        self->mRelevantSliceFilter = [[BAImageSliceSelector alloc] init];
+        self->mRelevantSlices = nil;
         self->mCurrentSlice = 0;
         self->mSliceCount   = 1;
         self->mCurrentTimestep = 0;
@@ -102,6 +107,9 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     if (self->mVoxelSize != nil)   [self->mVoxelSize release];
     if (self->mColumnVec != nil)   [self->mColumnVec release];
     if (self->mRowVec != nil)      [self->mRowVec release];
+    
+    if (self->mRelevantSliceFilter != nil) [self->mRelevantSliceFilter release];
+    if (self->mRelevantSlices      != nil) [self->mRelevantSlices      release];
     
     [super dealloc];
 }
@@ -175,7 +183,6 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         [self->mImage release];
     }
     
-    
     if (image == nil) {
         if (self->mImageMinMax != nil) {
             [self->mImageMinMax release];
@@ -190,27 +197,15 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         self->mImage = image;
         [self->mImage retain];
         
-        BARTImageSize* imageSize = [self->mImage getImageSize];
-        
-        switch (self->mViewOrientation) {
-            case ORIENT_AXIAL:
-                self->mSliceCount      = imageSize.slices;
-                self->mCurrentSlice    = (sliceNr < imageSize.slices) ? sliceNr : 0;
-                break;
-            case ORIENT_CORONAL:
-                self->mSliceCount = imageSize.rows;
-                self->mCurrentSlice = (sliceNr < imageSize.rows) ? sliceNr : 0;
-                break;
-            default:
-                self->mSliceCount = imageSize.columns;
-                self->mCurrentSlice = (sliceNr < imageSize.columns) ? sliceNr : 0;
-                break;
-        }
-        
-        
+        self->mSliceCount = [self->mRelevantSliceFilter getSliceDimensionSize:self->mImage alignedTo:self->mViewOrientation];
+        self->mCurrentSlice = (sliceNr < self->mSliceCount) ? sliceNr : 0;
         self->mCurrentTimestep = tstep;
         [self updateSliceSelectors];
         
+        BOOL isSingleSliceView = self->mGridSize.width == 1 && self->mGridSize.height == 1;
+        if (!isSingleSliceView) {
+            [self fetchRelevantSlices:self->mImage];
+        }
         
         NSImage* renderedSlices = nil;
         switch (self->mViewOrientation) {
@@ -225,6 +220,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                 break;
         }
 
+        BARTImageSize* imageSize = [self->mImage getImageSize];
         renderedSlices = [self fixSizeOf:renderedSlices with:imageSize];
         
         [self->mImageView setImage:renderedSlices];
@@ -383,6 +379,14 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         NSLog(@"ColumnVec  %@", self->mColumnVec);
         NSLog(@"RowVec %@",     self->mRowVec);
     }
+}
+
+-(void)fetchRelevantSlices:(EDDataElement*)image
+{
+    if (self->mRelevantSlices != nil) [self->mRelevantSlices release];
+    self->mRelevantSlices = [[self->mRelevantSliceFilter select:self->mGridSize.width * self->mGridSize.height
+                                                     slicesFrom:image 
+                                                      alignedTo:self->mViewOrientation] retain]; 
 }
 
 -(NSImage*)renderAxialImage

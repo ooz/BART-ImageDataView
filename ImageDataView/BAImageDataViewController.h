@@ -10,6 +10,8 @@
 #import <Quartz/Quartz.h>
 #import "EDDataElement.h"
 
+@class BAImageSliceSelector;
+
 @interface BAImageDataViewController : NSViewController {
     
     EDDataElement* mImage;
@@ -20,6 +22,8 @@
     NSArray*       mColumnVec;
     NSArray*       mRowVec;
     
+    BAImageSliceSelector* mRelevantSliceFilter;
+    NSArray* mRelevantSlices;
     uint mCurrentSlice;
     uint mSliceCount;
     uint mCurrentTimestep;
