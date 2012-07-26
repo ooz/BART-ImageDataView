@@ -36,8 +36,8 @@ static NSString* PROP_ROWVEC    = @"rowvec";
 -(void)fetchRelevantSlices:(EDDataElement*)image;
 
 -(NSImage*)renderImage;
--(NSImage*)renderSagittalImage;
--(NSImage*)renderAxialImage;
+-(NSImage*)renderIdenticalImage;
+-(NSImage*)renderTurnLeftRotateRightImage;
 -(NSImage*)renderCoronarImage;
 
 -(NSImage*)fixSizeOf:(NSImage*)image 
@@ -221,6 +221,10 @@ static NSString* PROP_ROWVEC    = @"rowvec";
 -(NSImage*)fixSizeOf:(NSImage*)image 
                 with:(BARTImageSize*)dataSize
 {
+    if (image == nil) {
+        return nil;
+    }
+    
     NSSize correctedDataSize;
     float voxGapX = 0.0f;
     float voxGapY = 0.0f;
@@ -381,23 +385,58 @@ static NSString* PROP_ROWVEC    = @"rowvec";
 -(NSImage*)renderImage
 {
     NSImage* renderedSlices = nil;
+    enum ImageDimension* dims = [self->mRelevantSliceFilter getDimensionsFrom:self->mImage
+                                                                    alignedTo:self->mViewOrientation];
 
-    switch (self->mViewOrientation) {
-        case ORIENT_AXIAL:
-            renderedSlices = [self renderAxialImage];
-            break;
-        case ORIENT_CORONAL:
-            renderedSlices = [self renderCoronarImage];
-            break;
-        default:
-            renderedSlices = [self renderSagittalImage];
-            break;
+    switch (dims[0]) {
+            case DIM_SLICE:
+                switch (dims[1]) {
+                    case DIM_HEIGHT:
+                        // TurnLeft
+                        break;
+                    default:
+                        // TurnUpRotateRight
+                        break;
+                }
+                break;
+            case DIM_HEIGHT:
+                if (dims[1] == DIM_SLICE) {
+                    // TurnLeftRotateRight
+                    renderedSlices = [self renderTurnLeftRotateRightImage];
+                }
+                break;
+            default:
+                // DIM_WIDTH
+                switch (dims[1]) {
+                    case DIM_SLICE:
+                        // TurnUp
+                        break;
+                    default:
+                        // Directly
+                        renderedSlices = [self renderIdenticalImage];
+                        break;
+                }
+                break;
     }
+    
+//    switch (self->mViewOrientation) {
+//        case ORIENT_AXIAL:
+//            renderedSlices = [self renderImageDirectly];
+//            break;
+//        case ORIENT_CORONAL:
+//            renderedSlices = [self renderCoronarImage];
+//            break;
+//        default:
+//            renderedSlices = [self renderSagittalImage];
+//            break;
+//    }
+    
+    free(dims);
     
     return renderedSlices;
 }
 
--(NSImage*)renderAxialImage
+-(NSImage*)renderIdenticalImage
 {
     BARTImageSize* imageSize = [self->mImage getImageSize];
 
@@ -496,7 +535,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     return nsImage;
 }
 
--(NSImage*)renderSagittalImage
+-(NSImage*)renderTurnLeftRotateRightImage
 {
     // TODO: too much c&p from renderAxialImage ;)
     
