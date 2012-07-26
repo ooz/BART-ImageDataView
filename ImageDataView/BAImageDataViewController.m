@@ -39,7 +39,8 @@ static NSString* PROP_ROWVEC    = @"rowvec";
 -(NSImage*)renderIdenticalImage;
 -(NSImage*)renderTurnUpImage;
 -(NSImage*)renderTurnLeftRotateRightImage;
--(NSImage*)renderCoronarImage;
+-(NSImage*)renderTurnLeftImage;
+-(NSImage*)renderTurnUpRotateRightImage;
 
 -(NSImage*)fixSizeOf:(NSImage*)image 
                 with:(BARTImageSize*)dataSize;
@@ -393,10 +394,10 @@ static NSString* PROP_ROWVEC    = @"rowvec";
             case DIM_SLICE:
                 switch (dims[1]) {
                     case DIM_HEIGHT:
-                        // TurnLeft
+                        renderedSlices = [self renderTurnLeftImage];
                         break;
                     default:
-                        // TurnUpRotateRight
+                        renderedSlices = [self renderTurnUpRotateRightImage];
                         break;
                 }
                 break;
@@ -417,18 +418,6 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                 }
                 break;
     }
-    
-//    switch (self->mViewOrientation) {
-//        case ORIENT_AXIAL:
-//            renderedSlices = [self renderImageDirectly];
-//            break;
-//        case ORIENT_CORONAL:
-//            renderedSlices = [self renderCoronarImage];
-//            break;
-//        default:
-//            renderedSlices = [self renderSagittalImage];
-//            break;
-//    }
     
     free(dims);
     
@@ -584,18 +573,18 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         for (int slice = 0; slice < slices; slice++) {
             float* sliceData = [self->mImage getSliceData:slice
                                                atTimestep:self->mCurrentTimestep];
-            for (int row = 0; row < rows; row++) {
-                // the column number in the target (sagittal) image equals the row number in the source (axial) data
+            
+            for (int col = 0; col < cols; col++) {
                 for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
-                    // gridIndex equals one column of data in the original axial slice data
-                    size_t relevantCol = [[self->mRelevantSlices objectAtIndex:gridIndex] intValue];
-                    if (relevantCol < cols) {
-                        normalized = sliceData[row * cols + relevantCol] / [max floatValue];
+                    
+                    size_t relevantRow = [[self->mRelevantSlices objectAtIndex:gridIndex] intValue];
+                    if (relevantRow < rows) {
+                        normalized = sliceData[relevantRow * cols + col] / [max floatValue];
                     } else {
                         normalized = 0.0f;
                     }
-                    // ((gridRow * gridWidth * cols * rows) + gridCol * cols)
-                    renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * rows + (gridIndex % gridWidth) * rows + (slice * gridWidth * rows + row)) * NUMBER_OF_CHANNELS;
+                    
+                    renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * cols + (gridIndex % gridWidth) * cols + (slice * gridWidth * cols + col)) * NUMBER_OF_CHANNELS;
                     renderImageData[renderIndex++] = normalized;
                     renderImageData[renderIndex++] = normalized;
                     renderImageData[renderIndex++] = normalized;
@@ -729,7 +718,12 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     return nsImage;
 }
 
--(NSImage*)renderCoronarImage
+-(NSImage*)renderTurnLeftImage;
+{
+    return nil;
+}
+
+-(NSImage*)renderTurnUpRotateRightImage
 {
     return nil;
 }
