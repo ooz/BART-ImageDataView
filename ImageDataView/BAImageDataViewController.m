@@ -35,6 +35,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
 -(void)fetchPropsIfUpdated:(EDDataElement*)image;
 -(void)fetchRelevantSlices:(EDDataElement*)image;
 
+-(NSImage*)renderImage;
 -(NSImage*)renderSagittalImage;
 -(NSImage*)renderAxialImage;
 -(NSImage*)renderCoronarImage;
@@ -207,19 +208,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
             [self fetchRelevantSlices:self->mImage];
         }
         
-        NSImage* renderedSlices = nil;
-        switch (self->mViewOrientation) {
-            case ORIENT_AXIAL:
-                renderedSlices = [self renderAxialImage];
-                break;
-            case ORIENT_CORONAL:
-                renderedSlices = [self renderCoronarImage];
-                break;
-            default:
-                renderedSlices = [self renderSagittalImage];
-                break;
-        }
-
+        NSImage* renderedSlices = [self renderImage];
         BARTImageSize* imageSize = [self->mImage getImageSize];
         renderedSlices = [self fixSizeOf:renderedSlices with:imageSize];
         
@@ -387,6 +376,25 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     self->mRelevantSlices = [[self->mRelevantSliceFilter select:self->mGridSize.width * self->mGridSize.height
                                                      slicesFrom:image 
                                                       alignedTo:self->mViewOrientation] retain]; 
+}
+
+-(NSImage*)renderImage
+{
+    NSImage* renderedSlices = nil;
+
+    switch (self->mViewOrientation) {
+        case ORIENT_AXIAL:
+            renderedSlices = [self renderAxialImage];
+            break;
+        case ORIENT_CORONAL:
+            renderedSlices = [self renderCoronarImage];
+            break;
+        default:
+            renderedSlices = [self renderSagittalImage];
+            break;
+    }
+    
+    return renderedSlices;
 }
 
 -(NSImage*)renderAxialImage
