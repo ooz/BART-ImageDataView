@@ -42,7 +42,7 @@ const size_t SLICE_DIMENSION_INDEX = 2;
             relevantSize = imageSize.slices;
             break;
         default:
-            NSLog(@"Error: could not find relevant slice dimension! Defaulting to 0!");
+            NSLog(@"Error: could not find relevant slice dimension (someone extended the enum!) Defaulting to 0!");
             break;
     }
     
