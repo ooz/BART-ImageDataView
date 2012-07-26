@@ -37,8 +37,10 @@ const size_t SLICE_DIMENSION_INDEX = 2;
             break;
         case DIM_HEIGHT:
             relevantSize = imageSize.rows;
+            break;
         case DIM_SLICE:
             relevantSize = imageSize.slices;
+            break;
         default:
             NSLog(@"Error: could not find relevant slice dimension! Defaulting to 0!");
             break;
