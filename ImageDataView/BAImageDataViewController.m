@@ -37,6 +37,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
 
 -(NSImage*)renderImage;
 -(NSImage*)renderIdenticalImage;
+-(NSImage*)renderTurnUpImage;
 -(NSImage*)renderTurnLeftRotateRightImage;
 -(NSImage*)renderCoronarImage;
 
@@ -401,7 +402,6 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                 break;
             case DIM_HEIGHT:
                 if (dims[1] == DIM_SLICE) {
-                    // TurnLeftRotateRight
                     renderedSlices = [self renderTurnLeftRotateRightImage];
                 }
                 break;
@@ -409,10 +409,9 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                 // DIM_WIDTH
                 switch (dims[1]) {
                     case DIM_SLICE:
-                        // TurnUp
+                        renderedSlices = [self renderTurnUpImage];
                         break;
                     default:
-                        // Directly
                         renderedSlices = [self renderIdenticalImage];
                         break;
                 }
@@ -535,9 +534,107 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     return nsImage;
 }
 
+-(NSImage*)renderTurnUpImage
+{
+    // TODO: too much c&p from renderIdenticalImage ;)
+    
+    BARTImageSize* imageSize = [self->mImage getImageSize];
+    
+    size_t rows       = imageSize.rows;
+    size_t cols       = imageSize.columns;
+    size_t slices     = imageSize.slices;
+    size_t gridWidth  = self->mGridSize.width;
+    size_t gridHeight = self->mGridSize.height;
+    
+    size_t renderImageDataLength =    cols
+                                    * slices 
+                                    * gridWidth
+                                    * gridHeight
+                                    * NUMBER_OF_CHANNELS
+                                    * sizeof(float);
+    float* renderImageData = malloc(renderImageDataLength);
+    
+    NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
+    float normalized = 0.0f;
+    
+    if (   gridWidth == 1
+        && gridHeight == 1) {
+        // Single slice view
+        
+        int renderIndex = 0;
+        for (int slice = 0; slice < slices; slice++) {
+            float* sliceData = [self->mImage getSliceData:slice
+                                               atTimestep:self->mCurrentTimestep];
+            for (int i = 0; i < cols; i++) {
+                normalized = sliceData[self->mCurrentSlice * cols + i] / [max floatValue];
+                renderImageData[renderIndex++] = normalized;
+                renderImageData[renderIndex++] = normalized;
+                renderImageData[renderIndex++] = normalized;
+                renderImageData[renderIndex++] = MAX_ALPHA;
+            }
+            
+            free(sliceData);
+        }
+        
+    } else {
+        // Many slice view
+        // TODO: much space for parallelization here
+        
+        int renderIndex = 0;
+        for (int slice = 0; slice < slices; slice++) {
+            float* sliceData = [self->mImage getSliceData:slice
+                                               atTimestep:self->mCurrentTimestep];
+            for (int row = 0; row < rows; row++) {
+                // the column number in the target (sagittal) image equals the row number in the source (axial) data
+                for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
+                    // gridIndex equals one column of data in the original axial slice data
+                    size_t relevantCol = [[self->mRelevantSlices objectAtIndex:gridIndex] intValue];
+                    if (relevantCol < cols) {
+                        normalized = sliceData[row * cols + relevantCol] / [max floatValue];
+                    } else {
+                        normalized = 0.0f;
+                    }
+                    // ((gridRow * gridWidth * cols * rows) + gridCol * cols)
+                    renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * rows + (gridIndex % gridWidth) * rows + (slice * gridWidth * rows + row)) * NUMBER_OF_CHANNELS;
+                    renderImageData[renderIndex++] = normalized;
+                    renderImageData[renderIndex++] = normalized;
+                    renderImageData[renderIndex++] = normalized;
+                    renderImageData[renderIndex]   = MAX_ALPHA;
+                }
+            }
+            
+            free(sliceData);
+        }
+    }
+    
+    NSSize ciImageSize;
+    ciImageSize.width  = gridWidth  * cols;
+    ciImageSize.height = gridHeight * slices;
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:renderImageData 
+                                                                          length:renderImageDataLength]
+                                               bytesPerRow:gridWidth * cols * NUMBER_OF_CHANNELS * sizeof(float)
+                                                      size:ciImageSize 
+                                                    format:kCIFormatRGBAf 
+                                                colorSpace:colorSpace];
+    
+    NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
+    CGImageRef        cgImage = imageRep.CGImage;
+    
+    NSImage*          nsImage = [[[NSImage alloc] initWithCGImage:cgImage 
+                                                             size:ciImageSize] autorelease];
+    
+    [ciImage release];
+    CGColorSpaceRelease(colorSpace);
+    free(renderImageData);
+    
+    return nsImage;
+
+}
+
 -(NSImage*)renderTurnLeftRotateRightImage
 {
-    // TODO: too much c&p from renderAxialImage ;)
+    // TODO: too much c&p from renderIdenticalImage ;)
     
     BARTImageSize* imageSize = [self->mImage getImageSize];
     
