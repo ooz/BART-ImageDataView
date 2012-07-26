@@ -114,10 +114,8 @@ const size_t SLICE_DIMENSION_INDEX = 2;
     
     NSInteger i = rest / 2; // Start with a padding
     while (i < relevantSize) {
-        if (i % step == 0) {
-            [relevantSlices addObject:[NSNumber numberWithInteger:i]];
-        }
-        i++;
+        [relevantSlices addObject:[NSNumber numberWithInteger:i]];
+        i += step;
     }
     
     return relevantSlices;
