@@ -13,7 +13,6 @@ enum ImageDimension {
       DIM_WIDTH
     , DIM_HEIGHT
     , DIM_SLICE
-//    , DIM_TIMESTEP
 };
 
 @interface BAImageSliceSelector : NSObject
