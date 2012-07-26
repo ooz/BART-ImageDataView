@@ -542,8 +542,9 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                 // the column number in the target (sagittal) image equals the row number in the source (axial) data
                 for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
                     // gridIndex equals one column of data in the original axial slice data
-                    if (gridIndex < slices) {
-                        normalized = sliceData[row * cols + gridIndex] / [max floatValue];
+                    size_t relevantCol = [[self->mRelevantSlices objectAtIndex:gridIndex] intValue];
+                    if (relevantCol < cols) {
+                        normalized = sliceData[row * cols + relevantCol] / [max floatValue];
                     } else {
                         normalized = 0.0f;
                     }
