@@ -874,18 +874,18 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                                                atTimestep:self->mCurrentTimestep];
             
             for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
-                size_t relevantCol = [[self->mRelevantSlices objectAtIndex:gridIndex] intValue];
+                size_t relevantRow = [[self->mRelevantSlices objectAtIndex:gridIndex] intValue];
                 
-                for (int row = 0; row < rows; row++) {
-                    if (relevantCol < cols) {
-                        normalized = sliceData[row * cols + relevantCol] / [max floatValue];
+                for (int col = 0; col < cols; col++) {
+                    if (relevantRow < rows) {
+                        normalized = sliceData[relevantRow * cols + col] / [max floatValue];
                     } else {
                         normalized = 0.0f;
                     }
                     
-                    renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * rows // Grid row
+                    renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * cols // Grid row
                                    + (gridIndex % gridWidth) * slices                  // Grid col
-                                   + (row * gridWidth * slices + slice)                // Position in grid tile
+                                   + (col * gridWidth * slices + slice)                // Position in grid tile
                                    ) * NUMBER_OF_CHANNELS;
                     renderImageData[renderIndex++] = normalized;
                     renderImageData[renderIndex++] = normalized;
