@@ -681,7 +681,10 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                         normalized = 0.0f;
                     }
                     // ((gridRow * gridWidth * cols * rows) + gridCol * cols)
-                    renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * rows + (gridIndex % gridWidth) * rows + (slice * gridWidth * rows + row)) * NUMBER_OF_CHANNELS;
+                    renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * rows 
+                                   + (gridIndex % gridWidth) * rows 
+                                   + (slice * gridWidth * rows + row)
+                                  ) * NUMBER_OF_CHANNELS;
                     renderImageData[renderIndex++] = normalized;
                     renderImageData[renderIndex++] = normalized;
                     renderImageData[renderIndex++] = normalized;
@@ -768,18 +771,21 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         for (int slice = 0; slice < slices; slice++) {
             float* sliceData = [self->mImage getSliceData:slice
                                                atTimestep:self->mCurrentTimestep];
-            
-            for (int col = 0; col < cols; col++) {
-                for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
+                        
+            for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
+                size_t relevantCol = [[self->mRelevantSlices objectAtIndex:gridIndex] intValue];
                     
-                    size_t relevantRow = [[self->mRelevantSlices objectAtIndex:gridIndex] intValue];
-                    if (relevantRow < rows) {
-                        normalized = sliceData[relevantRow * cols + col] / [max floatValue];
+                for (int row = 0; row < rows; row++) {
+                    if (relevantCol < cols) {
+                        normalized = sliceData[row * cols + relevantCol] / [max floatValue];
                     } else {
                         normalized = 0.0f;
                     }
                     
-                    renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * cols + (gridIndex % gridWidth) * cols + (slice * gridWidth * cols + col)) * NUMBER_OF_CHANNELS;
+                    renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * rows // Grid row
+                                   + (gridIndex % gridWidth) * slices                  // Grid col
+                                   + (row * gridWidth * slices + slice)                // Position in grid tile
+                                  ) * NUMBER_OF_CHANNELS;
                     renderImageData[renderIndex++] = normalized;
                     renderImageData[renderIndex++] = normalized;
                     renderImageData[renderIndex++] = normalized;
