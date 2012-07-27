@@ -823,7 +823,103 @@ static NSString* PROP_ROWVEC    = @"rowvec";
 
 -(NSImage*)renderTurnUpRotateRightImage
 {
-    return nil;
+    // TODO: too much c&p from renderIdenticalImage ;)
+    
+    BARTImageSize* imageSize = [self->mImage getImageSize];
+    
+    size_t rows       = imageSize.rows;
+    size_t cols       = imageSize.columns;
+    size_t slices     = imageSize.slices;
+    size_t gridWidth  = self->mGridSize.width;
+    size_t gridHeight = self->mGridSize.height;
+    
+    size_t renderImageDataLength =    slices
+                                    * cols
+                                    * gridWidth
+                                    * gridHeight
+                                    * NUMBER_OF_CHANNELS
+                                    * sizeof(float);
+    float* renderImageData = malloc(renderImageDataLength);
+    
+    NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
+    float normalized = 0.0f;
+    
+    if (   gridWidth == 1
+        && gridHeight == 1) {
+        // Single slice view
+        
+        for (int slice = 0; slice < slices; slice++) {
+            float* sliceData = [self->mImage getSliceData:slice
+                                               atTimestep:self->mCurrentTimestep];
+            int renderIndex = 0;
+            for (int col = 0; col < cols; col++) {
+                normalized  = sliceData[self->mCurrentSlice * cols + col] / [max floatValue];
+                renderIndex = (col * slices + slice) * NUMBER_OF_CHANNELS;
+                renderImageData[renderIndex++] = normalized;
+                renderImageData[renderIndex++] = normalized;
+                renderImageData[renderIndex++] = normalized;
+                renderImageData[renderIndex] = MAX_ALPHA;
+            }
+            
+            free(sliceData);
+        }
+        
+    } else {
+        // Many slice view
+        // TODO: much space for parallelization here
+        
+        int renderIndex = 0;
+        for (int slice = 0; slice < slices; slice++) {
+            float* sliceData = [self->mImage getSliceData:slice
+                                               atTimestep:self->mCurrentTimestep];
+            
+            for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
+                size_t relevantCol = [[self->mRelevantSlices objectAtIndex:gridIndex] intValue];
+                
+                for (int row = 0; row < rows; row++) {
+                    if (relevantCol < cols) {
+                        normalized = sliceData[row * cols + relevantCol] / [max floatValue];
+                    } else {
+                        normalized = 0.0f;
+                    }
+                    
+                    renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * rows // Grid row
+                                   + (gridIndex % gridWidth) * slices                  // Grid col
+                                   + (row * gridWidth * slices + slice)                // Position in grid tile
+                                   ) * NUMBER_OF_CHANNELS;
+                    renderImageData[renderIndex++] = normalized;
+                    renderImageData[renderIndex++] = normalized;
+                    renderImageData[renderIndex++] = normalized;
+                    renderImageData[renderIndex]   = MAX_ALPHA;
+                }
+            }
+            
+            free(sliceData);
+        }
+    }
+    
+    NSSize ciImageSize;
+    ciImageSize.width  = gridWidth  * slices;
+    ciImageSize.height = gridHeight * cols;
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:renderImageData 
+                                                                          length:renderImageDataLength]
+                                               bytesPerRow:gridWidth * slices * NUMBER_OF_CHANNELS * sizeof(float)
+                                                      size:ciImageSize 
+                                                    format:kCIFormatRGBAf 
+                                                colorSpace:colorSpace];
+    
+    NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
+    CGImageRef        cgImage = imageRep.CGImage;
+    
+    NSImage*          nsImage = [[[NSImage alloc] initWithCGImage:cgImage 
+                                                             size:ciImageSize] autorelease];
+    
+    [ciImage release];
+    CGColorSpaceRelease(colorSpace);
+    free(renderImageData);
+    
+    return nsImage;
 }
 
 -(void)updateSliceSelectors
