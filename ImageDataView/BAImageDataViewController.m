@@ -681,7 +681,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                         normalized = 0.0f;
                     }
                     // ((gridRow * gridWidth * cols * rows) + gridCol * cols)
-                    renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * rows 
+                    renderIndex = ((gridIndex / gridWidth) * gridWidth * rows * slices 
                                    + (gridIndex % gridWidth) * rows 
                                    + (slice * gridWidth * rows + row)
                                   ) * NUMBER_OF_CHANNELS;
