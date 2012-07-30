@@ -13,28 +13,60 @@
 #include <math.h>
 
 
+// ########################
+// # CONSTANT DEFINITIONS #
+// ########################
 
+/** Number of channels in the displayed NSImage object (RGBA). */
 static const int   NUMBER_OF_CHANNELS = 4;
+/** Highest alpha value. */
 static const float MAX_ALPHA = 1.0f;
 
+/** When multiplied with the image size results in the minimum image size. */
 static const float MIN_SCALE_FACTOR = 0.1f;
 
+/** Default grid size for both width and height (sinle slice view). */
 static const CGFloat DEFAULT_GRID_SIZE = 1.0f;
+/** Grid width/height for a 6x6 slice grid. */
 static const CGFloat GRID_SIZE_SIX = 6.0f;
 
+/** \see{EDDataElement} property key to query the voxel gap. */
 static NSString* PROP_VOXELGAP  = @"voxelgap";
+/** \see{EDDataElement} property key to query the voxel size. */
 static NSString* PROP_VOXELSIZE = @"voxelsize";
-
+/** \see{EDDataElement} property key to query the column vector. */
 static NSString* PROP_COLUMNVEC = @"columnvec";
+/** \see{EDDataElement} property key to query the row vector. */
 static NSString* PROP_ROWVEC    = @"rowvec";
 
 
+// ###############################
+// # Private method declarations #
+// ###############################
 
 @interface BAImageDataViewController (__privateMethods__)
 
+/**
+ * Updates internal (cached) variables of the view if a new image
+ * has been set via \see{BAImageDataViewController#showImage}.
+ *
+ * \param image EDDataElement whose properties are queried.
+ */
 -(void)fetchPropsIfUpdated:(EDDataElement*)image;
+/**
+ * Updates slice indices of slices to be shown in the multi slice grid
+ * (selected by \{BAImageDataViewController#mRelevantSliceFilter}).
+ * The update is triggered when the view orientation is changed or
+ * the view is switched from single to multi slice grid.
+ *
+ * \param image EDDataElement from which slices should be chosen (at current timestep).
+ */
 -(void)fetchRelevantSlices:(EDDataElement*)image;
 
+/**
+ * Methods to render the actual NSImage object displayed in the view.
+ * Regardless of single or multi slice view only one NSImage object is rendered.
+ */
 -(NSImage*)renderImage;
 -(NSImage*)renderIdenticalImage;
 -(NSImage*)renderTurnUpImage;
@@ -42,13 +74,24 @@ static NSString* PROP_ROWVEC    = @"rowvec";
 -(NSImage*)renderTurnLeftImage;
 -(NSImage*)renderTurnUpRotateRightImage;
 
+/**
+ * Updates the size of a NSImage object based on the physical size of the
+ * EDDataElement to be displayed. This respects voxel size and gap of the image.
+ */
 -(NSImage*)fixSizeOf:(NSImage*)image 
                 with:(BARTImageSize*)dataSize;
 
+/**
+ * Methods to update view objects based on internal state changes.
+ */
 -(void)updateSliceSelectors;
 -(void)updateSliceTextField;
 -(void)updateSliceSlider;
 
+/**
+ * Methods to enable/disable certain view components that may be needed/not needed
+ * in single slice/multi slice view.
+ */
 -(void)updateControlEnabledStates;
 -(void)setOrientationAndGridSizeSelectorStates:(BOOL)enabled;
 -(void)setSliceSelectorStates:(BOOL)enabled;
