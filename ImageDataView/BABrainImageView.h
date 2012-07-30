@@ -8,6 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 
+/** Custom NSImageView for displaying brain images.
+ * Image interpolation is disabled.
+ */
 @interface BABrainImageView : NSImageView
 
 @end
