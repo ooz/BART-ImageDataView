@@ -13,6 +13,7 @@
 #include <math.h>
 
 
+
 // ########################
 // # CONSTANT DEFINITIONS #
 // ########################
@@ -38,6 +39,7 @@ static NSString* PROP_VOXELSIZE = @"voxelsize";
 static NSString* PROP_COLUMNVEC = @"columnvec";
 /** \see{EDDataElement} property key to query the row vector. */
 static NSString* PROP_ROWVEC    = @"rowvec";
+
 
 
 // ###############################
@@ -99,6 +101,10 @@ static NSString* PROP_ROWVEC    = @"rowvec";
 @end
 
 
+
+// ##################
+// # Implementation #
+// ##################
 
 @implementation BAImageDataViewController
 
