@@ -8,7 +8,9 @@
 
 #import "BAImageSliceSelector.h"
 
+/** Number of dimensions in one volume. */
 const size_t RELEVANT_DIMENSIONS = 3;
+/** Index of the "slice dimension" in an array of dimensions. */
 const size_t SLICE_DIMENSION_INDEX = 2;
 
 
