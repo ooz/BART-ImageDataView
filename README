@@ -1,0 +1,15 @@
+Integration notice
+==================
+
+ * MainMenu.xib contains just a dummy window to test the view.
+   The actual view is contained in BAImageDataView.xib
+ * AppDelegate.m can be seen as an example for view integration in the main app.
+
+
+TODO
+====
+
+ * Filter slices without relevant information. Such slice filters should be subclasses
+   of BAImageSliceSelector
+ * Use information from column/row vector to flip images accordingly
+ * Unclear: timestep selection needed?
