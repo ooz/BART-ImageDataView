@@ -4,12 +4,14 @@ Integration notice
  * MainMenu.xib contains just a dummy window to test the view.
    The actual view is contained in BAImageDataView.xib
  * AppDelegate.m can be seen as an example for view integration in the main app.
+ * Timestep information is not intended to be manipulated by the user.
+   The view controller BAImageDataViewController allows to set the appropriate 
+   timestep.
 
 
 TODO
 ====
 
- * Filter slices without relevant information. Such slice filters should be subclasses
-   of BAImageSliceSelector
  * Use information from column/row vector to flip images accordingly
- * Unclear: timestep selection needed?
+ * Filter slices without relevant information. Such slice filters should be subclasses
+   of BAImageSliceSelector (low priority)
