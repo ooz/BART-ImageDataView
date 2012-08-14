@@ -70,7 +70,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
  * Regardless of single or multi slice view only one NSImage object is rendered.
  */
 -(NSImage*)renderImage;
--(NSImage*)renderIdenticalImage;
+-(NSImage*)renderIdenticalImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
 -(NSImage*)renderTurnUpImage;
 -(NSImage*)renderTurnLeftRotateRightImage;
 -(NSImage*)renderTurnLeftImage;
@@ -462,7 +462,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                         renderedSlices = [self renderTurnUpImage];
                         break;
                     default:
-                        renderedSlices = [self renderIdenticalImage];
+                        renderedSlices = [self renderIdenticalImage :NO :NO :NO];
                         break;
                 }
                 break;
@@ -473,7 +473,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     return renderedSlices;
 }
 
--(NSImage*)renderIdenticalImage
+-(NSImage*)renderIdenticalImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
 {
     BARTImageSize* imageSize = [self->mImage getImageSize];
 
@@ -497,7 +497,12 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         && gridHeight == 1) {
         // Single slice view
         
-        float* sliceData = [self->mImage getSliceData:self->mCurrentSlice 
+        uint sliceNr = self->mCurrentSlice;
+        if (flipZ) {
+            sliceNr = self->mSliceCount - self->mCurrentSlice - 1;
+        }
+        
+        float* sliceData = [self->mImage getSliceData:sliceNr
                                            atTimestep:self->mCurrentTimestep];
     
         for (int i = 0; i < rows * cols; i++) {
@@ -514,16 +519,22 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         // Many slice view
         // TODO: much space for parallelization here
         
-        NSUInteger sliceIndex = 0;
+        NSInteger sliceIndex = (flipZ) ? ([self->mRelevantSlices count] - 1) : 0;
         for (int gridRow = 0; gridRow < gridHeight; gridRow++) {
             for (int gridCol = 0; gridCol < gridWidth; gridCol++) {
             
                 size_t sliceNr   = 0;
                 float* sliceData = NULL;
-                if (sliceIndex < self->mSliceCount) {
-                    sliceNr   = [[self->mRelevantSlices objectAtIndex:sliceIndex++] intValue]; //gridRow * gridWidth + gridCol;
+                if (sliceIndex >= 0
+                    && sliceIndex < [self->mRelevantSlices count]) {
+                    sliceNr   = [[self->mRelevantSlices objectAtIndex:sliceIndex] intValue]; //gridRow * gridWidth + gridCol;
                     sliceData = [self->mImage getSliceData:sliceNr
                                                 atTimestep:self->mCurrentTimestep];
+                    if (flipZ) {
+                        sliceIndex--;
+                    } else {
+                        sliceIndex++;
+                    }
                 }
 
                 if (sliceData != NULL) {
