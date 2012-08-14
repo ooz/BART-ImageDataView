@@ -70,11 +70,11 @@ static NSString* PROP_ROWVEC    = @"rowvec";
  * Regardless of single or multi slice view only one NSImage object is rendered.
  */
 -(NSImage*)renderImage;
--(NSImage*)renderIdenticalImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
--(NSImage*)renderTurnUpImage;
--(NSImage*)renderTurnLeftRotateRightImage;
--(NSImage*)renderTurnLeftImage;
--(NSImage*)renderTurnUpRotateRightImage;
+-(NSImage*)renderIdenticalImage          :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+-(NSImage*)renderTurnUpImage             :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+-(NSImage*)renderTurnLeftRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+-(NSImage*)renderTurnLeftImage           :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+-(NSImage*)renderTurnUpRotateRightImage  :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
 
 /**
  * Utility method for the render methods.
@@ -461,23 +461,23 @@ static NSString* PROP_ROWVEC    = @"rowvec";
             case DIM_SLICE:
                 switch (dims[1]) {
                     case DIM_HEIGHT:
-                        renderedSlices = [self renderTurnLeftImage];
+                        renderedSlices = [self renderTurnLeftImage :NO :NO :NO];
                         break;
                     default:
-                        renderedSlices = [self renderTurnUpRotateRightImage];
+                        renderedSlices = [self renderTurnUpRotateRightImage :NO :NO :NO];
                         break;
                 }
                 break;
             case DIM_HEIGHT:
                 if (dims[1] == DIM_SLICE) {
-                    renderedSlices = [self renderTurnLeftRotateRightImage];
+                    renderedSlices = [self renderTurnLeftRotateRightImage :NO :NO :NO];
                 }
                 break;
             default:
                 // DIM_WIDTH
                 switch (dims[1]) {
                     case DIM_SLICE:
-                        renderedSlices = [self renderTurnUpImage];
+                        renderedSlices = [self renderTurnUpImage :NO :NO :NO];
                         break;
                     default:
                         renderedSlices = [self renderIdenticalImage :NO :NO :NO];
@@ -598,7 +598,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     return nsImage;
 }
 
--(NSImage*)renderTurnUpImage
+-(NSImage*)renderTurnUpImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
 {
     // TODO: too much c&p from renderIdenticalImage ;)
     
@@ -681,7 +681,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     return nsImage;
 }
 
--(NSImage*)renderTurnLeftRotateRightImage
+-(NSImage*)renderTurnLeftRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
 {
     // TODO: too much c&p from renderIdenticalImage ;)
     
@@ -767,7 +767,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     return nsImage;
 }
 
--(NSImage*)renderTurnLeftImage;
+-(NSImage*)renderTurnLeftImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
 {
     // TODO: too much c&p from renderIdenticalImage ;)
     
@@ -854,7 +854,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     return nsImage;
 }
 
--(NSImage*)renderTurnUpRotateRightImage
+-(NSImage*)renderTurnUpRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
 {
     // TODO: too much c&p from renderIdenticalImage ;)
     
