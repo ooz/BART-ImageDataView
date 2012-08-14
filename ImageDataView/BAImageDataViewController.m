@@ -79,6 +79,14 @@ static NSString* PROP_ROWVEC    = @"rowvec";
 /**
  * Utility method for the render methods.
  * Constructs a NSImage object from a float vector. The vector is not freed in the process!
+ *
+ * \param data Float array containing all needed bytes for all channels.
+ * \param len  Length of the data float array.
+ * \param bpr  Bytes per row in the resulting image. 
+ *             This has to respect the size of the data type (float) as well as the number of channels.
+ * \param w    Width  of the target NSImage in pixels.
+ * \param h    Height of the target NSImage in pixels.
+ * \return     Autoreleased NSImage rendering the float data.
  */
 -(NSImage*)imageFromFloat:(float*)data 
                    length:(size_t)len 
