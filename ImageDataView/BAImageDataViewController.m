@@ -523,12 +523,19 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         float* sliceData = [self->mImage getSliceData:sliceNr
                                            atTimestep:self->mCurrentTimestep];
     
-        for (int i = 0; i < rows * cols; i++) {
-            normalized = sliceData[i] / [max floatValue];
-            renderImageData[i * NUMBER_OF_CHANNELS]     = normalized;
-            renderImageData[i * NUMBER_OF_CHANNELS + 1] = normalized;
-            renderImageData[i * NUMBER_OF_CHANNELS + 2] = normalized;
-            renderImageData[i * NUMBER_OF_CHANNELS + 3] = MAX_ALPHA;
+        int srcRow;
+        int srcCol;
+        int targetIndex = 0;
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                srcRow = (flipY) ? rows - row - 1 : row;
+                srcCol = (flipX) ? cols - col - 1 : col;
+                normalized = sliceData[srcRow * cols + srcCol] / [max floatValue];
+                renderImageData[targetIndex++]     = normalized;
+                renderImageData[targetIndex++] = normalized;
+                renderImageData[targetIndex++] = normalized;
+                renderImageData[targetIndex++] = MAX_ALPHA;
+            }
         }
         
         free(sliceData);
@@ -560,9 +567,13 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                     size_t sliceOffset = ((gridRow * gridWidth * cols * rows) + gridCol * cols) * NUMBER_OF_CHANNELS;
 //                    NSLog(@"SliceNr: %ld, sliceOffset: %ld (rows: %ld, cols: %ld", sliceNr, sliceOffset, rows, cols);
                     
+                    int srcRow;
+                    int srcCol;
                     for (int row = 0; row < rows; row++) {
                         for (int col = 0; col < cols; col++) {
-                            normalized = sliceData[row * cols + col] / [max floatValue];
+                            srcRow = (flipY) ? (rows - row - 1) : row;
+                            srcCol = (flipX) ? (cols - col - 1) : col;
+                            normalized = sliceData[srcRow * cols + srcCol] / [max floatValue];
                             renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS]     = normalized;
                             renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 1] = normalized;
                             renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 2] = normalized;
