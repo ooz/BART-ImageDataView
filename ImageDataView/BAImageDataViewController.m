@@ -77,6 +77,16 @@ static NSString* PROP_ROWVEC    = @"rowvec";
 -(NSImage*)renderTurnUpRotateRightImage;
 
 /**
+ * Utility method for the render methods.
+ * Constructs a NSImage object from a float vector. The vector is not freed in the process!
+ */
+-(NSImage*)imageFromFloat:(float*)data 
+                   length:(size_t)len 
+              bytesPerRow:(size_t)bpr
+                    width:(size_t)w
+                   height:(size_t)h;
+
+/**
  * Updates the size of a NSImage object based on the physical size of the
  * EDDataElement to be displayed. This respects voxel size and gap of the image.
  */
@@ -559,25 +569,11 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         }
     }
     
-    NSSize ciImageSize;
-    ciImageSize.width  = gridWidth  * cols;
-    ciImageSize.height = gridHeight * rows;
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:renderImageData 
-                                                                          length:renderImageDataLength]
-                                               bytesPerRow:gridWidth * cols * NUMBER_OF_CHANNELS * sizeof(float)
-                                                      size:ciImageSize 
-                                                    format:kCIFormatRGBAf 
-                                                colorSpace:colorSpace];
-    
-    NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
-    CGImageRef        cgImage = imageRep.CGImage;
-    
-    NSImage*          nsImage = [[[NSImage alloc] initWithCGImage:cgImage 
-                                                            size:ciImageSize] autorelease];
-    
-    [ciImage release];
-    CGColorSpaceRelease(colorSpace);
+    NSImage* nsImage = [self imageFromFloat:renderImageData 
+                                     length:renderImageDataLength 
+                                bytesPerRow:gridWidth * cols * NUMBER_OF_CHANNELS * sizeof(float)
+                                      width:gridWidth * cols 
+                                     height:gridHeight * rows];
     free(renderImageData);
     
     return nsImage;
@@ -656,25 +652,11 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         }
     }
     
-    NSSize ciImageSize;
-    ciImageSize.width  = gridWidth  * cols;
-    ciImageSize.height = gridHeight * slices;
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:renderImageData 
-                                                                          length:renderImageDataLength]
-                                               bytesPerRow:gridWidth * cols * NUMBER_OF_CHANNELS * sizeof(float)
-                                                      size:ciImageSize 
-                                                    format:kCIFormatRGBAf 
-                                                colorSpace:colorSpace];
-    
-    NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
-    CGImageRef        cgImage = imageRep.CGImage;
-    
-    NSImage*          nsImage = [[[NSImage alloc] initWithCGImage:cgImage 
-                                                             size:ciImageSize] autorelease];
-    
-    [ciImage release];
-    CGColorSpaceRelease(colorSpace);
+    NSImage* nsImage = [self imageFromFloat:renderImageData 
+                                     length:renderImageDataLength 
+                                bytesPerRow:gridWidth * cols * NUMBER_OF_CHANNELS * sizeof(float)
+                                      width:gridWidth * cols 
+                                     height:gridHeight * slices];
     free(renderImageData);
     
     return nsImage;
@@ -756,25 +738,11 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         }
     }
     
-    NSSize ciImageSize;
-    ciImageSize.width  = gridWidth  * rows;
-    ciImageSize.height = gridHeight * slices;
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:renderImageData 
-                                                                          length:renderImageDataLength]
-                                               bytesPerRow:gridWidth * rows * NUMBER_OF_CHANNELS * sizeof(float)
-                                                      size:ciImageSize 
-                                                    format:kCIFormatRGBAf 
-                                                colorSpace:colorSpace];
-    
-    NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
-    CGImageRef        cgImage = imageRep.CGImage;
-    
-    NSImage*          nsImage = [[[NSImage alloc] initWithCGImage:cgImage 
-                                                             size:ciImageSize] autorelease];
-    
-    [ciImage release];
-    CGColorSpaceRelease(colorSpace);
+    NSImage* nsImage = [self imageFromFloat:renderImageData 
+                                     length:renderImageDataLength 
+                                bytesPerRow:gridWidth * rows * NUMBER_OF_CHANNELS * sizeof(float)
+                                      width:gridWidth * rows
+                                     height:gridHeight * slices];
     free(renderImageData);
     
     return nsImage;
@@ -857,25 +825,11 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         }
     }
     
-    NSSize ciImageSize;
-    ciImageSize.width  = gridWidth  * slices;
-    ciImageSize.height = gridHeight * rows;
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:renderImageData 
-                                                                          length:renderImageDataLength]
-                                               bytesPerRow:gridWidth * slices * NUMBER_OF_CHANNELS * sizeof(float)
-                                                      size:ciImageSize 
-                                                    format:kCIFormatRGBAf 
-                                                colorSpace:colorSpace];
-    
-    NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
-    CGImageRef        cgImage = imageRep.CGImage;
-    
-    NSImage*          nsImage = [[[NSImage alloc] initWithCGImage:cgImage 
-                                                             size:ciImageSize] autorelease];
-    
-    [ciImage release];
-    CGColorSpaceRelease(colorSpace);
+    NSImage* nsImage = [self imageFromFloat:renderImageData 
+                                     length:renderImageDataLength 
+                                bytesPerRow:gridWidth * slices * NUMBER_OF_CHANNELS * sizeof(float)
+                                      width:gridWidth * slices 
+                                     height:gridHeight * rows];
     free(renderImageData);
     
     return nsImage;
@@ -957,14 +911,30 @@ static NSString* PROP_ROWVEC    = @"rowvec";
             free(sliceData);
         }
     }
+
+    NSImage* nsImage = [self imageFromFloat:renderImageData 
+                                     length:renderImageDataLength 
+                                bytesPerRow:gridWidth * slices * NUMBER_OF_CHANNELS * sizeof(float)
+                                      width:gridWidth * slices 
+                                     height:gridHeight * cols];
+    free(renderImageData);
     
+    return nsImage;
+}
+
+-(NSImage*)imageFromFloat:(float*)data 
+                   length:(size_t)len 
+              bytesPerRow:(size_t)bpr
+                    width:(size_t)w
+                   height:(size_t)h
+{
     NSSize ciImageSize;
-    ciImageSize.width  = gridWidth  * slices;
-    ciImageSize.height = gridHeight * cols;
+    ciImageSize.width  = w;
+    ciImageSize.height = h;
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:renderImageData 
-                                                                          length:renderImageDataLength]
-                                               bytesPerRow:gridWidth * slices * NUMBER_OF_CHANNELS * sizeof(float)
+    CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:data
+                                                                          length:len]
+                                               bytesPerRow:bpr
                                                       size:ciImageSize 
                                                     format:kCIFormatRGBAf 
                                                 colorSpace:colorSpace];
@@ -977,7 +947,6 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     
     [ciImage release];
     CGColorSpaceRelease(colorSpace);
-    free(renderImageData);
     
     return nsImage;
 }
