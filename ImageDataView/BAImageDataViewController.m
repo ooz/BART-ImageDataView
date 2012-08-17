@@ -477,7 +477,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
                 // DIM_WIDTH
                 switch (dims[1]) {
                     case DIM_SLICE:
-                        renderedSlices = [self renderTurnUpImage :NO :NO :NO];
+                        renderedSlices = [self renderTurnUpImage :YES :YES :YES];
                         break;
                     default:
                         renderedSlices = [self renderIdenticalImage :NO :NO :NO];
@@ -626,11 +626,20 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         // Single slice view
         
         int renderIndex = 0;
+        int srcSliceNr= 0;
+        int tarSliceNr = (flipZ) ? (self->mSliceCount - self->mCurrentSlice - 1) : self->mCurrentSlice;
         for (int slice = 0; slice < slices; slice++) {
-            float* sliceData = [self->mImage getSliceData:slice
+            if (flipY) {
+                srcSliceNr = slices - slice - 1;
+            } else {
+                srcSliceNr = slice;
+            }
+            float* sliceData = [self->mImage getSliceData:srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
-            for (int i = 0; i < cols; i++) {
-                normalized = sliceData[self->mCurrentSlice * cols + i] / [max floatValue];
+            int srcCol;
+            for (int col = 0; col < cols; col++) {
+                srcCol = (flipX) ? cols - col - 1 : col;
+                normalized = sliceData[tarSliceNr * cols + srcCol] / [max floatValue];
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
