@@ -604,7 +604,7 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     
     BARTImageSize* imageSize = [self->mImage getImageSize];
     
-    size_t rows       = imageSize.rows;
+//    size_t rows       = imageSize.rows;
     size_t cols       = imageSize.columns;
     size_t slices     = imageSize.slices;
     size_t gridWidth  = self->mGridSize.width;
@@ -621,19 +621,16 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
     float normalized = 0.0f;
     
+    int srcSliceNr= 0;
     if (   gridWidth == 1
         && gridHeight == 1) {
         // Single slice view
         
         int renderIndex = 0;
-        int srcSliceNr= 0;
         int tarSliceNr = (flipZ) ? (self->mSliceCount - self->mCurrentSlice - 1) : self->mCurrentSlice;
         for (int slice = 0; slice < slices; slice++) {
-            if (flipY) {
-                srcSliceNr = slices - slice - 1;
-            } else {
-                srcSliceNr = slice;
-            }
+            
+            srcSliceNr = (flipY) ? slices - slice - 1 : slice;
             float* sliceData = [self->mImage getSliceData:srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
             int srcCol;
@@ -654,16 +651,22 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         // TODO: much space for parallelization here
         
         int renderIndex = 0;
+        int relevantSlicesCount = [self->mRelevantSlices count];
         for (int slice = 0; slice < slices; slice++) {
-            float* sliceData = [self->mImage getSliceData:slice
+            srcSliceNr = (flipY) ? slices - slice - 1 : slice;
+            float* sliceData = [self->mImage getSliceData:srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
             
+            int srcCol;
             for (int col = 0; col < cols; col++) {
+                srcCol = (flipX) ? cols - col - 1 : col;
+                
+                int flippedGridIndex;
                 for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
-                    
-                    size_t relevantRow = [[self->mRelevantSlices objectAtIndex:gridIndex] intValue];
-                    if (relevantRow < rows) {
-                        normalized = sliceData[relevantRow * cols + col] / [max floatValue];
+                    if (gridIndex < relevantSlicesCount) {
+                        flippedGridIndex = (flipZ) ? relevantSlicesCount - gridIndex - 1 : gridIndex;
+                        size_t relevantRow = [[self->mRelevantSlices objectAtIndex:flippedGridIndex] intValue];
+                        normalized = sliceData[relevantRow * cols + srcCol] / [max floatValue];
                     } else {
                         normalized = 0.0f;
                     }
