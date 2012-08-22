@@ -116,11 +116,11 @@ const size_t SLICE_DIMENSION_INDEX = 2;
     size_t step = size / relevantSize;
     size_t rest = size % relevantSize;
     
-    NSInteger i = rest / 2; // Start with a padding
+    NSInteger  slice = rest / 2; // Start with a padding
     NSUInteger count = 0;
-    while (i < size && count < n) {
-        [relevantSlices addObject:[NSNumber numberWithInteger:i]];
-        i += step;
+    while (slice < size && count < n) {
+        [relevantSlices addObject:[NSNumber numberWithInteger:slice]];
+        slice += step;
         count++;
     }
     
