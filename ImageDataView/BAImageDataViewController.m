@@ -40,6 +40,13 @@ static NSString* PROP_COLUMNVEC = @"columnvec";
 /** \see{EDDataElement} property key to query the row vector. */
 static NSString* PROP_ROWVEC    = @"rowvec";
 
+/** Threshold for horizontal flipping. 
+ *  If first  component of row vector is below this value, the image is flipped. */
+static const float ROW_FLIP_THRESHOLD = -0.2f;
+/** Threshold for vertical flipping. 
+ *  If second component of col vector is below this value, the image is flipped. */
+static const float COL_FLIP_THRESHOLD = -0.2f;
+
 
 
 // ###############################
@@ -456,31 +463,38 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     NSImage* renderedSlices = nil;
     enum ImageDimension* dims = [self->mRelevantSliceFilter getDimensionsFrom:self->mImage
                                                                     alignedTo:self->mViewOrientation];
+    
+    float rowOrientComponent = [[self->mRowVec objectAtIndex:0] floatValue];
+    float colOrientComponent = [[self->mColumnVec objectAtIndex:1] floatValue];
+    NSLog(@"Row/col components of row/col-vecs: (%f, %f)", rowOrientComponent, colOrientComponent);
+    
+    BOOL flipX = rowOrientComponent < ROW_FLIP_THRESHOLD;
+    BOOL flipY = colOrientComponent < COL_FLIP_THRESHOLD;
 
     switch (dims[0]) {
             case DIM_SLICE:
                 switch (dims[1]) {
                     case DIM_HEIGHT:
-                        renderedSlices = [self renderTurnLeftImage :YES :YES :YES];
+                        renderedSlices = [self renderTurnLeftImage :NO :flipY :flipX];
                         break;
                     default:
-                        renderedSlices = [self renderTurnUpRotateRightImage :YES :YES :YES];
+                        renderedSlices = [self renderTurnUpRotateRightImage :NO :flipX :flipY];
                         break;
                 }
                 break;
             case DIM_HEIGHT:
                 if (dims[1] == DIM_SLICE) {
-                    renderedSlices = [self renderTurnLeftRotateRightImage :YES :YES :YES];
+                    renderedSlices = [self renderTurnLeftRotateRightImage :flipY :NO :flipX];
                 }
                 break;
             default:
                 // DIM_WIDTH
                 switch (dims[1]) {
                     case DIM_SLICE:
-                        renderedSlices = [self renderTurnUpImage :YES :YES :YES];
+                        renderedSlices = [self renderTurnUpImage :flipX :NO :flipY];
                         break;
                     default:
-                        renderedSlices = [self renderIdenticalImage :YES :YES :YES];
+                        renderedSlices = [self renderIdenticalImage :flipX :flipY :NO];
                         break;
                 }
                 break;
