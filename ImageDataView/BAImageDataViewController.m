@@ -461,10 +461,10 @@ static NSString* PROP_ROWVEC    = @"rowvec";
             case DIM_SLICE:
                 switch (dims[1]) {
                     case DIM_HEIGHT:
-                        renderedSlices = [self renderTurnLeftImage :NO :NO :NO];
+                        renderedSlices = [self renderTurnLeftImage :YES :YES :YES];
                         break;
                     default:
-                        renderedSlices = [self renderTurnUpRotateRightImage :NO :NO :NO];
+                        renderedSlices = [self renderTurnUpRotateRightImage :YES :YES :YES];
                         break;
                 }
                 break;
@@ -651,7 +651,9 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         // TODO: much space for parallelization here
         
         int renderIndex = 0;
+        int flippedGridIndex;
         int relevantSlicesCount = [self->mRelevantSlices count];
+        NSLog(@"relevant slices: %@", self->mRelevantSlices);
         for (int slice = 0; slice < slices; slice++) {
             srcSliceNr = (flipY) ? slices - slice - 1 : slice;
             float* sliceData = [self->mImage getSliceData:srcSliceNr
@@ -661,7 +663,6 @@ static NSString* PROP_ROWVEC    = @"rowvec";
             for (int col = 0; col < cols; col++) {
                 srcCol = (flipX) ? cols - col - 1 : col;
                 
-                int flippedGridIndex;
                 for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
                     if (gridIndex < relevantSlicesCount) {
                         flippedGridIndex = (flipZ) ? relevantSlicesCount - gridIndex - 1 : gridIndex;
@@ -816,17 +817,23 @@ static NSString* PROP_ROWVEC    = @"rowvec";
     NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
     float normalized = 0.0f;
     
+    int srcSliceNr;
     if (   gridWidth == 1
         && gridHeight == 1) {
         // Single slice view
         
+        int renderIndex = 0;
+        int tarSliceNr = (flipZ) ? (self->mSliceCount - self->mCurrentSlice - 1) : self->mCurrentSlice;
         for (int slice = 0; slice < slices; slice++) {
-            float* sliceData = [self->mImage getSliceData:slice
+            
+            srcSliceNr = (flipX) ? slices - slice - 1 : slice;
+            float* sliceData = [self->mImage getSliceData:srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
-            int renderIndex = 0;
-            for (int i = 0; i < rows; i++) {
-                normalized  = sliceData[i * cols + self->mCurrentSlice] / [max floatValue];
-                renderIndex = (i * slices + slice) * NUMBER_OF_CHANNELS;
+            int srcRow;
+            for (int row = 0; row < rows; row++) {
+                srcRow = (flipY) ? rows - row - 1 : row;
+                normalized  = sliceData[srcRow * cols + tarSliceNr] / [max floatValue];
+                renderIndex = (row * slices + slice) * NUMBER_OF_CHANNELS;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
@@ -841,28 +848,31 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         // TODO: much space for parallelization here
         
         int renderIndex = 0;
+        int relevantSlicesCount = [self->mRelevantSlices count];
+        int flippedGridIndex;
         for (int slice = 0; slice < slices; slice++) {
-            float* sliceData = [self->mImage getSliceData:slice
+            srcSliceNr = (flipX) ? slices - slice - 1 : slice;
+            float* sliceData = [self->mImage getSliceData:srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
                         
             for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
-                size_t relevantCol = [[self->mRelevantSlices objectAtIndex:gridIndex] intValue];
+                if (gridIndex < relevantSlicesCount) {
+                    flippedGridIndex = (flipZ) ? relevantSlicesCount - gridIndex - 1 : gridIndex;
+                    size_t relevantCol = [[self->mRelevantSlices objectAtIndex:flippedGridIndex] intValue];
                     
-                for (int row = 0; row < rows; row++) {
-                    if (relevantCol < cols) {
-                        normalized = sliceData[row * cols + relevantCol] / [max floatValue];
-                    } else {
-                        normalized = 0.0f;
+                    int srcRow;
+                    for (int row = 0; row < rows; row++) {
+                        srcRow = (flipY) ? rows - row - 1 : row;
+                        normalized = sliceData[srcRow * cols + relevantCol] / [max floatValue];
+                        renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * rows // Grid row
+                                       + (gridIndex % gridWidth) * slices                  // Grid col
+                                       + (row * gridWidth * slices + slice)                // Position in grid tile
+                                      ) * NUMBER_OF_CHANNELS;
+                        renderImageData[renderIndex++] = normalized;
+                        renderImageData[renderIndex++] = normalized;
+                        renderImageData[renderIndex++] = normalized;
+                        renderImageData[renderIndex]   = MAX_ALPHA;
                     }
-                    
-                    renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * rows // Grid row
-                                   + (gridIndex % gridWidth) * slices                  // Grid col
-                                   + (row * gridWidth * slices + slice)                // Position in grid tile
-                                  ) * NUMBER_OF_CHANNELS;
-                    renderImageData[renderIndex++] = normalized;
-                    renderImageData[renderIndex++] = normalized;
-                    renderImageData[renderIndex++] = normalized;
-                    renderImageData[renderIndex]   = MAX_ALPHA;
                 }
             }
             
