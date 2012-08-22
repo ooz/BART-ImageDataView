@@ -653,7 +653,6 @@ static NSString* PROP_ROWVEC    = @"rowvec";
         int renderIndex = 0;
         int flippedGridIndex;
         int relevantSlicesCount = [self->mRelevantSlices count];
-        NSLog(@"relevant slices: %@", self->mRelevantSlices);
         for (int slice = 0; slice < slices; slice++) {
             srcSliceNr = (flipY) ? slices - slice - 1 : slice;
             float* sliceData = [self->mImage getSliceData:srcSliceNr
