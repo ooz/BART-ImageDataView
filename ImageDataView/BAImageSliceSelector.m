@@ -102,22 +102,22 @@ const size_t SLICE_DIMENSION_INDEX = 2;
        slicesFrom:(EDDataElement*)image
         alignedTo:(enum ImageOrientation)orientation
 {
-    size_t relevantSize = [self getSliceDimensionSize:image alignedTo:orientation];
+    size_t size = [self getSliceDimensionSize:image alignedTo:orientation];
     
-    size_t size;
-    if (n <= relevantSize) {
-        size = n;
+    size_t relevantSize;
+    if (n <= size) {
+        relevantSize = n;
     } else {
-        size = relevantSize;
+        relevantSize = size;
     }
     
-    NSMutableArray* relevantSlices = [NSMutableArray arrayWithCapacity:size]; 
+    NSMutableArray* relevantSlices = [NSMutableArray arrayWithCapacity:relevantSize]; 
 
-    size_t step = relevantSize / size;
-    size_t rest = relevantSize % size;
+    size_t step = size / relevantSize;
+    size_t rest = size % relevantSize;
     
     NSInteger i = rest / 2; // Start with a padding
-    while (i < size) {
+    while (i < relevantSize) {
         [relevantSlices addObject:[NSNumber numberWithInteger:i]];
         i += step;
     }
