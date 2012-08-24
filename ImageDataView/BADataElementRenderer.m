@@ -10,4 +10,48 @@
 
 @implementation BADataElementRenderer
 
+-(id)init
+{
+    
+}
+
+-(id)initWithSliceSelector:(BAImageSliceSelector*)selector
+{
+    
+}
+
+
+-(void)setData:(EDDataElement*)elem
+         slice:(uint)sliceNr
+      timestep:(uint)tstep
+{
+    
+}
+
+-(void)setSlice:(uint)sliceNr
+{
+    
+}
+
+-(void)setTimestep:(uint)tstep
+{
+    
+}
+
+-(void)setGridSize:(NSSize)size
+{
+    
+}
+
+-(void)setTargetOrientation:(enum ImageOrientation)o
+{
+    
+}
+
+
+-(NSImage*)renderImage
+{
+    
+}
+
 @end

@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "EDDataElement.h"
 
 @class BAImageSliceSelector;
-@class EDDataElement;
 
 @interface BADataElementRenderer : NSObject {
     
@@ -26,11 +26,9 @@
 -(void)setTimestep:(uint)tstep;
 
 -(void)setGridSize:(NSSize)size;
+-(void)setTargetOrientation:(enum ImageOrientation)o;
 
-
--(NSImage*)renderSagittalImage;
--(NSImage*)renderAxialImage;
--(NSImage*)renderCoronalImage;
+-(NSImage*)renderImage;
 
 
 @end
