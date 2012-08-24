@@ -8,9 +8,13 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "EDDataElement.h"
+
 /** Custom NSImageView for displaying brain images.
  * Image interpolation is disabled.
  */
-@interface BABrainImageView : NSImageView
+@interface BABrainImageView : NSImageView {
+    
+}
 
 @end

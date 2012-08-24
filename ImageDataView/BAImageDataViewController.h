@@ -10,6 +10,8 @@
 #import <Quartz/Quartz.h>
 #import "EDDataElement.h"
 
+@class BADataElementRenderer;
+@class BABrainImageView;
 @class BAImageSliceSelector;
 
 /**
@@ -19,54 +21,15 @@
  */
 @interface BAImageDataViewController : NSViewController {
     
-    /** The volume data to be shown. */
-    EDDataElement* mImage;
-    /** Min and max value of \see{BAImageDataViewController#mImage} cached for performance reasons. */
-    NSArray*       mImageMinMax;
-    /** Voxel gap  of \see{BAImageDataViewController#mImage}. */
-    NSArray*       mVoxelGap;
-    /** Voxel size of \see{BAImageDataViewController#mImage}. */
-    NSArray*       mVoxelSize;
-    /** Column vector indicating flips/rotations in the y-coord of \see{BAImageDataViewController#mImage}. */
-    NSArray*       mColumnVec;
-    /** Row    vector indicating flips/rotations in the x-coord of \see{BAImageDataViewController#mImage}. */
-    NSArray*       mRowVec;
-    
-    /** 
-     * Property list used to query \see{BAImageDataViewController#mImage} for various traits
-     * like voxel size/gap.
-     */
-    NSArray*       mPropList;
-    
-    
-    /** Filter that decides which slices to display in the multi slice grid. */
-    BAImageSliceSelector* mRelevantSliceFilter;
-    /** An array containing the filtered slice indices as NSNumber objects. */
-    NSArray* mRelevantSlices;
-    /** Current slice index to display in a single slice view. 
-     * Depends on image size and current \see{BAImageDataViewController#mViewOrientation}. 
-     */
-    uint mCurrentSlice;
-    /** Number of slices in \see{BAImageDataViewController#mImage}. 
-     * Depends on image size and current \see{BAImageDataViewController#mViewOrientation}. 
-     */
-    uint mSliceCount;
-    /** The timestep indicating the volume to display. */
-    uint mCurrentTimestep;
-   
-    
-    /** Which orientation to display in the view. */
-    enum ImageOrientation mViewOrientation;
-    /** Main orientation of \see{BAImageDataViewController#mImage}. */
-    enum ImageOrientation mMainOrientation;
+    /** Renderer used to convert an EDDataElement to a NSImage. */
+    BADataElementRenderer* mRenderer;
     
     /** Size of the multi slice grid. */
     NSSize mGridSize;
-
 }
 
 
-@property (readonly) IBOutlet NSImageView*        mImageView;
+@property (readonly) IBOutlet BABrainImageView*   mImageView;
 
 @property (readonly) IBOutlet NSSegmentedControl* mOrientationSelect;
 @property (readonly) IBOutlet id                  mGridSizeSelect;
@@ -79,7 +42,7 @@
 
 /** Displays an image.
  * Convenience method for \see{BAImageDataViewController#showImage:slice:atTimestep:}.
- * Shows the first slice of the timestep.
+ * Shows the first slice of the first timestep.
  *
  * \see{BAImageDataViewController#showImage:slice:atTimestep:}
  */

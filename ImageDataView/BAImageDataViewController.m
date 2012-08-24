@@ -8,44 +8,12 @@
 
 #import "BAImageDataViewController.h"
 
+#import "BAImageDataViewConstants.h"
+#import "BABrainImageView.h"
 #import "BAImageSliceSelector.h"
+#import "BADataElementRenderer.h"
 
 #include <math.h>
-
-
-
-// ########################
-// # CONSTANT DEFINITIONS #
-// ########################
-
-/** Number of channels in the displayed NSImage object (RGBA). */
-static const int   NUMBER_OF_CHANNELS = 4;
-/** Highest alpha value. */
-static const float MAX_ALPHA = 1.0f;
-
-/** When multiplied with the image size results in the minimum image size. */
-static const float MIN_SCALE_FACTOR = 0.1f;
-
-/** Default grid size for both width and height (sinle slice view). */
-static const CGFloat DEFAULT_GRID_SIZE = 1.0f;
-/** Grid width/height for a 6x6 slice grid. */
-static const CGFloat GRID_SIZE_SIX = 6.0f;
-
-/** \see{EDDataElement} property key to query the voxel gap. */
-static NSString* PROP_VOXELGAP  = @"voxelgap";
-/** \see{EDDataElement} property key to query the voxel size. */
-static NSString* PROP_VOXELSIZE = @"voxelsize";
-/** \see{EDDataElement} property key to query the column vector. */
-static NSString* PROP_COLUMNVEC = @"columnvec";
-/** \see{EDDataElement} property key to query the row vector. */
-static NSString* PROP_ROWVEC    = @"rowvec";
-
-/** Threshold for horizontal flipping. 
- *  If first  component of row vector is below this value, the image is flipped. */
-static const float ROW_FLIP_THRESHOLD = -0.2f;
-/** Threshold for vertical flipping. 
- *  If second component of col vector is below this value, the image is flipped. */
-static const float COL_FLIP_THRESHOLD = -0.2f;
 
 
 
@@ -144,33 +112,14 @@ static const float COL_FLIP_THRESHOLD = -0.2f;
                bundle:(NSBundle *)nibBundleOrNil
 {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-        self->mImage       = nil;
-        self->mImageMinMax = nil;
-        self->mVoxelGap    = nil;
-        self->mVoxelSize   = nil;
-        self->mColumnVec   = nil;
-        self->mRowVec      = nil;
+        BAImageSliceSelector* sliceSelector = [[BAImageSliceSelector alloc] init];
+        self->mRenderer = [[BADataElementRenderer alloc] initWithSliceSelector:sliceSelector];
+        [sliceSelector release];
         
-        self->mPropList = [NSArray arrayWithObjects: PROP_VOXELGAP
-                                                   , PROP_VOXELSIZE
-                                                   , PROP_COLUMNVEC
-                                                   , PROP_ROWVEC
-                                                   , nil];
+        self->mGridSize = (NSSize) { DEFAULT_GRID_SIZE
+                                   , DEFAULT_GRID_SIZE };
         
-        self->mRelevantSliceFilter = [[BAImageSliceSelector alloc] init];
-        self->mRelevantSlices = nil;
-        self->mCurrentSlice = 0;
-        self->mSliceCount   = 1;
-        self->mCurrentTimestep = 0;
-        
-        self->mViewOrientation = ORIENT_SAGITTAL;
-        self->mMainOrientation = ORIENT_UNKNOWN;
-        
-        self->mGridSize    = (NSSize) {DEFAULT_GRID_SIZE, DEFAULT_GRID_SIZE};
-        
-        [self.mSliceSelectSlider setMinValue:1];
-        
-        [self updateControlEnabledStates];
+        [self showImage:nil];
     }
     
     return self;
@@ -178,15 +127,7 @@ static const float COL_FLIP_THRESHOLD = -0.2f;
 
 -(void)dealloc
 {
-    if (self->mImage != nil)       [self->mImage release];
-    if (self->mImageMinMax != nil) [self->mImageMinMax release];
-    if (self->mVoxelGap != nil)    [self->mVoxelGap release];
-    if (self->mVoxelSize != nil)   [self->mVoxelSize release];
-    if (self->mColumnVec != nil)   [self->mColumnVec release];
-    if (self->mRowVec != nil)      [self->mRowVec release];
-    
-    if (self->mRelevantSliceFilter != nil) [self->mRelevantSliceFilter release];
-    if (self->mRelevantSlices      != nil) [self->mRelevantSlices      release];
+    if (self->mRenderer != nil) [self->mRenderer release];
     
     [super dealloc];
 }
@@ -197,21 +138,24 @@ static const float COL_FLIP_THRESHOLD = -0.2f;
         NSInteger orientationSelectionIndex = [self.mOrientationSelect selectedSegment];
 //        NSLog(@"Selected segment (orientation selector): %li", orientationSelectionIndex);
         
+        
+        enum ImageOrientation viewOrientation;
         switch (orientationSelectionIndex) {
             case 1:
-                self->mViewOrientation = ORIENT_AXIAL;
+                viewOrientation = ORIENT_AXIAL;
                 break;
             case 2:
-                self->mViewOrientation = ORIENT_CORONAL;
+                viewOrientation = ORIENT_CORONAL;
                 break;
             default:
-                self->mViewOrientation = ORIENT_SAGITTAL;
+                viewOrientation = ORIENT_SAGITTAL;
                 break;
         }
-        
-//        [self.mImageView setImageWithURL:[NSURL URLWithString:@"http://www.cbs.mpg.de/institute/building/mpi3n"]];
-        
-        [self showImage:self->mImage slice:self->mCurrentSlice atTimestep:self->mCurrentTimestep];
+
+        [self->mRenderer setTargetOrientation:viewOrientation];
+        [self showImage:[self->mRenderer getDataElement] 
+                  slice:[self->mRenderer getCurrentSlice]
+             atTimestep:[self->mRenderer getCurrentTimestep]];
     }
 }
 
@@ -221,30 +165,30 @@ static const float COL_FLIP_THRESHOLD = -0.2f;
         long selectedIndex = [self.mGridSizeSelect indexOfSelectedItem];
 //        NSLog(@"GridSize changed: %ld", selectedIndex);
         
-        if (selectedIndex == 0) {
-            self->mGridSize = (NSSize) { DEFAULT_GRID_SIZE
-                                       , DEFAULT_GRID_SIZE };
-        } else if (selectedIndex == 1) {
+        if (selectedIndex == 1) {
             self->mGridSize = (NSSize) { GRID_SIZE_SIX
                                        , GRID_SIZE_SIX };
+        } else {
+            self->mGridSize = (NSSize) { DEFAULT_GRID_SIZE
+                                       , DEFAULT_GRID_SIZE };
         }
-        
+                    
 //        NSLog(@"Grid size: %2.0f, %2.0f", self->mGridSize.width, self->mGridSize.height);
         
-        [self showImage:self->mImage slice:self->mCurrentSlice atTimestep:self->mCurrentTimestep];
-        
-//        [self updateControlEnabledStates];
+        [self->mRenderer setGridSize:self->mGridSize];
+        [self showImage:[self->mRenderer getDataElement] 
+                  slice:[self->mRenderer getCurrentSlice]
+             atTimestep:[self->mRenderer getCurrentTimestep]];
     }
 }
 
 -(IBAction)selectSlice:(id)sender
 {
     int sliceNr = [sender intValue] - 1;
-    if (sliceNr >= 0 && sliceNr < self->mSliceCount) {
-        self->mCurrentSlice = sliceNr;
-    }
     
-    [self showImage:self->mImage slice:self->mCurrentSlice atTimestep:self->mCurrentTimestep];
+    [self showImage:[self->mRenderer getDataElement] 
+              slice:sliceNr
+         atTimestep:[self->mRenderer getCurrentTimestep]];
 }
 
 -(void)showImage:(EDDataElement*)image
@@ -256,776 +200,11 @@ static const float COL_FLIP_THRESHOLD = -0.2f;
            slice:(uint)sliceNr
       atTimestep:(uint)tstep
 {
-    if (self->mImage != nil) {
-        [self->mImage release];
-    }
+    [self->mRenderer setData:image slice:sliceNr timestep:tstep];
+    [self->mImageView setImage:[self->mRenderer renderImage]];
     
-    if (image == nil) {
-        if (self->mImageMinMax != nil) {
-            [self->mImageMinMax release];
-            self->mImageMinMax = nil;
-        }
-        self->mImage = nil;
-        [self->mImageView setImage:nil];
-        
-    } else {
-        [self fetchPropsIfUpdated:image];
-        
-        self->mImage = image;
-        [self->mImage retain];
-        
-        self->mSliceCount = [self->mRelevantSliceFilter getSliceDimensionSize:self->mImage alignedTo:self->mViewOrientation];
-        self->mCurrentSlice = (sliceNr < self->mSliceCount) ? sliceNr : 0;
-        self->mCurrentTimestep = tstep;
-        [self updateSliceSelectors];
-        
-        BOOL isSingleSliceView = self->mGridSize.width == 1 && self->mGridSize.height == 1;
-        if (!isSingleSliceView) {
-            [self fetchRelevantSlices:self->mImage];
-        }
-        
-        NSImage* renderedSlices = [self renderImage];
-        BARTImageSize* imageSize = [self->mImage getImageSize];
-        renderedSlices = [self fixSizeOf:renderedSlices with:imageSize];
-        
-        [self->mImageView setImage:renderedSlices];
-    }
-    
+    [self updateSliceSelectors];
     [self updateControlEnabledStates];
-}
-
--(NSImage*)fixSizeOf:(NSImage*)image 
-                with:(BARTImageSize*)dataSize
-{
-    if (image == nil) {
-        return nil;
-    }
-    
-    NSSize correctedDataSize;
-    float voxGapX = 0.0f;
-    float voxGapY = 0.0f;
-    float voxSizeX = 1.0f;
-    float voxSizeY = 1.0f;
-    
-    BOOL isMainAxial    = self->mMainOrientation == ORIENT_AXIAL    || self->mMainOrientation == ORIENT_REVAXIAL;
-    BOOL isMainCoronal  = self->mMainOrientation == ORIENT_CORONAL  || self->mMainOrientation == ORIENT_REVCORONAL;
-    BOOL isMainSagittal = self->mMainOrientation == ORIENT_SAGITTAL || self->mMainOrientation == ORIENT_REVSAGITTAL;
-    // Find the above parameters depending on image data orientation (mMainOrientation)
-    //                                  and view display orientation (mViewOrientation)
-    // TODO: reduce to actual 6 non-redundant cases!
-    if (isMainAxial) {
-        switch (self->mViewOrientation) {
-            case ORIENT_AXIAL:
-                correctedDataSize.width  = dataSize.columns;
-                correctedDataSize.height = dataSize.rows;
-                voxGapX  = [[self->mVoxelGap  objectAtIndex:0] floatValue];
-                voxGapY  = [[self->mVoxelGap  objectAtIndex:1] floatValue];
-                voxSizeX = [[self->mVoxelSize objectAtIndex:0] floatValue]; 
-                voxSizeY = [[self->mVoxelSize objectAtIndex:1] floatValue];
-                break;
-            case ORIENT_CORONAL:
-                correctedDataSize.width  = dataSize.columns;
-                correctedDataSize.height = dataSize.slices;
-                voxGapX  = [[self->mVoxelGap  objectAtIndex:0] floatValue];
-                voxGapY  = [[self->mVoxelGap  objectAtIndex:2] floatValue];
-                voxSizeX = [[self->mVoxelSize objectAtIndex:0] floatValue]; 
-                voxSizeY = [[self->mVoxelSize objectAtIndex:2] floatValue];
-                break;
-            default:
-                correctedDataSize.width  = dataSize.rows;
-                correctedDataSize.height = dataSize.slices;
-                voxGapX  = [[self->mVoxelGap  objectAtIndex:1] floatValue];
-                voxGapY  = [[self->mVoxelGap  objectAtIndex:2] floatValue];
-                voxSizeX = [[self->mVoxelSize objectAtIndex:1] floatValue]; 
-                voxSizeY = [[self->mVoxelSize objectAtIndex:2] floatValue];
-                break;
-        }
-    } else if (isMainCoronal) {
-        switch (self->mViewOrientation) {
-            case ORIENT_AXIAL:
-                correctedDataSize.width  = dataSize.columns;
-                correctedDataSize.height = dataSize.slices;
-                voxGapX  = [[self->mVoxelGap  objectAtIndex:0] floatValue];
-                voxGapY  = [[self->mVoxelGap  objectAtIndex:2] floatValue];
-                voxSizeX = [[self->mVoxelSize objectAtIndex:0] floatValue]; 
-                voxSizeY = [[self->mVoxelSize objectAtIndex:2] floatValue];
-                break;
-            case ORIENT_CORONAL:
-                correctedDataSize.width  = dataSize.columns;
-                correctedDataSize.height = dataSize.rows;
-                voxGapX  = [[self->mVoxelGap  objectAtIndex:0] floatValue];
-                voxGapY  = [[self->mVoxelGap  objectAtIndex:1] floatValue];
-                voxSizeX = [[self->mVoxelSize objectAtIndex:0] floatValue]; 
-                voxSizeY = [[self->mVoxelSize objectAtIndex:1] floatValue];
-                break;
-            default:
-                correctedDataSize.width  = dataSize.slices;
-                correctedDataSize.height = dataSize.rows;
-                voxGapX  = [[self->mVoxelGap  objectAtIndex:2] floatValue];
-                voxGapY  = [[self->mVoxelGap  objectAtIndex:1] floatValue];
-                voxSizeX = [[self->mVoxelSize objectAtIndex:2] floatValue]; 
-                voxSizeY = [[self->mVoxelSize objectAtIndex:1] floatValue];
-                break;
-        }
-    } else if (isMainSagittal) {
-        switch (self->mViewOrientation) {
-            case ORIENT_AXIAL:
-                correctedDataSize.width  = dataSize.slices;
-                correctedDataSize.height = dataSize.columns;
-                voxGapX  = [[self->mVoxelGap  objectAtIndex:2] floatValue];
-                voxGapY  = [[self->mVoxelGap  objectAtIndex:0] floatValue];
-                voxSizeX = [[self->mVoxelSize objectAtIndex:2] floatValue]; 
-                voxSizeY = [[self->mVoxelSize objectAtIndex:0] floatValue];
-                break;
-            case ORIENT_CORONAL:
-                correctedDataSize.width  = dataSize.slices;
-                correctedDataSize.height = dataSize.rows;
-                voxGapX  = [[self->mVoxelGap  objectAtIndex:2] floatValue];
-                voxGapY  = [[self->mVoxelGap  objectAtIndex:1] floatValue];
-                voxSizeX = [[self->mVoxelSize objectAtIndex:2] floatValue]; 
-                voxSizeY = [[self->mVoxelSize objectAtIndex:1] floatValue];
-                break;
-            default:
-                correctedDataSize.width  = dataSize.columns;
-                correctedDataSize.height = dataSize.rows;
-                voxGapX  = [[self->mVoxelGap  objectAtIndex:0] floatValue];
-                voxGapY  = [[self->mVoxelGap  objectAtIndex:1] floatValue];
-                voxSizeX = [[self->mVoxelSize objectAtIndex:0] floatValue]; 
-                voxSizeY = [[self->mVoxelSize objectAtIndex:1] floatValue];
-                break;
-        }
-    }
-    
-    assert(correctedDataSize.width  > 0);
-    assert(correctedDataSize.height > 0);
- 
-    // Compute real size
-    correctedDataSize.width  = (correctedDataSize.width  * voxSizeX + (correctedDataSize.width  - 1) * voxGapX) * self->mGridSize.width;
-    correctedDataSize.height = (correctedDataSize.height * voxSizeY + (correctedDataSize.height - 1) * voxGapY) * self->mGridSize.height;
-    
-    NSSize imageSize = [image size];
-    float scale = fmin( imageSize.width  / correctedDataSize.width
-                      , imageSize.height / correctedDataSize.height);
-    
-//    NSLog(@"ImageSize: (%3.2f, %3.2f)", imageSize.width, imageSize.height);
-//    NSLog(@"CorrectedDataSize after  (%3.2f, %3.2f)", correctedDataSize.width, correctedDataSize.height);
-    
-    // Hack to enable scaling down of the NSImage in the ImageView
-    [image setScalesWhenResized:YES];
-    NSSize minSize;
-    minSize.width  = correctedDataSize.width  * scale * MIN_SCALE_FACTOR;
-    minSize.height = correctedDataSize.height * scale * MIN_SCALE_FACTOR;
-    [image setSize:minSize];
-    
-    return image;
-}
-
--(void)fetchPropsIfUpdated:(EDDataElement*)image
-{
-    if (self->mImage != image) {
-        if (self->mImageMinMax != nil) [self->mImageMinMax release];
-        self->mImageMinMax = [[image getMinMaxOfDataElement] retain];
-        
-        self->mMainOrientation = [image getMainOrientation];
-        
-        NSDictionary* imageProps = [image getProps:self->mPropList];
-        
-        if (self->mVoxelGap != nil) [self->mVoxelGap release];
-        self->mVoxelGap = [[imageProps valueForKey:PROP_VOXELGAP] retain];
-        
-        if (self->mVoxelSize != nil) [self->mVoxelSize release];
-        self->mVoxelSize = [[imageProps valueForKey:PROP_VOXELSIZE] retain];
-        
-        if (self->mColumnVec != nil) [self->mColumnVec release];
-        self->mColumnVec = [[imageProps valueForKey:PROP_COLUMNVEC] retain];
-        
-        if (self->mRowVec != nil) [self->mRowVec release];
-        self->mRowVec = [[imageProps valueForKey:PROP_ROWVEC] retain];
-
-        NSLog(@"MainOrientation %d", self->mMainOrientation);
-        NSLog(@"VoxelGap  %@",  self->mVoxelGap);
-        NSLog(@"VoxelSize %@",  self->mVoxelSize);
-        NSLog(@"ColumnVec  %@", self->mColumnVec);
-        NSLog(@"RowVec %@",     self->mRowVec);
-    }
-}
-
--(void)fetchRelevantSlices:(EDDataElement*)image
-{
-    if (self->mRelevantSlices != nil) [self->mRelevantSlices release];
-    self->mRelevantSlices = [[self->mRelevantSliceFilter select:self->mGridSize.width * self->mGridSize.height
-                                                     slicesFrom:image 
-                                                      alignedTo:self->mViewOrientation] retain]; 
-}
-
--(NSImage*)renderImage
-{
-    NSImage* renderedSlices = nil;
-    enum ImageDimension* dims = [self->mRelevantSliceFilter getDimensionsFrom:self->mImage
-                                                                    alignedTo:self->mViewOrientation];
-    
-    float rowOrientComponent = [[self->mRowVec objectAtIndex:0] floatValue];
-    float colOrientComponent = [[self->mColumnVec objectAtIndex:1] floatValue];
-    NSLog(@"Row/col components of row/col-vecs: (%f, %f)", rowOrientComponent, colOrientComponent);
-    
-    BOOL flipX = rowOrientComponent < ROW_FLIP_THRESHOLD;
-    BOOL flipY = colOrientComponent < COL_FLIP_THRESHOLD;
-
-    switch (dims[0]) {
-            case DIM_SLICE:
-                switch (dims[1]) {
-                    case DIM_HEIGHT:
-                        renderedSlices = [self renderTurnLeftImage :NO :flipY :flipX];
-                        break;
-                    default:
-                        renderedSlices = [self renderTurnUpRotateRightImage :NO :flipX :flipY];
-                        break;
-                }
-                break;
-            case DIM_HEIGHT:
-                if (dims[1] == DIM_SLICE) {
-                    renderedSlices = [self renderTurnLeftRotateRightImage :flipY :NO :flipX];
-                }
-                break;
-            default:
-                // DIM_WIDTH
-                switch (dims[1]) {
-                    case DIM_SLICE:
-                        renderedSlices = [self renderTurnUpImage :flipX :NO :flipY];
-                        break;
-                    default:
-                        renderedSlices = [self renderIdenticalImage :flipX :flipY :NO];
-                        break;
-                }
-                break;
-    }
-    
-    free(dims);
-    
-    return renderedSlices;
-}
-
--(NSImage*)renderIdenticalImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
-{
-    BARTImageSize* imageSize = [self->mImage getImageSize];
-
-    size_t rows       = imageSize.rows;
-    size_t cols       = imageSize.columns;
-    size_t gridWidth  = self->mGridSize.width;
-    size_t gridHeight = self->mGridSize.height;
-    
-    size_t renderImageDataLength =   cols
-                                   * rows 
-                                   * gridWidth
-                                   * gridHeight
-                                   * NUMBER_OF_CHANNELS
-                                   * sizeof(float);
-    float* renderImageData = malloc(renderImageDataLength);
-    
-    NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
-    float normalized = 0.0f;
-    
-    if (   gridWidth == 1
-        && gridHeight == 1) {
-        // Single slice view
-        
-        uint sliceNr = self->mCurrentSlice;
-        if (flipZ) {
-            sliceNr = self->mSliceCount - self->mCurrentSlice - 1;
-        }
-        
-        float* sliceData = [self->mImage getSliceData:sliceNr
-                                           atTimestep:self->mCurrentTimestep];
-    
-        int srcRow;
-        int srcCol;
-        int targetIndex = 0;
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                srcRow = (flipY) ? rows - row - 1 : row;
-                srcCol = (flipX) ? cols - col - 1 : col;
-                normalized = sliceData[srcRow * cols + srcCol] / [max floatValue];
-                renderImageData[targetIndex++]     = normalized;
-                renderImageData[targetIndex++] = normalized;
-                renderImageData[targetIndex++] = normalized;
-                renderImageData[targetIndex++] = MAX_ALPHA;
-            }
-        }
-        
-        free(sliceData);
-    
-    } else {
-        // Many slice view
-        // TODO: much space for parallelization here
-        
-        NSInteger sliceIndex = (flipZ) ? ([self->mRelevantSlices count] - 1) : 0;
-        for (int gridRow = 0; gridRow < gridHeight; gridRow++) {
-            for (int gridCol = 0; gridCol < gridWidth; gridCol++) {
-            
-                size_t sliceNr   = 0;
-                float* sliceData = NULL;
-                if (sliceIndex >= 0
-                    && sliceIndex < [self->mRelevantSlices count]) {
-                    sliceNr   = [[self->mRelevantSlices objectAtIndex:sliceIndex] intValue]; //gridRow * gridWidth + gridCol;
-                    sliceData = [self->mImage getSliceData:sliceNr
-                                                atTimestep:self->mCurrentTimestep];
-                    if (flipZ) {
-                        sliceIndex--;
-                    } else {
-                        sliceIndex++;
-                    }
-                }
-
-                if (sliceData != NULL) {
-                
-                    size_t sliceOffset = ((gridRow * gridWidth * cols * rows) + gridCol * cols) * NUMBER_OF_CHANNELS;
-//                    NSLog(@"SliceNr: %ld, sliceOffset: %ld (rows: %ld, cols: %ld", sliceNr, sliceOffset, rows, cols);
-                    
-                    int srcRow;
-                    int srcCol;
-                    for (int row = 0; row < rows; row++) {
-                        for (int col = 0; col < cols; col++) {
-                            srcRow = (flipY) ? (rows - row - 1) : row;
-                            srcCol = (flipX) ? (cols - col - 1) : col;
-                            normalized = sliceData[srcRow * cols + srcCol] / [max floatValue];
-                            renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS]     = normalized;
-                            renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 1] = normalized;
-                            renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 2] = normalized;
-                            renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 3] = MAX_ALPHA;
-                        }
-                        
-                    }
-                    
-                    free(sliceData);
-                }
-            }
-        }
-    }
-    
-    NSImage* nsImage = [self imageFromFloat:renderImageData 
-                                     length:renderImageDataLength 
-                                bytesPerRow:gridWidth * cols * NUMBER_OF_CHANNELS * sizeof(float)
-                                      width:gridWidth * cols 
-                                     height:gridHeight * rows];
-    free(renderImageData);
-    
-    return nsImage;
-}
-
--(NSImage*)renderTurnUpImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
-{
-    // TODO: too much c&p from renderIdenticalImage ;)
-    
-    BARTImageSize* imageSize = [self->mImage getImageSize];
-    
-//    size_t rows       = imageSize.rows;
-    size_t cols       = imageSize.columns;
-    size_t slices     = imageSize.slices;
-    size_t gridWidth  = self->mGridSize.width;
-    size_t gridHeight = self->mGridSize.height;
-    
-    size_t renderImageDataLength =    cols
-                                    * slices 
-                                    * gridWidth
-                                    * gridHeight
-                                    * NUMBER_OF_CHANNELS
-                                    * sizeof(float);
-    float* renderImageData = malloc(renderImageDataLength);
-    
-    NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
-    float normalized = 0.0f;
-    
-    int srcSliceNr= 0;
-    if (   gridWidth == 1
-        && gridHeight == 1) {
-        // Single slice view
-        
-        int renderIndex = 0;
-        int tarSliceNr = (flipZ) ? (self->mSliceCount - self->mCurrentSlice - 1) : self->mCurrentSlice;
-        for (int slice = 0; slice < slices; slice++) {
-            
-            srcSliceNr = (flipY) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
-                                               atTimestep:self->mCurrentTimestep];
-            int srcCol;
-            for (int col = 0; col < cols; col++) {
-                srcCol = (flipX) ? cols - col - 1 : col;
-                normalized = sliceData[tarSliceNr * cols + srcCol] / [max floatValue];
-                renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex++] = MAX_ALPHA;
-            }
-            
-            free(sliceData);
-        }
-        
-    } else {
-        // Many slice view
-        // TODO: much space for parallelization here
-        
-        int renderIndex = 0;
-        int flippedGridIndex;
-        int relevantSlicesCount = [self->mRelevantSlices count];
-        for (int slice = 0; slice < slices; slice++) {
-            srcSliceNr = (flipY) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
-                                               atTimestep:self->mCurrentTimestep];
-            
-            int srcCol;
-            for (int col = 0; col < cols; col++) {
-                srcCol = (flipX) ? cols - col - 1 : col;
-                
-                for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
-                    if (gridIndex < relevantSlicesCount) {
-                        flippedGridIndex = (flipZ) ? relevantSlicesCount - gridIndex - 1 : gridIndex;
-                        size_t relevantRow = [[self->mRelevantSlices objectAtIndex:flippedGridIndex] intValue];
-                        normalized = sliceData[relevantRow * cols + srcCol] / [max floatValue];
-                    } else {
-                        normalized = 0.0f;
-                    }
-                    
-                    renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * cols + (gridIndex % gridWidth) * cols + (slice * gridWidth * cols + col)) * NUMBER_OF_CHANNELS;
-                    renderImageData[renderIndex++] = normalized;
-                    renderImageData[renderIndex++] = normalized;
-                    renderImageData[renderIndex++] = normalized;
-                    renderImageData[renderIndex]   = MAX_ALPHA;
-                }
-            }
-            
-            free(sliceData);
-        }
-    }
-    
-    NSImage* nsImage = [self imageFromFloat:renderImageData 
-                                     length:renderImageDataLength 
-                                bytesPerRow:gridWidth * cols * NUMBER_OF_CHANNELS * sizeof(float)
-                                      width:gridWidth * cols 
-                                     height:gridHeight * slices];
-    free(renderImageData);
-    
-    return nsImage;
-}
-
--(NSImage*)renderTurnLeftRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
-{
-    // TODO: too much c&p from renderIdenticalImage ;)
-    
-    BARTImageSize* imageSize = [self->mImage getImageSize];
-    
-    size_t rows       = imageSize.rows;
-    size_t cols       = imageSize.columns;
-    size_t slices     = imageSize.slices;
-    size_t gridWidth  = self->mGridSize.width;
-    size_t gridHeight = self->mGridSize.height;
-    
-    size_t renderImageDataLength =    rows
-                                    * slices 
-                                    * gridWidth
-                                    * gridHeight
-                                    * NUMBER_OF_CHANNELS
-                                    * sizeof(float);
-    float* renderImageData = malloc(renderImageDataLength);
-    
-    NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
-    float normalized = 0.0f;
-    
-    int srcSliceNr;
-    if (   gridWidth == 1
-        && gridHeight == 1) {
-        // Single slice view
-        int renderIndex = 0;
-        for (int slice = 0; slice < slices; slice++) {
-            srcSliceNr = (flipY) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
-                                               atTimestep:self->mCurrentTimestep];
-            
-            int tarSliceNr = (flipZ) ? self->mSliceCount - self->mCurrentSlice - 1 : self->mCurrentSlice;
-            int srcRow;
-            for (int row = 0; row < rows; row++) {
-                srcRow = (flipX) ? rows - row - 1 : row;
-                normalized = sliceData[srcRow * cols + tarSliceNr] / [max floatValue];
-                renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex++] = MAX_ALPHA;
-            }
-            
-            free(sliceData);
-        }
-        
-    } else {
-        // Many slice view
-        // TODO: much space for parallelization here
-        
-        int renderIndex = 0;
-        int relevantSlicesCount = [self->mRelevantSlices count];
-        for (int slice = 0; slice < slices; slice++) {
-            srcSliceNr = (flipY) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
-                                               atTimestep:self->mCurrentTimestep];
-            
-            int srcRow;
-            for (int row = 0; row < rows; row++) {
-                // the column number in the target (sagittal) image equals the row number in the source (axial) data
-                srcRow = (flipX) ? rows - row - 1 : row;
-                
-                int flippedGridIndex;
-                for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
-                    // gridIndex equals one column of data in the original axial slice data
-                    
-                    if (gridIndex < relevantSlicesCount) {
-                        flippedGridIndex = (flipZ) ? relevantSlicesCount - gridIndex - 1 : gridIndex;
-                        size_t relevantCol = [[self->mRelevantSlices objectAtIndex:flippedGridIndex] intValue];
-                        normalized = sliceData[srcRow * cols + relevantCol] / [max floatValue];
-                    } else {
-                        normalized = 0.0f;
-                    }
-                    // ((gridRow * gridWidth * cols * rows) + gridCol * cols)
-                    renderIndex = ((gridIndex / gridWidth) * gridWidth * rows * slices 
-                                   + (gridIndex % gridWidth) * rows 
-                                   + (slice * gridWidth * rows + row)
-                                  ) * NUMBER_OF_CHANNELS;
-                    renderImageData[renderIndex++] = normalized;
-                    renderImageData[renderIndex++] = normalized;
-                    renderImageData[renderIndex++] = normalized;
-                    renderImageData[renderIndex]   = MAX_ALPHA;
-                }
-            }
-            
-            free(sliceData);
-        }
-    }
-    
-    NSImage* nsImage = [self imageFromFloat:renderImageData 
-                                     length:renderImageDataLength 
-                                bytesPerRow:gridWidth * rows * NUMBER_OF_CHANNELS * sizeof(float)
-                                      width:gridWidth * rows
-                                     height:gridHeight * slices];
-    free(renderImageData);
-    
-    return nsImage;
-}
-
--(NSImage*)renderTurnLeftImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
-{
-    // TODO: too much c&p from renderIdenticalImage ;)
-    
-    BARTImageSize* imageSize = [self->mImage getImageSize];
-    
-    size_t rows       = imageSize.rows;
-    size_t cols       = imageSize.columns;
-    size_t slices     = imageSize.slices;
-    size_t gridWidth  = self->mGridSize.width;
-    size_t gridHeight = self->mGridSize.height;
-    
-    size_t renderImageDataLength =    slices
-                                    * rows 
-                                    * gridWidth
-                                    * gridHeight
-                                    * NUMBER_OF_CHANNELS
-                                    * sizeof(float);
-    float* renderImageData = malloc(renderImageDataLength);
-    
-    NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
-    float normalized = 0.0f;
-    
-    int srcSliceNr;
-    int srcRow;
-    if (   gridWidth == 1
-        && gridHeight == 1) {
-        // Single slice view
-        
-        int renderIndex = 0;
-        int tarSliceNr = (flipZ) ? (self->mSliceCount - self->mCurrentSlice - 1) : self->mCurrentSlice;
-        for (int slice = 0; slice < slices; slice++) {
-            
-            srcSliceNr = (flipX) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
-                                               atTimestep:self->mCurrentTimestep];
-            
-            for (int row = 0; row < rows; row++) {
-                srcRow = (flipY) ? rows - row - 1 : row;
-                normalized  = sliceData[srcRow * cols + tarSliceNr] / [max floatValue];
-                renderIndex = (row * slices + slice) * NUMBER_OF_CHANNELS;
-                renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex] = MAX_ALPHA;
-            }
-            
-            free(sliceData);
-        }
-        
-    } else {
-        // Many slice view
-        // TODO: much space for parallelization here
-        
-        int renderIndex = 0;
-        int relevantSlicesCount = [self->mRelevantSlices count];
-        int flippedGridIndex;
-        for (int slice = 0; slice < slices; slice++) {
-            srcSliceNr = (flipX) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
-                                               atTimestep:self->mCurrentTimestep];
-                        
-            for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
-                if (gridIndex < relevantSlicesCount) {
-                    flippedGridIndex = (flipZ) ? relevantSlicesCount - gridIndex - 1 : gridIndex;
-                    size_t relevantCol = [[self->mRelevantSlices objectAtIndex:flippedGridIndex] intValue];
-                    
-                    for (int row = 0; row < rows; row++) {
-                        srcRow = (flipY) ? rows - row - 1 : row;
-                        normalized = sliceData[srcRow * cols + relevantCol] / [max floatValue];
-                        renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * rows // Grid row
-                                       + (gridIndex % gridWidth) * slices                  // Grid col
-                                       + (row * gridWidth * slices + slice)                // Position in grid tile
-                                      ) * NUMBER_OF_CHANNELS;
-                        renderImageData[renderIndex++] = normalized;
-                        renderImageData[renderIndex++] = normalized;
-                        renderImageData[renderIndex++] = normalized;
-                        renderImageData[renderIndex]   = MAX_ALPHA;
-                    }
-                }
-            }
-            
-            free(sliceData);
-        }
-    }
-    
-    NSImage* nsImage = [self imageFromFloat:renderImageData 
-                                     length:renderImageDataLength 
-                                bytesPerRow:gridWidth * slices * NUMBER_OF_CHANNELS * sizeof(float)
-                                      width:gridWidth * slices 
-                                     height:gridHeight * rows];
-    free(renderImageData);
-    
-    return nsImage;
-}
-
--(NSImage*)renderTurnUpRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
-{
-    // TODO: too much c&p from renderIdenticalImage ;)
-    
-    BARTImageSize* imageSize = [self->mImage getImageSize];
-    
-//    size_t rows       = imageSize.rows;
-    size_t cols       = imageSize.columns;
-    size_t slices     = imageSize.slices;
-    size_t gridWidth  = self->mGridSize.width;
-    size_t gridHeight = self->mGridSize.height;
-    
-    size_t renderImageDataLength =    slices
-                                    * cols
-                                    * gridWidth
-                                    * gridHeight
-                                    * NUMBER_OF_CHANNELS
-                                    * sizeof(float);
-    float* renderImageData = malloc(renderImageDataLength);
-    
-    NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
-    float normalized = 0.0f;
-    
-    int srcSliceNr;
-    int srcCol;
-    if (   gridWidth == 1
-        && gridHeight == 1) {
-        // Single slice view
-        
-        int renderIndex;
-        int tarSliceNr = (flipZ) ? (self->mSliceCount - self->mCurrentSlice - 1) : self->mCurrentSlice;
-        for (int slice = 0; slice < slices; slice++) {
-            
-            srcSliceNr = (flipX) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
-                                               atTimestep:self->mCurrentTimestep];
-            
-            for (int col = 0; col < cols; col++) {
-                srcCol = (flipY) ? cols - col - 1 : col;
-                normalized  = sliceData[tarSliceNr * cols + srcCol] / [max floatValue];
-                renderIndex = (col * slices + slice) * NUMBER_OF_CHANNELS;
-                renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex] = MAX_ALPHA;
-            }
-            
-            free(sliceData);
-        }
-        
-    } else {
-        // Many slice view
-        // TODO: much space for parallelization here
-        
-        int renderIndex = 0;
-        int relevantSlicesCount = [self->mRelevantSlices count];
-        int flippedGridIndex;
-        for (int slice = 0; slice < slices; slice++) {
-            srcSliceNr = (flipX) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
-                                               atTimestep:self->mCurrentTimestep];
-            
-            for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
-                if (gridIndex < relevantSlicesCount) {
-                    flippedGridIndex = (flipZ) ? relevantSlicesCount - gridIndex - 1 : gridIndex;
-                    size_t relevantRow = [[self->mRelevantSlices objectAtIndex:flippedGridIndex] intValue];
-                    
-                    for (int col = 0; col < cols; col++) {
-                        srcCol = (flipY) ? cols - col - 1: col; 
-                        normalized = sliceData[relevantRow * cols + srcCol] / [max floatValue];
-                        renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * cols // Grid row
-                                       + (gridIndex % gridWidth) * slices                  // Grid col
-                                       + (col * gridWidth * slices + slice)                // Position in grid tile
-                                       ) * NUMBER_OF_CHANNELS;
-                        renderImageData[renderIndex++] = normalized;
-                        renderImageData[renderIndex++] = normalized;
-                        renderImageData[renderIndex++] = normalized;
-                        renderImageData[renderIndex]   = MAX_ALPHA;
-                    }
-                }
-            }
-            
-            free(sliceData);
-        }
-    }
-
-    NSImage* nsImage = [self imageFromFloat:renderImageData 
-                                     length:renderImageDataLength 
-                                bytesPerRow:gridWidth * slices * NUMBER_OF_CHANNELS * sizeof(float)
-                                      width:gridWidth * slices 
-                                     height:gridHeight * cols];
-    free(renderImageData);
-    
-    return nsImage;
-}
-
--(NSImage*)imageFromFloat:(float*)data 
-                   length:(size_t)len 
-              bytesPerRow:(size_t)bpr
-                    width:(size_t)w
-                   height:(size_t)h
-{
-    NSSize ciImageSize;
-    ciImageSize.width  = w;
-    ciImageSize.height = h;
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:data
-                                                                          length:len]
-                                               bytesPerRow:bpr
-                                                      size:ciImageSize 
-                                                    format:kCIFormatRGBAf 
-                                                colorSpace:colorSpace];
-    
-    NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
-    CGImageRef        cgImage = imageRep.CGImage;
-    
-    NSImage*          nsImage = [[[NSImage alloc] initWithCGImage:cgImage 
-                                                             size:ciImageSize] autorelease];
-    
-    [ciImage release];
-    CGColorSpaceRelease(colorSpace);
-    
-    return nsImage;
 }
 
 -(void)updateSliceSelectors
@@ -1037,24 +216,19 @@ static const float COL_FLIP_THRESHOLD = -0.2f;
 -(void)updateSliceTextField
 {
     [self.mSliceSelect setStringValue:[NSString stringWithFormat:@"%d/%ld", 
-                                       (self->mCurrentSlice + 1),           // Display natural indices starting with 1
-                                       self->mSliceCount]];
+                                       ([self->mRenderer getCurrentSlice] + 1),     // Display natural indices starting with 1
+                                       [self->mRenderer getSliceCount]]];
 }
 
 -(void)updateSliceSlider
 {
-    [self.mSliceSelectSlider setIntValue:(self->mCurrentSlice + 1)];        // Same thing with the slider
-    [self.mSliceSelectSlider setMaxValue:self->mSliceCount];
+    [self.mSliceSelectSlider setIntValue:[self->mRenderer getCurrentSlice]];        // Same thing with the slider
+    [self.mSliceSelectSlider setMaxValue:[self->mRenderer getSliceCount]];
 }
 
 -(void)updateControlEnabledStates
 {
-    if (self->mImage == nil) {
-        // Deactivate all controls
-        [self setOrientationAndGridSizeSelectorStates:NO];
-        [self setSliceSelectorStates:NO];
-        
-    } else {
+    if ([self->mRenderer getDataElement] != nil) {
         // Activate orientation selection, slice grid selection
         [self setOrientationAndGridSizeSelectorStates:YES];
         
@@ -1064,6 +238,11 @@ static const float COL_FLIP_THRESHOLD = -0.2f;
         } else {
             [self setSliceSelectorStates:NO];
         }
+        
+    } else {
+        // Deactivate all controls
+        [self setOrientationAndGridSizeSelectorStates:NO];
+        [self setSliceSelectorStates:NO];
     }
 }
 

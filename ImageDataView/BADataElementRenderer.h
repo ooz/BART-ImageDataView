@@ -37,7 +37,8 @@
     BAImageSliceSelector* mRelevantSliceFilter;
     /** An array containing the filtered slice indices as NSNumber objects. */
     NSArray* mRelevantSlices;
-    /** Current slice index to display in a single slice rendered image. 
+    
+    /** Current slice index to render in a single slice image. 
      * Depends on image size and current \see{BAImageDataViewController#mTargetOrientation}. 
      */
     uint mCurrentSlice;
@@ -47,6 +48,8 @@
     uint mSliceCount;
     /** The timestep indicating the volume to render. */
     uint mCurrentTimestep;
+    /** Total number of timesteps in mImage. */
+    uint mTimestepCount;
     
     
     /** Target orientation to which the image should be rendered. */
@@ -61,7 +64,6 @@
 
 -(id)initWithSliceSelector:(BAImageSliceSelector*)selector;
 
-
 -(void)setData:(EDDataElement*)elem
          slice:(uint)sliceNr
       timestep:(uint)tstep;
@@ -72,6 +74,14 @@
 -(void)setGridSize:(NSSize)size;
 -(void)setTargetOrientation:(enum ImageOrientation)o;
 
+-(EDDataElement*)getDataElement;
+-(uint)getCurrentSlice;
+-(uint)getSliceCount;
+-(uint)getCurrentTimestep;
+
+/**
+ * \return Autoreleased NSImage.
+ */
 -(NSImage*)renderImage;
 
 
