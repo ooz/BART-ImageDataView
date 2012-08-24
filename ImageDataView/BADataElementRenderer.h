@@ -13,6 +13,50 @@
 
 @interface BADataElementRenderer : NSObject {
     
+    /** The volume data to be rendered. */
+    EDDataElement* mImage;
+    /** Min and max value of \see{BAImageDataViewController#mImage} cached for performance reasons. */
+    NSArray*       mImageMinMax;
+    /** Voxel gap  of \see{BAImageDataViewController#mImage}. */
+    NSArray*       mVoxelGap;
+    /** Voxel size of \see{BAImageDataViewController#mImage}. */
+    NSArray*       mVoxelSize;
+    /** Column vector indicating flips/rotations in the y-coord of \see{BAImageDataViewController#mImage}. */
+    NSArray*       mColumnVec;
+    /** Row    vector indicating flips/rotations in the x-coord of \see{BAImageDataViewController#mImage}. */
+    NSArray*       mRowVec;
+    
+    /** 
+     * Property list used to query \see{BAImageDataViewController#mImage} for various traits
+     * like voxel size/gap.
+     */
+    NSArray*       mPropList;
+    
+    
+    /** Filter that decides which slices to render in the multi slice grid. */
+    BAImageSliceSelector* mRelevantSliceFilter;
+    /** An array containing the filtered slice indices as NSNumber objects. */
+    NSArray* mRelevantSlices;
+    /** Current slice index to display in a single slice rendered image. 
+     * Depends on image size and current \see{BAImageDataViewController#mTargetOrientation}. 
+     */
+    uint mCurrentSlice;
+    /** Number of slices in \see{BAImageDataViewController#mImage}. 
+     * Depends on image size and current \see{BAImageDataViewController#mTargetOrientation}. 
+     */
+    uint mSliceCount;
+    /** The timestep indicating the volume to render. */
+    uint mCurrentTimestep;
+    
+    
+    /** Target orientation to which the image should be rendered. */
+    enum ImageOrientation mTargetOrientation;
+    /** Main orientation of \see{BAImageDataViewController#mImage}. */
+    enum ImageOrientation mMainOrientation;
+    
+    /** Size of the multi slice grid. */
+    NSSize mGridSize;
+    
 }
 
 -(id)initWithSliceSelector:(BAImageSliceSelector*)selector;
