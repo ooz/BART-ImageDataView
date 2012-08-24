@@ -8,6 +8,29 @@
 
 #import <Foundation/Foundation.h>
 
-@interface BADataElementRenderer : NSObject
+@class BAImageSliceSelector;
+@class EDDataElement;
+
+@interface BADataElementRenderer : NSObject {
+    
+}
+
+-(id)initWithSliceSelector:(BAImageSliceSelector*)selector;
+
+
+-(void)setData:(EDDataElement*)elem
+         slice:(uint)sliceNr
+      timestep:(uint)tstep;
+
+-(void)setSlice:(uint)sliceNr;
+-(void)setTimestep:(uint)tstep;
+
+-(void)setGridSize:(NSSize)size;
+
+
+-(NSImage*)renderSagittalImage;
+-(NSImage*)renderAxialImage;
+-(NSImage*)renderCoronalImage;
+
 
 @end

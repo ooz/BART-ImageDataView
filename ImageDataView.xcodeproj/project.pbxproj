@@ -19,6 +19,7 @@
 		4737CE2415934F1F00E0D0FD /* BAImageDataView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4737CE2215934F1F00E0D0FD /* BAImageDataView.xib */; };
 		4737CE26159371BE00E0D0FD /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4737CE25159371BE00E0D0FD /* Quartz.framework */; };
 		474F0C4E15BEA96300AF1858 /* BAImageSliceSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 474F0C4D15BEA96300AF1858 /* BAImageSliceSelector.m */; };
+		47BB83FB15E781EB004E3B2F /* BADataElementRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BB83FA15E781EB004E3B2F /* BADataElementRenderer.m */; };
 		47F841451592195B00048830 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47F841441592195B00048830 /* Cocoa.framework */; };
 		47F8414F1592195B00048830 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 47F8414D1592195B00048830 /* InfoPlist.strings */; };
 		47F841511592195B00048830 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 47F841501592195B00048830 /* main.m */; };
@@ -48,6 +49,8 @@
 		4737CE25159371BE00E0D0FD /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		474F0C4C15BEA96300AF1858 /* BAImageSliceSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAImageSliceSelector.h; sourceTree = "<group>"; };
 		474F0C4D15BEA96300AF1858 /* BAImageSliceSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAImageSliceSelector.m; sourceTree = "<group>"; };
+		47BB83F915E781EB004E3B2F /* BADataElementRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BADataElementRenderer.h; sourceTree = "<group>"; };
+		47BB83FA15E781EB004E3B2F /* BADataElementRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BADataElementRenderer.m; sourceTree = "<group>"; };
 		47F841401592195B00048830 /* ImageDataView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageDataView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47F841441592195B00048830 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		47F841471592195B00048830 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -144,6 +147,8 @@
 				4737CE2215934F1F00E0D0FD /* BAImageDataView.xib */,
 				4720DC4D15A7247900C5B981 /* BABrainImageView.h */,
 				4720DC4E15A7247900C5B981 /* BABrainImageView.m */,
+				47BB83F915E781EB004E3B2F /* BADataElementRenderer.h */,
+				47BB83FA15E781EB004E3B2F /* BADataElementRenderer.m */,
 				474F0C4C15BEA96300AF1858 /* BAImageSliceSelector.h */,
 				474F0C4D15BEA96300AF1858 /* BAImageSliceSelector.m */,
 				47F8414B1592195B00048830 /* Supporting Files */,
@@ -240,6 +245,7 @@
 				4737CE2315934F1F00E0D0FD /* BAImageDataViewController.m in Sources */,
 				4720DC4F15A7247900C5B981 /* BABrainImageView.m in Sources */,
 				474F0C4E15BEA96300AF1858 /* BAImageSliceSelector.m in Sources */,
+				47BB83FB15E781EB004E3B2F /* BADataElementRenderer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
