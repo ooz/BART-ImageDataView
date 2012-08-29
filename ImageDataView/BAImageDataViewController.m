@@ -30,7 +30,8 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 
 @interface BAImageDataViewController (__privateMethods__)
 
-
+/** Initializes all GUI elements related to overlays/colortables. */
+-(void)initOverlayColortableComponents;
 
 /**
  * Methods to update view objects based on internal state changes.
@@ -88,11 +89,41 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
         self->mGridSize = (NSSize) { DEFAULT_GRID_SIZE
                                    , DEFAULT_GRID_SIZE };
         
+//        [self initOverlayColortableComponents];
+        
         [self showImage:nil];
     }
     
     return self;
 }
+
+-(void)awakeFromNib
+{
+//    [self->mOverlaySelect removeAllItems];
+//    [self->mOverlaySelect setTitle:@"Overlay selection"];
+//    [self->mOverlaySelect setEnabled:NO];
+//    [self->mColortableSelect removeAllItems];
+    [self->mColortableSelect addItemWithTitle:@"Colortable 1"];
+    [self->mColortableSelect addItemWithTitle:@"Colortable 2"];
+    
+    
+    // TODO: use formatter for text fields!
+//    [self->mRegion1LowerField   setValue:[NSNumber numberWithDouble:0.0]];
+    [self->mRegion1LowerStepper setValue:[NSNumber numberWithDouble:0.0]];
+//    [self->mRegion1UpperField   setValue:[NSNumber numberWithDouble:0.0]];
+    [self->mRegion1UpperStepper setValue:[NSNumber numberWithDouble:0.0]];
+    
+    [self->mRegion2LowerField   setEnabled:NO];
+    [self->mRegion2LowerStepper setEnabled:NO];
+    [self->mRegion2UpperField   setEnabled:NO];
+    [self->mRegion2UpperStepper setEnabled:NO];
+}
+
+//-(void)initOverlayColortableComponents
+//{
+//    
+//    [self awa]
+//}
 
 -(void)dealloc
 {
