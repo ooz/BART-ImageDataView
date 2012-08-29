@@ -43,6 +43,30 @@
 -(IBAction)setGridSize:(id)sender;
 -(IBAction)selectSlice:(id)sender;
 
+
+// ################################################
+// # Outlets and actions for overlays/colortables #
+// ################################################
+
+@property (readonly) IBOutlet NSPopUpButton*      mOverlaySelect;
+@property (readonly) IBOutlet NSPopUpButton*      mColortableSelect;
+// Color table region 1
+@property (readonly) IBOutlet NSTextField*        mRegion1LowerField;
+@property (readonly) IBOutlet NSStepper*          mRegion1LowerStepper;
+@property (readonly) IBOutlet NSTextField*        mRegion1UpperField;
+@property (readonly) IBOutlet NSStepper*          mRegion1UpperStepper;
+// Color table region 2
+@property (readonly) IBOutlet NSTextField*        mRegion2LowerField;
+@property (readonly) IBOutlet NSStepper*          mRegion2LowerStepper;
+@property (readonly) IBOutlet NSTextField*        mRegion2UpperField;
+@property (readonly) IBOutlet NSStepper*          mRegion2UpperStepper;
+
+-(IBAction)setOverlay:(id)sender;
+-(IBAction)setColortable:(id)sender;
+-(IBAction)setRegion1Bounds:(id)sender;
+-(IBAction)setRegion2Bounds:(id)sender;
+
+
 /** Displays an image.
  * Convenience method for \see{BAImageDataViewController#showImage:slice:atTimestep:}.
  * Shows the first slice of the first timestep.

@@ -288,4 +288,29 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
     [self.mSliceSelectSlider setEnabled:enabled];
 }
 
+
+// ##########################################
+// # Overlay and colortable related actions #
+// ##########################################
+
+-(IBAction)setOverlay:(id)sender
+{
+
+}
+
+-(IBAction)setColortable:(id)sender
+{
+    
+}
+
+-(IBAction)setRegion1Bounds:(id)sender
+{
+    
+}
+
+-(IBAction)setRegion2Bounds:(id)sender
+{
+    
+}
+
 @end
