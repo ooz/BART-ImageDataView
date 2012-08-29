@@ -15,6 +15,12 @@
  */
 @interface BABrainImageView : NSImageView {
     
+    NSImage* mBackgroundImage;
+    NSImage* mForegroundImage;
+    
 }
+
+-(void)setBackgroundImage:(NSImage*)newImage;
+-(void)setForegroundImage:(NSImage*)newImage;
 
 @end
