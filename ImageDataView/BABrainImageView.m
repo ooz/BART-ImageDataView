@@ -55,6 +55,7 @@
         [self->mBackgroundImage release];
     
     self->mBackgroundImage = [newImage retain];
+    [self updateSetImage];
 }
 
 -(void)setForegroundImage:(NSImage*)newImage
@@ -63,6 +64,7 @@
         [self->mForegroundImage release];
     
     self->mForegroundImage = [newImage retain];
+    [self updateSetImage];
 }
 
 -(void)updateSetImage
