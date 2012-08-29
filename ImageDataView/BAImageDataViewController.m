@@ -30,58 +30,7 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 
 @interface BAImageDataViewController (__privateMethods__)
 
-/**
- * Updates internal (cached) variables of the view if a new image
- * has been set via \see{BAImageDataViewController#showImage}.
- *
- * \param image EDDataElement whose properties are queried.
- */
--(void)fetchPropsIfUpdated:(EDDataElement*)image;
-/**
- * Updates slice indices of slices to be shown in the multi slice grid
- * (selected by \{BAImageDataViewController#mRelevantSliceFilter}).
- * The update is triggered when the view orientation is changed or
- * the view is switched from single to multi slice grid.
- *
- * \param image EDDataElement from which slices should be chosen (at current timestep).
- */
--(void)fetchRelevantSlices:(EDDataElement*)image;
 
-/**
- * Methods to render the actual NSImage object displayed in the view.
- * Regardless of single or multi slice view only one NSImage object is rendered.
- */
--(NSImage*)renderImage;
--(NSImage*)renderIdenticalImage          :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
--(NSImage*)renderTurnUpImage             :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
--(NSImage*)renderTurnLeftRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
--(NSImage*)renderTurnLeftImage           :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
--(NSImage*)renderTurnUpRotateRightImage  :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
-
-/**
- * Utility method for the render methods.
- * Constructs a NSImage object from a float vector. The vector is not freed in the process!
- *
- * \param data Float array containing all needed bytes for all channels.
- * \param len  Length of the data float array.
- * \param bpr  Bytes per row in the resulting image. 
- *             This has to respect the size of the data type (float) as well as the number of channels.
- * \param w    Width  of the target NSImage in pixels.
- * \param h    Height of the target NSImage in pixels.
- * \return     Autoreleased NSImage rendering the float data.
- */
--(NSImage*)imageFromFloat:(float*)data 
-                   length:(size_t)len 
-              bytesPerRow:(size_t)bpr
-                    width:(size_t)w
-                   height:(size_t)h;
-
-/**
- * Updates the size of a NSImage object based on the physical size of the
- * EDDataElement to be displayed. This respects voxel size and gap of the image.
- */
--(NSImage*)fixSizeOf:(NSImage*)image 
-                with:(BARTImageSize*)dataSize;
 
 /**
  * Methods to update view objects based on internal state changes.
