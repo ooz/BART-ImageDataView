@@ -115,6 +115,17 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 @synthesize mSliceSelect;
 @synthesize mSliceSelectSlider;
 
+@synthesize mOverlaySelect;
+@synthesize mColortableSelect;
+@synthesize mRegion1LowerField;
+@synthesize mRegion1LowerStepper;
+@synthesize mRegion1UpperField;
+@synthesize mRegion1UpperStepper;
+@synthesize mRegion2LowerField;
+@synthesize mRegion2LowerStepper;
+@synthesize mRegion2UpperField;
+@synthesize mRegion2UpperStepper;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil 
                bundle:(NSBundle *)nibBundleOrNil
 {
