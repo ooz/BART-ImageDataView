@@ -24,6 +24,9 @@
     /** Renderer used to convert an EDDataElement to a NSImage. */
     BADataElementRenderer* mRenderer;
     
+    /** Dictionary mapping IDs to EDDataElement objects. */
+    NSMutableDictionary* mOverlays;
+    
     /** Size of the multi slice grid. */
     NSSize mGridSize;
 }
@@ -61,5 +64,14 @@
 -(void)showImage:(EDDataElement*)image
            slice:(uint)sliceNr
       atTimestep:(uint)tstep;
+
+// ###################
+// # Overlay support #
+// ###################
+
+-(void)setBackgroundImage:(EDDataElement*)image;
+-(void)setOverlayImage:(EDDataElement*)image withID:(NSString*)identifier;
+-(void)removeOverlay:(NSString*)identifier;
+//-(EDDataElement*)getOverlay;
 
 @end

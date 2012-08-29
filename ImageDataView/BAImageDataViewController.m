@@ -16,6 +16,13 @@
 #include <math.h>
 
 
+// #############
+// # Constants #
+// #############
+
+/** Initial size of the NSDictionary used to store overlays. */
+static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
+
 
 // ###############################
 // # Private method declarations #
@@ -116,6 +123,8 @@
         self->mRenderer = [[BADataElementRenderer alloc] initWithSliceSelector:sliceSelector];
         [sliceSelector release];
         
+        self->mOverlays = [[NSMutableDictionary alloc] initWithCapacity:INITIAL_OVERLAY_CAPACITY];
+        
         self->mGridSize = (NSSize) { DEFAULT_GRID_SIZE
                                    , DEFAULT_GRID_SIZE };
         
@@ -128,6 +137,8 @@
 -(void)dealloc
 {
     if (self->mRenderer != nil) [self->mRenderer release];
+    
+    [self->mOverlays release];
     
     [super dealloc];
 }
@@ -201,10 +212,29 @@
       atTimestep:(uint)tstep
 {
     [self->mRenderer setData:image slice:sliceNr timestep:tstep];
-    [self->mImageView setImage:[self->mRenderer renderImage]];
+    [self->mImageView setBackgroundImage:[self->mRenderer renderImage]];
     
     [self updateSliceSelectors];
     [self updateControlEnabledStates];
+}
+
+-(void)setBackgroundImage:(EDDataElement*)image
+{
+    [self showImage:image];
+}
+
+-(void)setOverlayImage:(EDDataElement*)image withID:(NSString*)identifier
+{
+    if (identifier != nil) {
+        [self->mOverlays setObject:image forKey:identifier];
+    }
+    // TODO: Update GUI dropdown!
+}
+
+-(void)removeOverlay:(NSString*)identifier
+{
+    [self->mOverlays removeObjectForKey:identifier];
+    // TODO: Update GUI dropdown!
 }
 
 -(void)updateSliceSelectors
