@@ -48,6 +48,9 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 -(void)setOrientationAndGridSizeSelectorStates:(BOOL)enabled;
 -(void)setSliceSelectorStates:(BOOL)enabled;
 
+/** Updates the min/max values of the NSStepper components used for the colortable regions. */
+-(void)updateStepperMinMax;
+
 @end
 
 
@@ -64,6 +67,11 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 @synthesize mGridSizeSelect;
 @synthesize mSliceSelect;
 @synthesize mSliceSelectSlider;
+
+@synthesize mRegion1Lower;
+@synthesize mRegion1Upper;
+@synthesize mRegion2Lower;
+@synthesize mRegion2Upper;
 
 @synthesize mOverlaySelect;
 @synthesize mColortableSelect;
@@ -100,23 +108,24 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 -(void)awakeFromNib
 {
 //    [self->mOverlaySelect removeAllItems];
-//    [self->mOverlaySelect setTitle:@"Overlay selection"];
-//    [self->mOverlaySelect setEnabled:NO];
+    [self->mOverlaySelect addItemWithTitle:@"Overlay selection"];
+    [self->mOverlaySelect setEnabled:NO];
 //    [self->mColortableSelect removeAllItems];
     [self->mColortableSelect addItemWithTitle:@"Colortable 1"];
     [self->mColortableSelect addItemWithTitle:@"Colortable 2"];
     
-    
     // TODO: use formatter for text fields!
 //    [self->mRegion1LowerField   setValue:[NSNumber numberWithDouble:0.0]];
-    [self->mRegion1LowerStepper setValue:[NSNumber numberWithDouble:0.0]];
+//    [self->mRegion1LowerStepper setValue:[NSNumber numberWithDouble:0.0]];
 //    [self->mRegion1UpperField   setValue:[NSNumber numberWithDouble:0.0]];
-    [self->mRegion1UpperStepper setValue:[NSNumber numberWithDouble:0.0]];
+//    [self->mRegion1UpperStepper setValue:[NSNumber numberWithDouble:0.0]];
     
     [self->mRegion2LowerField   setEnabled:NO];
     [self->mRegion2LowerStepper setEnabled:NO];
     [self->mRegion2UpperField   setEnabled:NO];
     [self->mRegion2UpperStepper setEnabled:NO];
+    
+    [self showImage:nil];
 }
 
 //-(void)initOverlayColortableComponents
@@ -204,7 +213,8 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 {
     [self->mRenderer setData:image slice:sliceNr timestep:tstep];
     [self->mImageView setBackgroundImage:[self->mRenderer renderImage]];
-    
+
+    [self updateStepperMinMax];
     [self updateSliceSelectors];
     [self updateControlEnabledStates];
 }
@@ -279,6 +289,28 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
     [self.mSliceSelectSlider setEnabled:enabled];
 }
 
+-(void)updateStepperMinMax
+{
+    NSArray* minMax = [self->mRenderer getDataMinMax];
+    
+    double min = 0.0;
+    double max = 0.0;
+    if (minMax != nil) {
+        min = [[minMax objectAtIndex:0] doubleValue];
+        max = [[minMax objectAtIndex:1] doubleValue];
+    }
+    
+    [self->mRegion1LowerStepper setMinValue:min];
+    [self->mRegion1LowerStepper setMaxValue:max];
+    [self->mRegion1UpperStepper setMinValue:min];
+    [self->mRegion1UpperStepper setMaxValue:max];
+    
+    [self->mRegion2LowerStepper setMinValue:min];
+    [self->mRegion2LowerStepper setMaxValue:max];
+    [self->mRegion2UpperStepper setMinValue:min];
+    [self->mRegion2UpperStepper setMaxValue:max];
+}
+
 
 // ##########################################
 // # Overlay and colortable related actions #
@@ -296,12 +328,40 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 
 -(IBAction)setRegion1Bounds:(id)sender
 {
+    float tfLower = [self->mRegion1LowerField floatValue];
+    if (tfLower < [self->mRegion1LowerStepper minValue]) {
+        [self->mRegion1LowerField setFloatValue:[self->mRegion1LowerStepper minValue]];
+    }
+    if (tfLower > [self->mRegion1LowerStepper maxValue]) {
+        [self->mRegion1LowerField setFloatValue:[self->mRegion1LowerStepper maxValue]];
+    }
     
+    float tfUpper = [self->mRegion1UpperField floatValue];
+    if (tfUpper < [self->mRegion1UpperStepper minValue]) {
+        [self->mRegion1UpperField setFloatValue:[self->mRegion1UpperStepper minValue]];
+    }
+    if (tfUpper > [self->mRegion1UpperStepper maxValue]) {
+        [self->mRegion1UpperField setFloatValue:[self->mRegion1UpperStepper maxValue]];
+    }
 }
 
 -(IBAction)setRegion2Bounds:(id)sender
 {
+    float tfLower = [self->mRegion2LowerField floatValue];
+    if (tfLower < [self->mRegion2LowerStepper minValue]) {
+        [self->mRegion2LowerField setFloatValue:[self->mRegion2LowerStepper minValue]];
+    }
+    if (tfLower > [self->mRegion2LowerStepper maxValue]) {
+        [self->mRegion2LowerField setFloatValue:[self->mRegion2LowerStepper maxValue]];
+    }
     
+    float tfUpper = [self->mRegion2UpperField floatValue];
+    if (tfUpper < [self->mRegion2UpperStepper minValue]) {
+        [self->mRegion2UpperField setFloatValue:[self->mRegion2UpperStepper minValue]];
+    }
+    if (tfUpper > [self->mRegion2UpperStepper maxValue]) {
+        [self->mRegion2UpperField setFloatValue:[self->mRegion2UpperStepper maxValue]];
+    }
 }
 
 @end

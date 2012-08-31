@@ -48,6 +48,11 @@
 // # Outlets and actions for overlays/colortables #
 // ################################################
 
+@property (nonatomic, readwrite) float mRegion1Lower;
+@property (nonatomic, readwrite) float mRegion1Upper;
+@property (nonatomic, readwrite) float mRegion2Lower;
+@property (nonatomic, readwrite) float mRegion2Upper;
+
 @property (readonly) IBOutlet NSPopUpButton*      mOverlaySelect;
 @property (readonly) IBOutlet NSPopUpButton*      mColortableSelect;
 // Color table region 1
