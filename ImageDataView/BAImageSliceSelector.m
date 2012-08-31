@@ -8,6 +8,9 @@
 
 #import "BAImageSliceSelector.h"
 
+/** Default size of the slice dimension. */
+const size_t DEFAULT_SLICE_DIMENSION_SIZE = 1;
+
 /** Number of dimensions in one volume. */
 const size_t RELEVANT_DIMENSIONS = 3;
 /** Index of the "slice dimension" in an array of dimensions. */
@@ -26,13 +29,17 @@ const size_t SLICE_DIMENSION_INDEX = 2;
 -(size_t)getSliceDimensionSize:(EDDataElement*)image
                      alignedTo:(enum ImageOrientation)orientation
 {
+    if (image == nil) {
+        return DEFAULT_SLICE_DIMENSION_SIZE;
+    }
+    
     BARTImageSize* imageSize = [image getImageSize]; 
     
     enum ImageDimension* dims = [self getDimensionsFrom:image alignedTo:orientation];
     enum ImageDimension sliceDim = dims[SLICE_DIMENSION_INDEX];
     free(dims);
     
-    size_t relevantSize = 0;
+    size_t relevantSize = DEFAULT_SLICE_DIMENSION_SIZE;
     switch (sliceDim) {
         case DIM_WIDTH:
             relevantSize = imageSize.columns;
