@@ -14,6 +14,7 @@
 			<string>NSStepperCell</string>
 			<string>NSSegmentedControl</string>
 			<string>NSPopUpButton</string>
+			<string>NSUserDefaultsController</string>
 			<string>NSMenuItem</string>
 			<string>NSMenu</string>
 			<string>NSTextFieldCell</string>
@@ -56,6 +57,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{373, 17}, {19, 27}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="90071994"/>
 						<string key="NSReuseIdentifierKey">_NS:1083</string>
 						<bool key="NSEnabled">YES</bool>
@@ -65,7 +67,7 @@
 							<string key="NSCellIdentifier">_NS:1083</string>
 							<reference key="NSControlView" ref="273766763"/>
 							<double key="NSMaxValue">100</double>
-							<double key="NSIncrement">1</double>
+							<double key="NSIncrement">0.5</double>
 							<bool key="NSAutorepeat">YES</bool>
 						</object>
 					</object>
@@ -74,6 +76,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{431, 17}, {19, 27}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="111230119"/>
 						<string key="NSReuseIdentifierKey">_NS:1083</string>
 						<bool key="NSEnabled">YES</bool>
@@ -83,7 +86,7 @@
 							<string key="NSCellIdentifier">_NS:1083</string>
 							<reference key="NSControlView" ref="781062275"/>
 							<double key="NSMaxValue">100</double>
-							<double key="NSIncrement">1</double>
+							<double key="NSIncrement">0.5</double>
 							<bool key="NSAutorepeat">YES</bool>
 						</object>
 					</object>
@@ -92,6 +95,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{498, 17}, {19, 27}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="594254829"/>
 						<string key="NSReuseIdentifierKey">_NS:1083</string>
 						<bool key="NSEnabled">YES</bool>
@@ -101,7 +105,7 @@
 							<string key="NSCellIdentifier">_NS:1083</string>
 							<reference key="NSControlView" ref="959603892"/>
 							<double key="NSMaxValue">100</double>
-							<double key="NSIncrement">1</double>
+							<double key="NSIncrement">0.5</double>
 							<bool key="NSAutorepeat">YES</bool>
 						</object>
 					</object>
@@ -110,6 +114,8 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{556, 17}, {19, 27}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:1083</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSStepperCell" key="NSCell" id="899475823">
@@ -118,7 +124,7 @@
 							<string key="NSCellIdentifier">_NS:1083</string>
 							<reference key="NSControlView" ref="71257770"/>
 							<double key="NSMaxValue">100</double>
-							<double key="NSIncrement">1</double>
+							<double key="NSIncrement">0.5</double>
 							<bool key="NSAutorepeat">YES</bool>
 						</object>
 					</object>
@@ -127,6 +133,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{514, 20}, {45, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="71257770"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -167,6 +174,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{456, 20}, {45, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="959603892"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -187,6 +195,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{389, 20}, {45, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="781062275"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -207,6 +216,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{331, 20}, {45, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="273766763"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -227,6 +237,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{198, 18}, {111, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="215336342"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -261,6 +272,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 18}, {179, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="557976407"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -295,6 +307,7 @@
 						<int key="NSvFlags">12</int>
 						<string key="NSFrame">{{0, 48}, {592, 5}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="87740073"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<string key="NSOffsets">{0, 0}</string>
@@ -327,6 +340,7 @@
 						</set>
 						<string key="NSFrame">{{0, 90}, {592, 428}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="555167030"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -346,6 +360,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{453, 58}, {121, 21}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="73264067"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -370,6 +385,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{377, 59}, {70, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="321609343"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -390,6 +406,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{20, 58}, {173, 25}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="255867891"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -430,6 +447,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{257, 56}, {78, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="134774983"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="NSEnabled">YES</bool>
@@ -493,8 +511,12 @@
 				</array>
 				<string key="NSFrameSize">{592, 518}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="127635858"/>
 				<string key="NSClassName">NSView</string>
+			</object>
+			<object class="NSUserDefaultsController" id="836185735">
+				<bool key="NSSharedInstance">YES</bool>
 			</object>
 		</array>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -738,6 +760,134 @@
 						<reference key="destination" ref="71257770"/>
 					</object>
 					<int key="connectionID">1488</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: mRegion1Lower</string>
+						<reference key="source" ref="215336342"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="215336342"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">value: mRegion1Lower</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">mRegion1Lower</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1490</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: mRegion1Upper</string>
+						<reference key="source" ref="90071994"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="90071994"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">value: mRegion1Upper</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">mRegion1Upper</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1496</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: mRegion2Lower</string>
+						<reference key="source" ref="111230119"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="111230119"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">value: mRegion2Lower</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">mRegion2Lower</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1502</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: mRegion2Upper</string>
+						<reference key="source" ref="594254829"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="594254829"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">value: mRegion2Upper</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">mRegion2Upper</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1508</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: mRegion2Upper</string>
+						<reference key="source" ref="71257770"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="71257770"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">value: mRegion2Upper</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">mRegion2Upper</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1512</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: mRegion2Lower</string>
+						<reference key="source" ref="959603892"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="959603892"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">value: mRegion2Lower</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">mRegion2Lower</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1505</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: mRegion1Upper</string>
+						<reference key="source" ref="781062275"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="781062275"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">value: mRegion1Upper</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">mRegion1Upper</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1499</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: mRegion1Lower</string>
+						<reference key="source" ref="273766763"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="273766763"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">value: mRegion1Lower</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">mRegion1Lower</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1492</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1954,6 +2104,11 @@
 						<reference key="object" ref="15019068"/>
 						<reference key="parent" ref="90071994"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1493</int>
+						<reference key="object" ref="836185735"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -2055,6 +2210,7 @@
 				<string key="1466.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="1467.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="1468.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="1493.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<array class="NSMutableArray" key="19.IBNSViewMetadataConstraints">
 					<reference ref="719474821"/>
 				</array>
@@ -2126,9 +2282,154 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">1488</int>
+			<int key="maxID">1512</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes"/>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<object class="IBPartialClassDescription">
+					<string key="className">BABrainImageView</string>
+					<string key="superclassName">NSImageView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BABrainImageView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BAImageDataViewController</string>
+					<string key="superclassName">NSViewController</string>
+					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="selectSlice:">id</string>
+						<string key="setColortable:">id</string>
+						<string key="setGridSize:">id</string>
+						<string key="setOrientation:">id</string>
+						<string key="setOverlay:">id</string>
+						<string key="setRegion1Bounds:">id</string>
+						<string key="setRegion2Bounds:">id</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="selectSlice:">
+							<string key="name">selectSlice:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="setColortable:">
+							<string key="name">setColortable:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="setGridSize:">
+							<string key="name">setGridSize:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="setOrientation:">
+							<string key="name">setOrientation:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="setOverlay:">
+							<string key="name">setOverlay:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="setRegion1Bounds:">
+							<string key="name">setRegion1Bounds:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="setRegion2Bounds:">
+							<string key="name">setRegion2Bounds:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="mColortableSelect">NSPopUpButton</string>
+						<string key="mGridSizeSelect">id</string>
+						<string key="mImageView">BABrainImageView</string>
+						<string key="mOrientationSelect">NSSegmentedControl</string>
+						<string key="mOverlaySelect">NSPopUpButton</string>
+						<string key="mRegion1LowerField">NSTextField</string>
+						<string key="mRegion1LowerStepper">NSStepper</string>
+						<string key="mRegion1UpperField">NSTextField</string>
+						<string key="mRegion1UpperStepper">NSStepper</string>
+						<string key="mRegion2LowerField">NSTextField</string>
+						<string key="mRegion2LowerStepper">NSStepper</string>
+						<string key="mRegion2UpperField">NSTextField</string>
+						<string key="mRegion2UpperStepper">NSStepper</string>
+						<string key="mSliceSelect">NSTextField</string>
+						<string key="mSliceSelectSlider">NSSlider</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="mColortableSelect">
+							<string key="name">mColortableSelect</string>
+							<string key="candidateClassName">NSPopUpButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mGridSizeSelect">
+							<string key="name">mGridSizeSelect</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mImageView">
+							<string key="name">mImageView</string>
+							<string key="candidateClassName">BABrainImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mOrientationSelect">
+							<string key="name">mOrientationSelect</string>
+							<string key="candidateClassName">NSSegmentedControl</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mOverlaySelect">
+							<string key="name">mOverlaySelect</string>
+							<string key="candidateClassName">NSPopUpButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mRegion1LowerField">
+							<string key="name">mRegion1LowerField</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mRegion1LowerStepper">
+							<string key="name">mRegion1LowerStepper</string>
+							<string key="candidateClassName">NSStepper</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mRegion1UpperField">
+							<string key="name">mRegion1UpperField</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mRegion1UpperStepper">
+							<string key="name">mRegion1UpperStepper</string>
+							<string key="candidateClassName">NSStepper</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mRegion2LowerField">
+							<string key="name">mRegion2LowerField</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mRegion2LowerStepper">
+							<string key="name">mRegion2LowerStepper</string>
+							<string key="candidateClassName">NSStepper</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mRegion2UpperField">
+							<string key="name">mRegion2UpperField</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mRegion2UpperStepper">
+							<string key="name">mRegion2UpperStepper</string>
+							<string key="candidateClassName">NSStepper</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mSliceSelect">
+							<string key="name">mSliceSelect</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="mSliceSelectSlider">
+							<string key="name">mSliceSelectSlider</string>
+							<string key="candidateClassName">NSSlider</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BAImageDataViewController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSLayoutConstraint</string>
+					<string key="superclassName">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/NSLayoutConstraint.h</string>
+					</object>
+				</object>
+			</array>
+		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">
