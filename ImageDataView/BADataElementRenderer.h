@@ -75,6 +75,7 @@
 -(void)setTargetOrientation:(enum ImageOrientation)o;
 
 -(EDDataElement*)getDataElement;
+-(NSArray*)getDataMinMax;
 -(uint)getCurrentSlice;
 -(uint)getSliceCount;
 -(uint)getCurrentTimestep;

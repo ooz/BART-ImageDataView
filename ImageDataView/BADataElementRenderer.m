@@ -249,6 +249,11 @@
     return self->mImage;
 }
 
+-(NSArray*)getDataMinMax
+{
+    return self->mImageMinMax;
+}
+
 -(uint)getCurrentSlice
 {
     return self->mCurrentSlice;
