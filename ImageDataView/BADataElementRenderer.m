@@ -211,7 +211,7 @@
         
         self->mMainOrientation = [image getMainOrientation];
         
-        BARTImageSize* imageSize = [self->mImage getImageSize];
+        BARTImageSize* imageSize = [image getImageSize];
         self->mTimestepCount = imageSize.timesteps;
         
         NSDictionary* imageProps = [image getProps:self->mPropList];
