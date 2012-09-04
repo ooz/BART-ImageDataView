@@ -231,8 +231,8 @@
 //        NSLog(@"MainOrientation %d", self->mMainOrientation);
 //        NSLog(@"VoxelGap  %@",  self->mVoxelGap);
 //        NSLog(@"VoxelSize %@",  self->mVoxelSize);
-//        NSLog(@"ColumnVec  %@", self->mColumnVec);
 //        NSLog(@"RowVec %@",     self->mRowVec);
+//        NSLog(@"ColumnVec  %@", self->mColumnVec);
     }
 }
 
@@ -280,12 +280,20 @@
     enum ImageDimension* dims = [self->mRelevantSliceFilter getDimensionsFrom:self->mImage
                                                                     alignedTo:self->mTargetOrientation];
     
-    float rowOrientComponent = [[self->mRowVec objectAtIndex:0] floatValue];
-    float colOrientComponent = [[self->mColumnVec objectAtIndex:1] floatValue];
+    NSUInteger* relevantComps = [self->mRelevantSliceFilter getRowColVectorMainComponents:[self->mImage getMainOrientation]];
+    float rowOrientComponent = [[self->mRowVec objectAtIndex:relevantComps[0]] floatValue];
+    float colOrientComponent = [[self->mColumnVec objectAtIndex:relevantComps[1]] floatValue];
+    free(relevantComps);
 //    NSLog(@"Row/col components of row/col-vecs: (%f, %f)", rowOrientComponent, colOrientComponent);
     
     BOOL flipX = rowOrientComponent < ROW_FLIP_THRESHOLD;
-    BOOL flipY = colOrientComponent < COL_FLIP_THRESHOLD;
+    BOOL flipY;
+    if (relevantComps[1] == 2) {
+        // y-axis is top-down in dicom images, while scanner z-axis is bottom-up in coronal images
+        flipY = colOrientComponent > COL_FLIP_THRESHOLD; 
+    } else {
+        flipY = colOrientComponent < COL_FLIP_THRESHOLD;
+    }
     
     switch (dims[0]) {
         case DIM_SLICE:
@@ -300,14 +308,14 @@
             break;
         case DIM_HEIGHT:
             if (dims[1] == DIM_SLICE) {
-                renderedSlices = [self renderTurnLeftRotateRightImage :flipY :NO :flipX];
+                renderedSlices = [self renderTurnLeftRotateRightImage :flipY :YES :flipX];
             }
             break;
         default:
             // DIM_WIDTH
             switch (dims[1]) {
                 case DIM_SLICE:
-                    renderedSlices = [self renderTurnUpImage :flipX :NO :flipY];
+                    renderedSlices = [self renderTurnUpImage :flipX :YES :flipY];
                     break;
                 default:
                     renderedSlices = [self renderIdenticalImage :flipX :flipY :NO];

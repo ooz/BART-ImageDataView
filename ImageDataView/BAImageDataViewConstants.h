@@ -33,9 +33,9 @@ static NSString* PROP_ROWVEC    = @"rowvec";
 
 /** Threshold for horizontal flipping. 
  *  If first  component of row vector is below this value, the image is flipped. */
-static const float ROW_FLIP_THRESHOLD = -0.2f;
+static const float ROW_FLIP_THRESHOLD = 0.0f;
 /** Threshold for vertical flipping. 
  *  If second component of col vector is below this value, the image is flipped. */
-static const float COL_FLIP_THRESHOLD = -0.2f;
+static const float COL_FLIP_THRESHOLD = 0.0f;
 
 #endif
