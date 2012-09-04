@@ -58,6 +58,28 @@ const size_t SLICE_DIMENSION_INDEX = 2;
     return relevantSize;
 }
 
+-(NSUInteger*)getRowColVectorMainComponents:(enum ImageOrientation)mainOrient
+{
+    BOOL isSagittal = mainOrient == ORIENT_SAGITTAL || mainOrient == ORIENT_REVSAGITTAL;
+    BOOL isCoronal  = mainOrient == ORIENT_CORONAL  || mainOrient == ORIENT_REVCORONAL;
+    
+    NSUInteger* comps = malloc(sizeof(NSUInteger) * 2);
+    
+    if (isSagittal) {
+        comps[0] = 1;
+        comps[1] = 2;
+    } else if (isCoronal) {
+        comps[0] = 0;
+        comps[1] = 2;
+    } else {
+        // Axial or default
+        comps[0] = 0;
+        comps[1] = 1;
+    }
+    
+    return comps;
+}
+
 -(enum ImageDimension*)getDimensionsFrom:(EDDataElement*)image
                                alignedTo:(enum ImageOrientation)orientation
 {

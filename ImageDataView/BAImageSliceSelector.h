@@ -43,6 +43,22 @@ enum ImageDimension {
                                alignedTo:(enum ImageOrientation)orientation;
 
 /**
+ * Determines the relevant component indices of the row/column vectors based
+ * on a given main orientation.
+ *
+ * \param mainOrient Main orientation which determines the relevant components 
+ *                   of the row/col vectors.
+ * \return           Two-dimensional vector of NSUInteger values.
+ *                   The first value denotes the relevant component of the
+ *                   row vector, the second value the relevant component of
+ *                   the column vector.
+ *                   The values range from 0 to 2 (first to third component).
+ *                   MEMORY MANAGEMENT: Caller is responsible to free the 
+ *                                      allocated memory!
+ */
+-(NSUInteger*)getRowColVectorMainComponents:(enum ImageOrientation)mainOrient;
+
+/**
  * Returns the size of the "slice dimension" which is determined by the image's
  * main orientation and the target orientation.
  *
