@@ -102,8 +102,13 @@
 // ###################
 
 -(void)setBackgroundImage:(EDDataElement*)image;
--(void)setOverlayImage:(EDDataElement*)image withID:(NSString*)identifier;
+-(void)addOverlayImage:(EDDataElement*)image withID:(NSString*)identifier;
 -(void)removeOverlay:(NSString*)identifier;
-//-(EDDataElement*)getOverlay;
+
+-(void)showOverlay:(NSString*)identifier;
+-(void)hideOverlay:(NSString*)identifier;
+
+-(EDDataElement*)getOverlayBy:(NSString*)identifier;
+-(NSArray*)overlayIDs;
 
 @end

@@ -229,13 +229,32 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
     [self showImage:image];
 }
 
--(void)setOverlayImage:(EDDataElement*)image withID:(NSString*)identifier
+-(void)addOverlayImage:(EDDataElement*)image withID:(NSString*)identifier
 {
     if (image != nil && identifier != nil) {
         [self->mOverlays setObject:image forKey:identifier];
         [self->mOverlaySelect addItemWithTitle:identifier];
         [self->mOverlaySelect setEnabled:YES];
     }
+}
+
+-(void)showOverlay:(NSString*)identifier
+{
+    // TODO
+}
+-(void)hideOverlay:(NSString*)identifier
+{
+    // TODO
+}
+
+-(EDDataElement*)getOverlayBy:(NSString*)identifier
+{
+    return [self->mOverlays objectForKey:identifier];
+}
+
+-(NSArray*)overlayIDs
+{
+    return [self->mOverlays allKeys];
 }
 
 -(void)removeOverlay:(NSString*)identifier
