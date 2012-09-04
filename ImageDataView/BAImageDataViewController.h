@@ -24,6 +24,9 @@
     /** Renderer used to convert an EDDataElement to a NSImage. */
     BADataElementRenderer* mRenderer;
     
+    /** Renderer for overlays. */
+    BADataElementRenderer* mOverlayRenderer;
+    
     /** Dictionary mapping IDs to EDDataElement objects. */
     NSMutableDictionary* mOverlays;
     

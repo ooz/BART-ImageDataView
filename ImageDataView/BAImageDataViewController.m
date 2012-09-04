@@ -92,6 +92,10 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
         self->mRenderer = [[BADataElementRenderer alloc] initWithSliceSelector:sliceSelector];
         [sliceSelector release];
         
+        sliceSelector = [[BAImageSliceSelector alloc] init];
+        self->mOverlayRenderer = [[BADataElementRenderer alloc] initWithSliceSelector:sliceSelector];
+        [sliceSelector release];
+        
         self->mOverlays = [[NSMutableDictionary alloc] initWithCapacity:INITIAL_OVERLAY_CAPACITY];
         
         self->mGridSize = (NSSize) { DEFAULT_GRID_SIZE
@@ -137,6 +141,7 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 -(void)dealloc
 {
     if (self->mRenderer != nil) [self->mRenderer release];
+    if (self->mOverlayRenderer != nil) [self->mOverlayRenderer release];
     
     [self->mOverlays release];
     
@@ -226,10 +231,11 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 
 -(void)setOverlayImage:(EDDataElement*)image withID:(NSString*)identifier
 {
-    if (identifier != nil) {
+    if (image != nil && identifier != nil) {
         [self->mOverlays setObject:image forKey:identifier];
+        [self->mOverlaySelect addItemWithTitle:identifier];
+        [self->mOverlaySelect setEnabled:YES];
     }
-    // TODO: Update GUI dropdown!
 }
 
 -(void)removeOverlay:(NSString*)identifier
@@ -318,7 +324,15 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 
 -(IBAction)setOverlay:(id)sender
 {
-
+    if (sender == self->mOverlaySelect) {
+        NSString* selection = [self->mOverlaySelect titleOfSelectedItem];
+        EDDataElement* overlay = [self->mOverlays objectForKey:selection];
+        
+        if (overlay != nil) {
+            [self->mOverlayRenderer setData:overlay slice:0 timestep:0];
+            [self->mImageView setForegroundImage:[self->mOverlayRenderer renderImage]];
+        }
+    }
 }
 
 -(IBAction)setColortable:(id)sender
