@@ -90,11 +90,11 @@
         self->mColumnVec   = nil;
         self->mRowVec      = nil;
         
-        self->mPropList = [NSArray arrayWithObjects: PROP_VOXELGAP
-                                                   , PROP_VOXELSIZE
-                                                   , PROP_COLUMNVEC
-                                                   , PROP_ROWVEC
-                                                   , nil];
+        self->mPropList = [[NSArray arrayWithObjects: PROP_VOXELGAP
+                                                    , PROP_VOXELSIZE
+                                                    , PROP_COLUMNVEC
+                                                    , PROP_ROWVEC
+                                                    , nil] retain];
         
         self->mRelevantSliceFilter = [[BAImageSliceSelector alloc] init];
         self->mRelevantSlices = nil;
@@ -133,6 +133,8 @@
     if (self->mVoxelSize != nil)   [self->mVoxelSize release];
     if (self->mColumnVec != nil)   [self->mColumnVec release];
     if (self->mRowVec != nil)      [self->mRowVec release];
+    
+    if (self->mPropList != nil)    [self->mPropList release];
     
     if (self->mRelevantSliceFilter != nil) [self->mRelevantSliceFilter release];
     if (self->mRelevantSlices      != nil) [self->mRelevantSlices      release];
