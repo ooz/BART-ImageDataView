@@ -81,7 +81,7 @@
  *
  * \see{BAImageDataViewController#showImage:slice:atTimestep:}
  */
--(void)showImage:(EDDataElement*)image;
+-(void)showImage:(EDDataElement*)image __attribute__((deprecated));
 
 /** Displays an image.
  * Shows a volume from an image object at the specified timestep.
@@ -95,7 +95,7 @@
  */
 -(void)showImage:(EDDataElement*)image
            slice:(uint)sliceNr
-      atTimestep:(uint)tstep;
+      atTimestep:(uint)tstep __attribute__((deprecated));
 
 // ###################
 // # Overlay support #
