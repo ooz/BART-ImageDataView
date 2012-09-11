@@ -64,6 +64,8 @@
 
 -(id)initWithSliceSelector:(BAImageSliceSelector*)selector;
 
+-(void)setData:(EDDataElement*)elem;
+
 -(void)setData:(EDDataElement*)elem
          slice:(uint)sliceNr
       timestep:(uint)tstep;

@@ -142,6 +142,10 @@
     [super dealloc];
 }
 
+-(void)setData:(EDDataElement*)elem
+{
+    [self setData:elem slice:self->mCurrentSlice timestep:self->mCurrentTimestep];
+}
 
 -(void)setData:(EDDataElement*)elem
          slice:(uint)sliceNr
