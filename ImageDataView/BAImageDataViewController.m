@@ -268,9 +268,9 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 
 -(void)updateViewImages
 {
-    [self->mImageView setBackgroundImage:[self->mRenderer renderImage]];
-    [self->mImageView setForegroundImage:[self->mOverlayRenderer renderImage]];
-    
+    [self->mImageView setImages:[self->mOverlayRenderer renderImage] 
+                             on:[self->mRenderer renderImage]];
+
     [self updateStepperMinMax];
     [self updateSliceSelectors];
     [self updateControlEnabledStates];
@@ -362,7 +362,8 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
         
         if (overlay != nil) {
             [self->mOverlayRenderer setData:overlay slice:[self->mRenderer getCurrentSlice] timestep:[self->mRenderer getCurrentTimestep]];
-            [self->mImageView setForegroundImage:[self->mOverlayRenderer renderImage]];
+            
+            [self updateViewImages];
         }
     }
 }

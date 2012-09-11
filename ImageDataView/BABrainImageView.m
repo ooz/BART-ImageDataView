@@ -49,24 +49,50 @@
     [super drawRect:dirtyRect];
 }
 
+-(void)setImages:(NSImage*)foreground 
+              on:(NSImage*)background
+{
+    if (self->mForegroundImage != nil) [self->mForegroundImage release];
+    
+    if (foreground != nil) {
+        self->mForegroundImage = [foreground retain];
+    } else {
+        self->mForegroundImage = nil;
+    }
+    
+    if (self->mBackgroundImage != nil) [self->mBackgroundImage release];
+    
+    if (background != nil) {
+        self->mBackgroundImage = [background retain];
+    } else {
+        self->mBackgroundImage = nil;
+    }
+    
+    [self updateSetImage];
+}
+
 -(void)setBackgroundImage:(NSImage*)newImage
 {
-    if (self->mBackgroundImage != nil) 
-        [self->mBackgroundImage release];
+    if (self->mBackgroundImage != nil) [self->mBackgroundImage release];
     
-    if (newImage != nil)
+    if (newImage != nil) {
         self->mBackgroundImage = [newImage retain];
+    } else {
+        self->mBackgroundImage = nil;
+    }
     
     [self updateSetImage];
 }
 
 -(void)setForegroundImage:(NSImage*)newImage
 {
-    if (self->mForegroundImage != nil) 
-        [self->mForegroundImage release];
+    if (self->mForegroundImage != nil) [self->mForegroundImage release];
     
-    if (newImage != nil)
+    if (newImage != nil) {
         self->mForegroundImage = [newImage retain];
+    } else {
+        self->mForegroundImage = nil;
+    }
     
     [self updateSetImage];
 }

@@ -20,6 +20,8 @@
     
 }
 
+-(void)setImages:(NSImage*)foreground on:(NSImage*)background;
+
 -(void)setBackgroundImage:(NSImage*)newImage;
 -(void)setForegroundImage:(NSImage*)newImage;
 
