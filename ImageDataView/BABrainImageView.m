@@ -54,7 +54,9 @@
     if (self->mBackgroundImage != nil) 
         [self->mBackgroundImage release];
     
-    self->mBackgroundImage = [newImage retain];
+    if (newImage != nil)
+        self->mBackgroundImage = [newImage retain];
+    
     [self updateSetImage];
 }
 
@@ -63,7 +65,9 @@
     if (self->mForegroundImage != nil) 
         [self->mForegroundImage release];
     
-    self->mForegroundImage = [newImage retain];
+    if (newImage != nil)
+        self->mForegroundImage = [newImage retain];
+    
     [self updateSetImage];
 }
 
