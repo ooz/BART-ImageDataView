@@ -75,28 +75,6 @@
 -(IBAction)setRegion2Bounds:(id)sender;
 
 
-/** Displays an image.
- * Convenience method for \see{BAImageDataViewController#showImage:slice:atTimestep:}.
- * Shows the first slice of the first timestep.
- *
- * \see{BAImageDataViewController#showImage:slice:atTimestep:}
- */
--(void)showImage:(EDDataElement*)image __attribute__((deprecated));
-
-/** Displays an image.
- * Shows a volume from an image object at the specified timestep.
- * Depending on the view state (either single or multi slice view) the parameter
- * sliceNr is evaluated. It is non-relevant for the multi slice grid.
- *
- * \param image   EDDataElement to display.
- * \param sliceNr The slice of the volume of image at tstep to display. 
- *                Value is ignored if view is in multi slice state.
- * \param tstep   Timestep/volume of image to display.
- */
--(void)showImage:(EDDataElement*)image
-           slice:(uint)sliceNr
-      atTimestep:(uint)tstep __attribute__((deprecated));
-
 // ###################
 // # Overlay support #
 // ###################

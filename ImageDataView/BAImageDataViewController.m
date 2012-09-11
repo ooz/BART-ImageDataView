@@ -34,6 +34,12 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 -(void)initOverlayColortableComponents;
 
 /**
+ * Renders back- and foreground and passes the image objects to the view
+ * class for display.
+ */
+-(void)updateViewImages;
+
+/**
  * Methods to update view objects based on internal state changes.
  */
 -(void)updateSliceSelectors;
@@ -103,7 +109,7 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
         
 //        [self initOverlayColortableComponents];
         
-        [self showImage:nil];
+        [self updateViewImages];
     }
     
     return self;
@@ -129,7 +135,7 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
     [self->mRegion2UpperField   setEnabled:NO];
     [self->mRegion2UpperStepper setEnabled:NO];
     
-    [self showImage:nil];
+    [self updateViewImages];
 }
 
 //-(void)initOverlayColortableComponents
@@ -169,9 +175,9 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
         }
 
         [self->mRenderer setTargetOrientation:viewOrientation];
-        [self showImage:[self->mRenderer getDataElement] 
-                  slice:[self->mRenderer getCurrentSlice]
-             atTimestep:[self->mRenderer getCurrentTimestep]];
+        [self->mOverlayRenderer setTargetOrientation:viewOrientation];
+        
+        [self updateViewImages];
     }
 }
 
@@ -192,9 +198,9 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 //        NSLog(@"Grid size: %2.0f, %2.0f", self->mGridSize.width, self->mGridSize.height);
         
         [self->mRenderer setGridSize:self->mGridSize];
-        [self showImage:[self->mRenderer getDataElement] 
-                  slice:[self->mRenderer getCurrentSlice]
-             atTimestep:[self->mRenderer getCurrentTimestep]];
+        [self->mOverlayRenderer setGridSize:self->mGridSize];
+        
+        [self updateViewImages];
     }
 }
 
@@ -202,31 +208,17 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 {
     int sliceNr = [sender intValue] - 1;
     
-    [self showImage:[self->mRenderer getDataElement] 
-              slice:sliceNr
-         atTimestep:[self->mRenderer getCurrentTimestep]];
-}
-
--(void)showImage:(EDDataElement*)image
-{
-    [self showImage:image slice:0 atTimestep:0];
-}
-
--(void)showImage:(EDDataElement*)image
-           slice:(uint)sliceNr
-      atTimestep:(uint)tstep
-{
-    [self->mRenderer setData:image slice:sliceNr timestep:tstep];
-    [self->mImageView setBackgroundImage:[self->mRenderer renderImage]];
-
-    [self updateStepperMinMax];
-    [self updateSliceSelectors];
-    [self updateControlEnabledStates];
+    [self->mRenderer setSlice:sliceNr];
+    [self->mOverlayRenderer setSlice:sliceNr];
+    
+    [self updateViewImages];
 }
 
 -(void)setBackgroundImage:(EDDataElement*)image
 {
-    [self showImage:image];
+    [self->mRenderer setData:image];
+    
+    [self updateViewImages];
 }
 
 -(void)addOverlayImage:(EDDataElement*)image withID:(NSString*)identifier
@@ -261,6 +253,16 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 {
     [self->mOverlays removeObjectForKey:identifier];
     // TODO: Update GUI dropdown!
+}
+
+-(void)updateViewImages
+{
+    [self->mImageView setBackgroundImage:[self->mRenderer renderImage]];
+    [self->mImageView setForegroundImage:[self->mOverlayRenderer renderImage]];
+    
+    [self updateStepperMinMax];
+    [self updateSliceSelectors];
+    [self updateControlEnabledStates];
 }
 
 -(void)updateSliceSelectors
