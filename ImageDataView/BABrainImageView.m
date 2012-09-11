@@ -73,29 +73,57 @@
 
 -(void)updateSetImage
 {
-    if (       self->mBackgroundImage != nil && self->mForegroundImage == nil) {
-        [self setImage:self->mBackgroundImage];
-        
-    } else if (self->mBackgroundImage == nil && self->mForegroundImage != nil) {
-        [self setImage:self->mForegroundImage];
+    if (self->mBackgroundImage == nil) {
+        if (self->mForegroundImage != nil) {
+            [self setImage:self->mForegroundImage];
+        }
         
     } else {
-        // Both images are set
-        // Use NSImage composite
-        // http://www.bdunagan.com/2010/01/25/cocoa-tip-nsimage-composites/
+        if (self->mForegroundImage == nil) {
+            [self setImage:self->mBackgroundImage];
         
-        [self->mBackgroundImage lockFocus];
-        
-        [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationNone];
-        [self->mForegroundImage drawInRect:NSMakeRect(0, 0, 
-                                                      [self->mBackgroundImage size].width, [self->mBackgroundImage size].height) 
-                       fromRect:NSZeroRect 
-                      operation:NSCompositeSourceOver 
-                       fraction:1.0];
-        
-        [self->mBackgroundImage unlockFocus];
-        
-        [self setImage:self->mBackgroundImage];
+        } else {
+            // Both images set, draw composite
+            NSImage* drawArea = [self->mBackgroundImage copy];
+            
+            // Determine actual (bitmap) sizes for drawing purposes
+            NSArray* imageReps;
+            NSImageRep* imageRep;
+            
+            NSSize bgSize;
+            imageReps = [self->mBackgroundImage representations];
+            imageRep  = [imageReps objectAtIndex:0];
+            bgSize.width  = [imageRep pixelsWide];
+            bgSize.height = [imageRep pixelsHigh];
+            
+            NSSize fgSize;
+            imageReps = [self->mForegroundImage representations];
+            imageRep  = [imageReps objectAtIndex:0];
+            fgSize.width  = [imageRep pixelsWide];
+            fgSize.height = [imageRep pixelsHigh];
+            
+            // Set actual (bitmap) representation sizes
+            [drawArea setSize:bgSize];
+            [self->mForegroundImage setSize:fgSize];
+            
+            // Use NSImage composite
+            // http://www.bdunagan.com/2010/01/25/cocoa-tip-nsimage-composites/
+            [drawArea lockFocus];
+            
+            [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationNone];
+            [self->mForegroundImage drawInRect:NSMakeRect(0, 0, bgSize.width, bgSize.height) 
+                                      fromRect:NSZeroRect 
+                                     operation:NSCompositeSourceOver
+                                      fraction:0.5];
+            
+            [drawArea unlockFocus];
+            
+            // Restore size
+            [drawArea setSize:[self->mBackgroundImage size]];
+            
+            [self setImage:drawArea];
+            [drawArea release];
+        }
     }
 }
 
