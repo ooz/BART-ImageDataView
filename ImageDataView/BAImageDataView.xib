@@ -419,19 +419,19 @@
 							<array class="NSMutableArray" key="NSSegmentImages">
 								<object class="NSSegmentItem">
 									<double key="NSSegmentItemWidth">55</double>
-									<string key="NSSegmentItemLabel">sagittal</string>
+									<string key="NSSegmentItemTooltip">sagittal</string>
 									<bool key="NSSegmentItemSelected">YES</bool>
 									<int key="NSSegmentItemImageScaling">0</int>
 								</object>
 								<object class="NSSegmentItem">
 									<double key="NSSegmentItemWidth">55</double>
-									<string key="NSSegmentItemLabel">axial</string>
+									<string key="NSSegmentItemTooltip">axial</string>
 									<int key="NSSegmentItemTag">1</int>
 									<int key="NSSegmentItemImageScaling">0</int>
 								</object>
 								<object class="NSSegmentItem">
 									<double key="NSSegmentItemWidth">55</double>
-									<string key="NSSegmentItemLabel">coronal</string>
+									<string key="NSSegmentItemTooltip">coronal</string>
 									<int key="NSSegmentItemImageScaling">0</int>
 								</object>
 							</array>
@@ -2218,7 +2218,7 @@
 				<string key="24.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<boolean value="NO" key="255.IBNSViewMetadataTranslatesAutoresizingMaskIntoConstraints"/>
 				<string key="255.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<integer value="2" key="256.IBNSSegmentedControlInspectorSelectedSegmentMetadataKey"/>
+				<integer value="0" key="256.IBNSSegmentedControlInspectorSelectedSegmentMetadataKey"/>
 				<string key="256.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<array class="NSMutableArray" key="283.IBNSViewMetadataConstraints">
 					<reference ref="588489650"/>
