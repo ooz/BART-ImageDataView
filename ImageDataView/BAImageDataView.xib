@@ -235,7 +235,7 @@
 					<object class="NSPopUpButton" id="557976407">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{198, 18}, {111, 26}}</string>
+						<string key="NSFrame">{{194, 18}, {111, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="215336342"/>
@@ -270,7 +270,7 @@
 					<object class="NSPopUpButton" id="87740073">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 18}, {179, 26}}</string>
+						<string key="NSFrame">{{17, 18}, {175, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="557976407"/>
@@ -404,7 +404,7 @@
 					<object class="NSSegmentedControl" id="555167030">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{20, 58}, {173, 25}}</string>
+						<string key="NSFrame">{{20, 58}, {169, 25}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="255867891"/>
@@ -413,11 +413,7 @@
 						<object class="NSSegmentedCell" key="NSCell" id="377313963">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">0</int>
-							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaGrande</string>
-								<double key="NSSize">13</double>
-								<int key="NSfFlags">16</int>
-							</object>
+							<reference key="NSSupport" ref="474822562"/>
 							<string key="NSCellIdentifier">_NS:9</string>
 							<reference key="NSControlView" ref="555167030"/>
 							<array class="NSMutableArray" key="NSSegmentImages">
@@ -439,7 +435,7 @@
 									<int key="NSSegmentItemImageScaling">0</int>
 								</object>
 							</array>
-							<int key="NSSegmentStyle">2</int>
+							<int key="NSSegmentStyle">4</int>
 						</object>
 					</object>
 					<object class="NSPopUpButton" id="255867891">
@@ -515,7 +511,7 @@
 				<reference key="NSNextKeyView" ref="127635858"/>
 				<string key="NSClassName">NSView</string>
 			</object>
-			<object class="NSUserDefaultsController" id="836185735">
+			<object class="NSUserDefaultsController" id="674018367">
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
 		</array>
@@ -2106,7 +2102,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1493</int>
-						<reference key="object" ref="836185735"/>
+						<reference key="object" ref="674018367"/>
 						<reference key="parent" ref="0"/>
 					</object>
 				</array>
