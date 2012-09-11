@@ -20,6 +20,9 @@
 		4737CE26159371BE00E0D0FD /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4737CE25159371BE00E0D0FD /* Quartz.framework */; };
 		474F0C4E15BEA96300AF1858 /* BAImageSliceSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 474F0C4D15BEA96300AF1858 /* BAImageSliceSelector.m */; };
 		47BB83FB15E781EB004E3B2F /* BADataElementRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BB83FA15E781EB004E3B2F /* BADataElementRenderer.m */; };
+		47EC773A15FF625500A00C51 /* Axial.png in Resources */ = {isa = PBXBuildFile; fileRef = 47EC773715FF622E00A00C51 /* Axial.png */; };
+		47EC773B15FF625500A00C51 /* Coronal.png in Resources */ = {isa = PBXBuildFile; fileRef = 47EC773815FF622E00A00C51 /* Coronal.png */; };
+		47EC773C15FF625500A00C51 /* Sagittal.png in Resources */ = {isa = PBXBuildFile; fileRef = 47EC773915FF622E00A00C51 /* Sagittal.png */; };
 		47F841451592195B00048830 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47F841441592195B00048830 /* Cocoa.framework */; };
 		47F8414F1592195B00048830 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 47F8414D1592195B00048830 /* InfoPlist.strings */; };
 		47F841511592195B00048830 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 47F841501592195B00048830 /* main.m */; };
@@ -52,6 +55,9 @@
 		47BB83F915E781EB004E3B2F /* BADataElementRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BADataElementRenderer.h; sourceTree = "<group>"; };
 		47BB83FA15E781EB004E3B2F /* BADataElementRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BADataElementRenderer.m; sourceTree = "<group>"; };
 		47BB83FD15E7B16B004E3B2F /* BAImageDataViewConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAImageDataViewConstants.h; sourceTree = "<group>"; };
+		47EC773715FF622E00A00C51 /* Axial.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Axial.png; sourceTree = "<group>"; };
+		47EC773815FF622E00A00C51 /* Coronal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Coronal.png; sourceTree = "<group>"; };
+		47EC773915FF622E00A00C51 /* Sagittal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Sagittal.png; sourceTree = "<group>"; };
 		47F841401592195B00048830 /* ImageDataView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageDataView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47F841441592195B00048830 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		47F841471592195B00048830 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -99,11 +105,22 @@
 			path = EDNA;
 			sourceTree = "<group>";
 		};
+		47EC773615FF622E00A00C51 /* img */ = {
+			isa = PBXGroup;
+			children = (
+				47EC773715FF622E00A00C51 /* Axial.png */,
+				47EC773815FF622E00A00C51 /* Coronal.png */,
+				47EC773915FF622E00A00C51 /* Sagittal.png */,
+			);
+			path = img;
+			sourceTree = "<group>";
+		};
 		47F841351592195B00048830 = {
 			isa = PBXGroup;
 			children = (
 				4737CDF6159230DD00E0D0FD /* EDNA */,
 				47F8414A1592195B00048830 /* ImageDataView */,
+				47EC773615FF622E00A00C51 /* img */,
 				47F841431592195B00048830 /* Frameworks */,
 				47F841411592195B00048830 /* Products */,
 			);
@@ -221,6 +238,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				47EC773A15FF625500A00C51 /* Axial.png in Resources */,
+				47EC773B15FF625500A00C51 /* Coronal.png in Resources */,
+				47EC773C15FF625500A00C51 /* Sagittal.png in Resources */,
 				47F8414F1592195B00048830 /* InfoPlist.strings in Resources */,
 				47F841551592195B00048830 /* Credits.rtf in Resources */,
 				47F8415B1592195C00048830 /* MainMenu.xib in Resources */,

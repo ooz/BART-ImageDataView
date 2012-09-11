@@ -135,6 +135,17 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
     [self->mRegion2UpperField   setEnabled:NO];
     [self->mRegion2UpperStepper setEnabled:NO];
     
+    NSImage* iconImage;
+    iconImage = [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleWithIdentifier:BUNDLE_ID] pathForResource: @"Sagittal" ofType: @"png"]];
+    [self->mOrientationSelect setImage:iconImage forSegment:0];
+    [iconImage release];
+    iconImage = [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleWithIdentifier:BUNDLE_ID] pathForResource: @"Axial" ofType: @"png"]];
+    [self->mOrientationSelect setImage:iconImage forSegment:1];
+    [iconImage release];
+    iconImage = [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleWithIdentifier:BUNDLE_ID] pathForResource: @"Coronal" ofType: @"png"]];
+    [self->mOrientationSelect setImage:iconImage forSegment:2];
+    [iconImage release];
+    
     [self updateViewImages];
 }
 

@@ -9,6 +9,9 @@
 #ifndef ImageDataView_BAImageDataViewConstants_h
 #define ImageDataView_BAImageDataViewConstants_h
 
+/** Bundle identifier used to locate resources. */
+static NSString* BUNDLE_ID = @"de.cbs.mpg.bart.ImageDataView";
+
 /** Number of channels in the rendered NSImage object (RGBA). */
 static const int   NUMBER_OF_CHANNELS = 4;
 /** Highest alpha value. */
