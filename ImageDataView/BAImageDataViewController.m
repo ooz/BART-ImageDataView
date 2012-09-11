@@ -348,7 +348,7 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
         EDDataElement* overlay = [self->mOverlays objectForKey:selection];
         
         if (overlay != nil) {
-            [self->mOverlayRenderer setData:overlay slice:0 timestep:0];
+            [self->mOverlayRenderer setData:overlay slice:[self->mRenderer getCurrentSlice] timestep:[self->mRenderer getCurrentTimestep]];
             [self->mImageView setForegroundImage:[self->mOverlayRenderer renderImage]];
         }
     }
