@@ -87,6 +87,7 @@
             NSImage* drawArea = [self->mBackgroundImage copy];
             
             // Determine actual (bitmap) sizes for drawing purposes
+            // http://borkware.com/quickies/one?topic=NSImage
             NSArray* imageReps;
             NSImageRep* imageRep;
             
