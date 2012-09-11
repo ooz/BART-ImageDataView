@@ -329,7 +329,7 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 
 -(void)updateStepperMinMax
 {
-    NSArray* minMax = [self->mRenderer getDataMinMax];
+    NSArray* minMax = [self->mOverlayRenderer getDataMinMax];
     
     double min = 0.0;
     double max = 0.0;
