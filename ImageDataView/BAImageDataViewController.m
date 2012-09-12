@@ -247,7 +247,14 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 -(void)addOverlayImage:(EDDataElement*)image withID:(NSString*)identifier
 {
     if (image != nil && identifier != nil) {
+        if ([self->mOverlays count] == 0) {
+            [self->mOverlaySelect removeAllItems];
+            [self->mOverlaySelect addItemWithTitle:NO_OVERLAY_TEXT];
+            [self->mOverlaySelect setEnabled:YES];
+        }
+        
         [self->mOverlays setObject:image forKey:identifier];
+        
         [self->mOverlaySelect addItemWithTitle:identifier];
         [self->mOverlaySelect setEnabled:YES];
     }
@@ -267,7 +274,7 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 {
     EDDataElement* overlay = [self->mOverlays objectForKey:identifier];
     
-    if (overlay == [self->mOverlayRenderer getDataElement]) {
+    if (overlay != nil && overlay == [self->mOverlayRenderer getDataElement]) {
         [self->mOverlayRenderer setData:nil];
         
         [self updateViewImages];
@@ -286,8 +293,18 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 
 -(void)removeOverlay:(NSString*)identifier
 {
+    [self hideOverlay:identifier];
+    
     [self->mOverlays removeObjectForKey:identifier];
-    // TODO: Update GUI dropdown!
+    
+    if ([self->mOverlays count] == 0) {
+        [self->mOverlaySelect removeAllItems];
+        [self->mOverlaySelect addItemWithTitle:DEFAULT_OVERLAY_TEXT];
+        [self->mOverlaySelect setEnabled:NO];
+    
+    } else if ([self->mOverlaySelect indexOfItemWithTitle:identifier] != -1) {
+        [self->mOverlaySelect removeItemWithTitle:identifier];
+    }
 }
 
 -(void)updateViewImages
@@ -383,7 +400,13 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
     if (sender == self->mOverlaySelect) {
         NSString* selection = [self->mOverlaySelect titleOfSelectedItem];
         
-        [self showOverlay:selection];
+        if ([selection isEqualToString:NO_OVERLAY_TEXT]) {
+            [self->mOverlayRenderer setData:nil];
+            [self updateViewImages];
+            
+        } else {
+            [self showOverlay:selection];
+        }
     }
 }
 
