@@ -20,10 +20,14 @@
 // # Constants #
 // #############
 
+/** Text shown in the overlay selection drop down if no overlay is available. */
 static NSString* DEFAULT_OVERLAY_TEXT = @"Overlay selection";
+/** Drop down option text to disable the current overlay. */
 static NSString* NO_OVERLAY_TEXT      = @"No overlay";
 
+/** Drop down text for the first colortable (one domain). */
 static NSString* COLORTABLE_ONE_TEXT  = @"Colortable 1";
+/** Drop down text for the second colortable (two domains). */
 static NSString* COLORTABLE_TWO_TEXT  = @"Colortable 2";
 
 /** Initial size of the NSDictionary used to store overlays. */
