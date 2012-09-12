@@ -243,11 +243,23 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 
 -(void)showOverlay:(NSString*)identifier
 {
-    // TODO
+    EDDataElement* overlay = [self->mOverlays objectForKey:identifier];
+    
+    if (overlay != nil) {
+        [self->mOverlayRenderer setData:overlay slice:[self->mRenderer getCurrentSlice] timestep:[self->mRenderer getCurrentTimestep]];
+        
+        [self updateViewImages];
+    }
 }
 -(void)hideOverlay:(NSString*)identifier
 {
-    // TODO
+    EDDataElement* overlay = [self->mOverlays objectForKey:identifier];
+    
+    if (overlay == [self->mOverlayRenderer getDataElement]) {
+        [self->mOverlayRenderer setData:nil];
+        
+        [self updateViewImages];
+    }
 }
 
 -(EDDataElement*)getOverlayBy:(NSString*)identifier
@@ -358,13 +370,8 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 {
     if (sender == self->mOverlaySelect) {
         NSString* selection = [self->mOverlaySelect titleOfSelectedItem];
-        EDDataElement* overlay = [self->mOverlays objectForKey:selection];
         
-        if (overlay != nil) {
-            [self->mOverlayRenderer setData:overlay slice:[self->mRenderer getCurrentSlice] timestep:[self->mRenderer getCurrentTimestep]];
-            
-            [self updateViewImages];
-        }
+        [self showOverlay:selection];
     }
 }
 
