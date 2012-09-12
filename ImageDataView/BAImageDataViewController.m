@@ -256,7 +256,6 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
         [self->mOverlays setObject:image forKey:identifier];
         
         [self->mOverlaySelect addItemWithTitle:identifier];
-        [self->mOverlaySelect setEnabled:YES];
     }
 }
 
