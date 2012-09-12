@@ -300,6 +300,7 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
         [self->mOverlaySelect removeAllItems];
         [self->mOverlaySelect addItemWithTitle:DEFAULT_OVERLAY_TEXT];
         [self->mOverlaySelect setEnabled:NO];
+        [self->mColortableSelect setEnabled:NO];
     
     } else if ([self->mOverlaySelect indexOfItemWithTitle:identifier] != -1) {
         [self->mOverlaySelect removeItemWithTitle:identifier];
@@ -402,16 +403,20 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
         if ([selection isEqualToString:NO_OVERLAY_TEXT]) {
             [self->mOverlayRenderer setData:nil];
             [self updateViewImages];
+            [self->mColortableSelect setEnabled:NO];
             
         } else {
             [self showOverlay:selection];
+            [self->mColortableSelect setEnabled:YES];
         }
     }
 }
 
 -(IBAction)setColortable:(id)sender
 {
-    
+    if (sender == self->mColortableSelect) {
+        // TODO
+    }
 }
 
 -(IBAction)setRegion1Bounds:(id)sender
