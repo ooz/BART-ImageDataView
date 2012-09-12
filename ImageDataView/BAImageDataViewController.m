@@ -20,6 +20,12 @@
 // # Constants #
 // #############
 
+static NSString* DEFAULT_OVERLAY_TEXT = @"Overlay selection";
+static NSString* NO_OVERLAY_TEXT      = @"No overlay";
+
+static NSString* COLORTABLE_ONE_TEXT  = @"Colortable 1";
+static NSString* COLORTABLE_TWO_TEXT  = @"Colortable 2";
+
 /** Initial size of the NSDictionary used to store overlays. */
 static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 
@@ -118,11 +124,13 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 -(void)awakeFromNib
 {
 //    [self->mOverlaySelect removeAllItems];
-    [self->mOverlaySelect addItemWithTitle:@"Overlay selection"];
+    [self->mOverlaySelect addItemWithTitle:DEFAULT_OVERLAY_TEXT];
     [self->mOverlaySelect setEnabled:NO];
+    
 //    [self->mColortableSelect removeAllItems];
-    [self->mColortableSelect addItemWithTitle:@"Colortable 1"];
-    [self->mColortableSelect addItemWithTitle:@"Colortable 2"];
+    [self->mColortableSelect addItemWithTitle:COLORTABLE_ONE_TEXT];
+    [self->mColortableSelect addItemWithTitle:COLORTABLE_TWO_TEXT];
+    [self->mColortableSelect setEnabled:NO];
     
     // TODO: use formatter for text fields!
 //    [self->mRegion1LowerField   setValue:[NSNumber numberWithDouble:0.0]];
