@@ -59,7 +59,7 @@ static NSArray* colorMappingFilterKernels = nil;
 														 error: NULL];
 
         NSArray*  kernels = [CIKernel kernelsWithString: code];
-        NSLog(@"###In Array: %i",[kernels count]);
+        NSLog(@"###In Array: %lu",[kernels count]);
 		// if the .cikernel file contains more then one kernel we would end up
 		// with an array of kernels
 
