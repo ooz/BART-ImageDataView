@@ -44,43 +44,45 @@ static NSArray* colorMappingFilterKernels = nil;
 }
 
 // the init() method initializes our kernel(s) with the actual kernel code from the .cikernel file
-- (id) init {
-	
-    if(colorMappingFilterKernels == nil) {
-
-//        NSString* code    = [NSString stringWithContentsOfFile:@"/Users/user/Development/BARTProcedure/BARTApplication/ColorMappingFilter.cikernel"
-//													  encoding: NSUTF8StringEncoding
-//                                                         error:NULL];
+-(id)init
+{
+    if (self = [super init]) {
+        if(colorMappingFilterKernels == nil) {
+            
+            //        NSString* code    = [NSString stringWithContentsOfFile:@"/Users/user/Development/BARTProcedure/BARTApplication/ColorMappingFilter.cikernel"
+            //													  encoding: NSUTF8StringEncoding
+            //                                                         error:NULL];
+            
+            NSBundle* bundle  = [NSBundle bundleForClass: [self class]];
+            NSString* code    = [NSString stringWithContentsOfFile: [bundle pathForResource: @"ColorMappingFilter"
+                                                                                     ofType: @"cikernel"]
+                                                          encoding: NSUTF8StringEncoding
+                                                             error: NULL];
+            
+            NSArray*  kernels = [CIKernel kernelsWithString: code];
+            NSLog(@"###In Array: %lu",[kernels count]);
+            // if the .cikernel file contains more then one kernel we would end up
+            // with an array of kernels
+            
+            // the 'copyItems:NO' simply sends a 'retain' to all array elements, so we need
+            // a 'release' somewhere !?!?!?!?!?
+            colorMappingFilterKernels = [[NSArray alloc] initWithArray:kernels copyItems:NO];
+            
+        }
         
-        NSBundle* bundle  = [NSBundle bundleForClass: [self class]];
-        NSString* code    = [NSString stringWithContentsOfFile: [bundle pathForResource: @"ColorMappingFilter"
-																				 ofType: @"cikernel"]
-													  encoding: NSUTF8StringEncoding
-														 error: NULL];
-
-        NSArray*  kernels = [CIKernel kernelsWithString: code];
-        NSLog(@"###In Array: %lu",[kernels count]);
-		// if the .cikernel file contains more then one kernel we would end up
-		// with an array of kernels
-
-		// the 'copyItems:NO' simply sends a 'retain' to all array elements, so we need
-		// a 'release' somewhere !?!?!?!?!?
-		colorMappingFilterKernels = [[NSArray alloc] initWithArray:kernels copyItems:NO];
-		
+        self->kernelToUse = 0;
+        
     }
-	
-	kernelToUse = 0;
-	
-    return [super init];
+    
+    return self;
 }
 
-
-- (CIImage*) outputImage {
+-(CIImage*)outputImage
+{
     CISampler* src = [CISampler samplerWithImage: inputImage];
     CISampler* colTable = [CISampler samplerWithImage: colorTable];
 	CIImage *ret = [self apply: [colorMappingFilterKernels objectAtIndex:kernelToUse],   src, colTable, minimum, maximum, kCIApplyOptionDefinition, [src definition], nil];
 	
-
 	return ret;
 }
 
