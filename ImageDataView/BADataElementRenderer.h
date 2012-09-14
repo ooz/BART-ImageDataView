@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "EDDataElement.h"
 
+@class BAImageFilter;
 @class BAImageSliceSelector;
 
 @interface BADataElementRenderer : NSObject {
@@ -32,6 +33,13 @@
      */
     NSArray*       mPropList;
     
+    /** 
+     * Cache of rendered image in case the raw data (+ slice and orientation info) did not change.
+     * (Is used when filter attributes change, so no need to render raw EDDataElement again.)
+     */
+    CIImage*       mRenderCache;
+    /** Image filter for the raw rendered image (e.g. a colortable filter). */
+    BAImageFilter* mImageFilter;
     
     /** Filter that decides which slices to render in the multi slice grid. */
     BAImageSliceSelector* mRelevantSliceFilter;
@@ -76,11 +84,15 @@
 -(void)setGridSize:(NSSize)size;
 -(void)setTargetOrientation:(enum ImageOrientation)o;
 
+-(void)setImageFilter:(BAImageFilter*)filter;
+
 -(EDDataElement*)getDataElement;
 -(NSArray*)getDataMinMax;
 -(uint)getCurrentSlice;
 -(uint)getSliceCount;
 -(uint)getCurrentTimestep;
+
+-(BAImageFilter*)getImageFilter;
 
 /**
  * \return Autoreleased NSImage.

@@ -9,6 +9,7 @@
 #import "BADataElementRenderer.h"
 
 #import "BAImageDataViewConstants.h"
+#import "BAImageFilter.h"
 #import "BAImageSliceSelector.h"
 
 
@@ -96,6 +97,8 @@
                                                     , PROP_ROWVEC
                                                     , nil] retain];
         
+        self->mImageFilter = nil;
+        
         self->mRelevantSliceFilter = [[BAImageSliceSelector alloc] init];
         self->mRelevantSlices = nil;
         
@@ -135,6 +138,8 @@
     if (self->mRowVec != nil)      [self->mRowVec release];
     
     if (self->mPropList != nil)    [self->mPropList release];
+    
+    if (self->mImageFilter != nil) [self->mImageFilter release];
     
     if (self->mRelevantSliceFilter != nil) [self->mRelevantSliceFilter release];
     if (self->mRelevantSlices      != nil) [self->mRelevantSlices      release];
@@ -209,6 +214,15 @@
     [self setSlice:self->mCurrentSlice];
 }
 
+-(void)setImageFilter:(BAImageFilter*)filter
+{
+    if (self->mImageFilter != nil) 
+        [self->mImageFilter release];
+    
+    self->mImageFilter = [filter retain];
+}
+
+
 -(void)fetchPropsIfUpdated:(EDDataElement*)image
 {
     if (self->mImage != image) {
@@ -273,6 +287,11 @@
 -(uint)getCurrentTimestep
 {
     return self->mCurrentTimestep;
+}
+
+-(BAImageFilter*)getImageFilter
+{
+    return self->mImageFilter;
 }
 
 
@@ -848,6 +867,13 @@
                                                       size:ciImageSize 
                                                     format:kCIFormatRGBAf 
                                                 colorSpace:colorSpace];
+    
+    // Apply filter
+    if (self->mImageFilter != nil) {
+        CIImage* newCIImage = [self->mImageFilter apply:ciImage];
+        [ciImage release];
+        ciImage = newCIImage;
+    }
     
     NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
     CGImageRef        cgImage = imageRep.CGImage;
