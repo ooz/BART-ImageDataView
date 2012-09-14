@@ -10,6 +10,7 @@
 
 #import "BAImageDataViewConstants.h"
 #import "BABrainImageView.h"
+#import "BASingleDomainColortableFilter.h"
 #import "BAImageSliceSelector.h"
 #import "BADataElementRenderer.h"
 
@@ -111,6 +112,10 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
         sliceSelector = [[BAImageSliceSelector alloc] init];
         self->mOverlayRenderer = [[BADataElementRenderer alloc] initWithSliceSelector:sliceSelector];
         [sliceSelector release];
+        
+        BAImageFilter* imageFilter = [[BASingleDomainColortableFilter alloc] init];
+        [self->mOverlayRenderer setImageFilter:imageFilter];
+        [imageFilter release];
         
         self->mOverlays = [[NSMutableDictionary alloc] initWithCapacity:INITIAL_OVERLAY_CAPACITY];
         
