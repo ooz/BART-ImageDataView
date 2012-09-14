@@ -26,6 +26,7 @@
 		47EC77401600CA7E00A00C51 /* ColorMappingFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = 47EC773D1600CA7D00A00C51 /* ColorMappingFilter.cikernel */; };
 		47EC77411600CA7E00A00C51 /* ColorMappingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 47EC773F1600CA7D00A00C51 /* ColorMappingFilter.m */; };
 		47EC7744160356B400A00C51 /* BAImageFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 47EC7743160356B300A00C51 /* BAImageFilter.m */; };
+		47EC774716035EDD00A00C51 /* BASingleDomainColortableFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 47EC774616035EDD00A00C51 /* BASingleDomainColortableFilter.m */; };
 		47F841451592195B00048830 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47F841441592195B00048830 /* Cocoa.framework */; };
 		47F8414F1592195B00048830 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 47F8414D1592195B00048830 /* InfoPlist.strings */; };
 		47F841511592195B00048830 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 47F841501592195B00048830 /* main.m */; };
@@ -66,6 +67,8 @@
 		47EC773F1600CA7D00A00C51 /* ColorMappingFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ColorMappingFilter.m; path = ../ColorMappingFilter.m; sourceTree = "<group>"; };
 		47EC7742160356B300A00C51 /* BAImageFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAImageFilter.h; sourceTree = "<group>"; };
 		47EC7743160356B300A00C51 /* BAImageFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAImageFilter.m; sourceTree = "<group>"; };
+		47EC774516035EDD00A00C51 /* BASingleDomainColortableFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BASingleDomainColortableFilter.h; sourceTree = "<group>"; };
+		47EC774616035EDD00A00C51 /* BASingleDomainColortableFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BASingleDomainColortableFilter.m; sourceTree = "<group>"; };
 		47F841401592195B00048830 /* ImageDataView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageDataView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		47F841441592195B00048830 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		47F841471592195B00048830 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -180,6 +183,8 @@
 				47BB83FD15E7B16B004E3B2F /* BAImageDataViewConstants.h */,
 				47EC7742160356B300A00C51 /* BAImageFilter.h */,
 				47EC7743160356B300A00C51 /* BAImageFilter.m */,
+				47EC774516035EDD00A00C51 /* BASingleDomainColortableFilter.h */,
+				47EC774616035EDD00A00C51 /* BASingleDomainColortableFilter.m */,
 				47EC773D1600CA7D00A00C51 /* ColorMappingFilter.cikernel */,
 				47EC773E1600CA7D00A00C51 /* ColorMappingFilter.h */,
 				47EC773F1600CA7D00A00C51 /* ColorMappingFilter.m */,
@@ -284,6 +289,7 @@
 				47BB83FB15E781EB004E3B2F /* BADataElementRenderer.m in Sources */,
 				47EC77411600CA7E00A00C51 /* ColorMappingFilter.m in Sources */,
 				47EC7744160356B400A00C51 /* BAImageFilter.m in Sources */,
+				47EC774716035EDD00A00C51 /* BASingleDomainColortableFilter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
