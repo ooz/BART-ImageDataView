@@ -8,12 +8,51 @@
 
 #import "BASingleDomainColortableFilter.h"
 
+#import "ColorMappingFilter.h"
+#import "BAImageDataViewConstants.h"
+
+extern CIFormat kCIFormatRGBAf;
+
 @implementation BASingleDomainColortableFilter
 
 -(id)init
 {
     if (self = [super init]) {
         self->mColortable = nil;
+        
+        NSSize ctSize;
+        ctSize.width  = 512;
+        ctSize.height = 1;
+        
+        //float colorTableData[256 * 4 * 2];
+        float* colorTableData = malloc(sizeof(float) * 256 * 4 * 2);
+        
+        // red to yellow (the more positive the more yellow)
+        for(int _ctIndex = 0; _ctIndex < 256; _ctIndex++) {
+            colorTableData[_ctIndex * 4 + 0] = 1.0;
+            colorTableData[_ctIndex * 4 + 1] = 1.0 * (_ctIndex / 255.0);
+            colorTableData[_ctIndex * 4 + 2] = 0.0;//1.0 * _ctIndex / 255.0;
+            colorTableData[_ctIndex * 4 + 3] = 1.0;
+        }
+        // cyan to blue (the more negative the more cyan)
+        for(int _ctIndex = 0; _ctIndex < 256; _ctIndex++) {
+            colorTableData[(_ctIndex + 256) * 4 + 0] = 0.0;//0.5 - 0.5 * (_ctIndex / 255.0); // 127 to 0
+            colorTableData[(_ctIndex + 256) * 4 + 1] = 1.0 * (_ctIndex / 255.0); // 255 to 0
+            colorTableData[(_ctIndex + 256) * 4 + 2] = 1.0;//1.0 * (_ctIndex / 255.0);
+            colorTableData[(_ctIndex + 256) * 4 + 3] = 1.0;
+        }
+        
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        self->mColortable = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:colorTableData length:512 * sizeof(float) * NUMBER_OF_CHANNELS]
+                                                    bytesPerRow:512 * sizeof(float) * NUMBER_OF_CHANNELS
+                                                           size:ctSize 
+                                                         format:kCIFormatRGBAf 
+                                                     colorSpace:colorSpace];
+        
+        CGColorSpaceRelease(colorSpace);
+        free(colorTableData);
+
+        
     }
     
     return self;
@@ -25,6 +64,30 @@
         [self->mColortable release];
     
     [super dealloc];
+}
+
+-(CIImage*)apply:(CIImage*)on
+{
+//    [ColorMappingFilter class];
+        
+    if (self->mFilter != nil) 
+        [self->mFilter release];
+    
+    self->mFilter = [[CIFilter filterWithName: @"ColorMappingFilter"
+                                keysAndValues: @"inputImage", on,
+                                               @"colorTable", self->mColortable, nil] retain];
+    
+    int colortableMappingType = 0;
+    [(ColorMappingFilter*) self->mFilter setKernelToUse: colortableMappingType];
+    float    filterMinimum = 0.0;
+    float    filterMaximum = 255.0;
+    [self->mFilter setValue: [NSNumber numberWithFloat: filterMinimum / 255.0]
+                          forKey: @"minimum"];
+    
+    [self->mFilter setValue: [NSNumber numberWithFloat: filterMaximum / 255.0]
+                          forKey: @"maximum"];
+    
+    return [self->mFilter valueForKey:@"outputImage"];
 }
 
 @end
