@@ -68,22 +68,19 @@ extern CIFormat kCIFormatRGBAf;
 
 -(CIImage*)apply:(CIImage*)on
 {
-//    [ColorMappingFilter class];
+    [ColorMappingFilter class];
         
-    if (self->mFilter != nil) 
-        [self->mFilter release];
-    
-    self->mFilter = [[CIFilter filterWithName: @"ColorMappingFilter"
-                                keysAndValues: @"inputImage", on,
-                                               @"colorTable", self->mColortable, nil] retain];
+    self->mFilter = [CIFilter filterWithName: @"ColorMappingFilter"
+                               keysAndValues: @"inputImage", on,
+                                              @"colorTable", self->mColortable, nil];
     
     int colortableMappingType = 0;
     [(ColorMappingFilter*) self->mFilter setKernelToUse: colortableMappingType];
+    
     float    filterMinimum = 0.0;
     float    filterMaximum = 255.0;
     [self->mFilter setValue: [NSNumber numberWithFloat: filterMinimum / 255.0]
                           forKey: @"minimum"];
-    
     [self->mFilter setValue: [NSNumber numberWithFloat: filterMaximum / 255.0]
                           forKey: @"maximum"];
     
