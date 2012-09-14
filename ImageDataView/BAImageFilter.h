@@ -8,6 +8,25 @@
 
 #import <Foundation/Foundation.h>
 
-@interface BAImageFilter : NSObject
+/**
+ * Common superclass for colortable based image filters.
+ * This class is not meant for direct use but for subclassing.
+ */
+@interface BAImageFilter : NSObject {
+    
+    CIFilter* mFilter;
+    
+}
+
+-(CIFilter*)filter;
+
+/**
+ * Applies the wrapped CIFilter to a CIImage object.
+ *
+ * \param on CIImage to apply the filter to.
+ * \return   New CIImage resulting from applying the filter
+ *           on the passed image.
+ */
+-(CIImage*)apply:(CIImage*)on;
 
 @end
