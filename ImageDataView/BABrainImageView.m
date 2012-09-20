@@ -141,7 +141,7 @@
             [self->mForegroundImage drawInRect:NSMakeRect(0, 0, bgSize.width, bgSize.height) 
                                       fromRect:NSZeroRect 
                                      operation:NSCompositeSourceOver
-                                      fraction:0.5];
+                                      fraction:1.0];
             
             [drawArea unlockFocus];
             
