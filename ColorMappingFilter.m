@@ -90,6 +90,8 @@ static NSArray* colorMappingFilterKernels = nil;
 {
 	[inputImage release];
 	[colorTable release];
+    [minimum release];
+    [maximum release];
 
 	[super dealloc];
 }
