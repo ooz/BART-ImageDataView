@@ -177,10 +177,7 @@
         [self setSlice:sliceNr];
         [self setTimestep:tstep];
         
-        BOOL isSingleSliceView = self->mGridSize.width == 1 && self->mGridSize.height == 1;
-        if (!isSingleSliceView) {
-            [self fetchRelevantSlices:self->mImage];
-        }
+        [self setGridSize:self->mGridSize];
     }
 }
 
@@ -203,6 +200,11 @@
 -(void)setGridSize:(NSSize)size
 {
     self->mGridSize = size;
+    
+    BOOL isSingleSliceView = self->mGridSize.width == 1 && self->mGridSize.height == 1;
+    if (!isSingleSliceView) {
+        [self fetchRelevantSlices:self->mImage];
+    }
 }
 
 -(void)setTargetOrientation:(enum ImageOrientation)o
@@ -212,6 +214,7 @@
     self->mSliceCount = [self->mRelevantSliceFilter getSliceDimensionSize:self->mImage 
                                                                 alignedTo:self->mTargetOrientation];
     [self setSlice:self->mCurrentSlice];
+    [self setGridSize:self->mGridSize];
 }
 
 -(void)setImageFilter:(BAImageFilter*)filter
