@@ -15,6 +15,7 @@
 @interface BAImageFilter : NSObject {
     
     CIFilter* mFilter;
+    NSMutableDictionary* mParams;
     
 }
 
@@ -28,5 +29,15 @@
  *           on the passed image.
  */
 -(CIImage*)apply:(CIImage*)on;
+
+/**
+ * Sets a named parameter.
+ */
+-(void)setValue:(id)value forKey:(NSString *)key;
+
+/**
+ * Gets a named parameter.
+ */
+-(id)valueForKey:(NSString *)key;
 
 @end

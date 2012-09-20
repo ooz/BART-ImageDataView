@@ -77,11 +77,11 @@ extern CIFormat kCIFormatRGBAf;
     int colortableMappingType = 0;
     [(ColorMappingFilter*) self->mFilter setKernelToUse: colortableMappingType];
     
-    float    filterMinimum = 0.0;
-    float    filterMaximum = 255.0;
-    [self->mFilter setValue: [NSNumber numberWithFloat: filterMinimum / 255.0]
+//    float    filterMinimum = 0.0;
+//    float    filterMaximum = 255.0;
+    [self->mFilter setValue: [self valueForKey:@"minimum"]
                           forKey: @"minimum"];
-    [self->mFilter setValue: [NSNumber numberWithFloat: filterMaximum / 255.0]
+    [self->mFilter setValue: [self valueForKey:@"maximum"]
                           forKey: @"maximum"];
     
     return [self->mFilter valueForKey:@"outputImage"];

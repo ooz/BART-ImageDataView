@@ -51,6 +51,11 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 -(void)updateViewImages;
 
 /**
+ * Update the image filters applied to overlay with new min/max values.
+ */
+-(void)updateFilterBounds;
+
+/**
  * Methods to update view objects based on internal state changes.
  */
 -(void)updateSliceSelectors;
@@ -271,6 +276,8 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
     if (overlay != nil) {
         [self->mOverlayRenderer setData:overlay slice:[self->mRenderer getCurrentSlice] timestep:[self->mRenderer getCurrentTimestep]];
         
+        [self updateFilterBounds];
+        
         [self updateViewImages];
     }
 }
@@ -441,6 +448,8 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
     if (tfUpper > [self->mRegion1UpperStepper maxValue]) {
         [self->mRegion1UpperField setFloatValue:[self->mRegion1UpperStepper maxValue]];
     }
+    
+    [self updateFilterBounds];
 }
 
 -(IBAction)setRegion2Bounds:(id)sender
@@ -459,6 +468,24 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
     }
     if (tfUpper > [self->mRegion2UpperStepper maxValue]) {
         [self->mRegion2UpperField setFloatValue:[self->mRegion2UpperStepper maxValue]];
+    }
+}
+
+-(void)updateFilterBounds
+{
+    // Update min/max in overlay filters
+    BAImageFilter* filter = [self->mOverlayRenderer getImageFilter];
+    if (filter != nil) {
+        float tfLower = [self->mRegion1LowerField floatValue];
+        float tfUpper = [self->mRegion1UpperField floatValue];
+        float min = [self->mRegion1LowerStepper minValue];
+        float max = [self->mRegion1LowerStepper maxValue];
+        
+        // TODO: Compute exact normalized value respecting all signum cases of min/max
+        [filter setValue:[NSNumber numberWithFloat:tfLower / max] forKey:@"minimum"];
+        [filter setValue:[NSNumber numberWithFloat:tfUpper / max] forKey:@"maximum"];
+        
+        [self updateViewImages];
     }
 }
 
