@@ -128,8 +128,6 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
                                    , DEFAULT_GRID_SIZE };
         
 //        [self initOverlayColortableComponents];
-        
-        [self updateViewImages];
     }
     
     return self;
