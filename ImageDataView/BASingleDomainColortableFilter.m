@@ -20,6 +20,9 @@ extern CIFormat kCIFormatRGBAf;
     if (self = [super init]) {
         self->mColortable = nil;
         
+        [self setValue:[NSNumber numberWithFloat:0.0f] forKey:@"minimum"];
+        [self setValue:[NSNumber numberWithFloat:1.0f] forKey:@"maximum"];
+        
         NSSize ctSize;
         ctSize.width  = 512;
         ctSize.height = 1;
