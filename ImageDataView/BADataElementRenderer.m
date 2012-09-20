@@ -870,9 +870,7 @@
     
     // Apply filter
     if (self->mImageFilter != nil) {
-        CIImage* newCIImage = [self->mImageFilter apply:ciImage];
-        [ciImage release];
-        ciImage = newCIImage;
+        ciImage = [self->mImageFilter apply:ciImage];
     }
     
     NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
@@ -881,7 +879,10 @@
     NSImage*          nsImage = [[[NSImage alloc] initWithCGImage:cgImage 
                                                              size:ciImageSize] autorelease];
     
-    [ciImage release];
+    if (self->mImageFilter == nil) {
+        // If CIFilter based image filter is active, this caused a BadAccess
+        [ciImage release];
+    }
     CGColorSpaceRelease(colorSpace);
     
     return nsImage;
