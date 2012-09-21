@@ -76,6 +76,14 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
 -(void)updateControlEnabledStates;
 -(void)setOrientationAndGridSizeSelectorStates:(BOOL)enabled;
 -(void)setSliceSelectorStates:(BOOL)enabled;
+/**
+ * Enable/disable the textfields and steppers used to select the colortable region(s).
+ *
+ * \param mask    Mask telling the region selection components (textfield/stepper)
+ *                of which region to enable/disable.
+ * \param enabled Flag to enable (YES) or disable (NO) the region selection components.
+ */
+-(void)setRegionSelectionStates:(NSUInteger)mask to:(BOOL)enabled;
 
 /** Updates the min/max values of the NSStepper components used for the colortable regions. */
 -(void)updateStepperMinMax;
@@ -133,8 +141,6 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
         
         self->mGridSize = (NSSize) { DEFAULT_GRID_SIZE
                                    , DEFAULT_GRID_SIZE };
-        
-//        [self initOverlayColortableComponents];
     }
     
     return self;
@@ -142,11 +148,9 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
 
 -(void)awakeFromNib
 {
-//    [self->mOverlaySelect removeAllItems];
     [self->mOverlaySelect addItemWithTitle:DEFAULT_OVERLAY_TEXT];
     [self->mOverlaySelect setEnabled:NO];
     
-//    [self->mColortableSelect removeAllItems];
     [self->mColortableSelect addItemWithTitle:COLORTABLE_ONE_TEXT];
     [self->mColortableSelect addItemWithTitle:COLORTABLE_TWO_TEXT];
     [self->mColortableSelect setEnabled:NO];
@@ -157,10 +161,9 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
 //    [self->mRegion1UpperField   setValue:[NSNumber numberWithDouble:0.0]];
 //    [self->mRegion1UpperStepper setValue:[NSNumber numberWithDouble:0.0]];
     
-    [self->mRegion2LowerField   setEnabled:NO];
-    [self->mRegion2LowerStepper setEnabled:NO];
-    [self->mRegion2UpperField   setEnabled:NO];
-    [self->mRegion2UpperStepper setEnabled:NO];
+    [self setRegionSelectionStates:( FIRST_REGION_SELECTION_MASK 
+                                   |SECOND_REGION_SELECTION_MASK) 
+                                to:NO];
     
     NSImage* iconImage;
     iconImage = [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleWithIdentifier:BUNDLE_ID] pathForResource: @"Sagittal" ofType: @"png"]];
@@ -175,12 +178,6 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
     
     [self updateViewImages];
 }
-
-//-(void)initOverlayColortableComponents
-//{
-//    
-//    [self awa]
-//}
 
 -(void)dealloc
 {
@@ -281,6 +278,7 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
     if (overlay != nil) {
         [self->mOverlayRenderer setData:overlay slice:[self->mRenderer getCurrentSlice] timestep:[self->mRenderer getCurrentTimestep]];
         
+        [self updateStepperMinMax];
         [self updateFilterBounds:(FIRST_REGION_SELECTION_MASK | SECOND_REGION_SELECTION_MASK)];
         
         [self updateViewImages];
@@ -318,6 +316,8 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
         [self->mOverlaySelect addItemWithTitle:DEFAULT_OVERLAY_TEXT];
         [self->mOverlaySelect setEnabled:NO];
         [self->mColortableSelect setEnabled:NO];
+        [self setRegionSelectionStates:(FIRST_REGION_SELECTION_MASK | SECOND_REGION_SELECTION_MASK) 
+                                    to:NO];
     
     } else if ([self->mOverlaySelect indexOfItemWithTitle:identifier] != -1) {
         [self->mOverlaySelect removeItemWithTitle:identifier];
@@ -329,7 +329,6 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
     [self->mImageView setImages:[self->mOverlayRenderer renderImage] 
                              on:[self->mRenderer renderImage]];
 
-    [self updateStepperMinMax];
     [self updateSliceSelectors];
     [self updateControlEnabledStates];
 }
@@ -419,12 +418,16 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
         
         if ([selection isEqualToString:NO_OVERLAY_TEXT]) {
             [self->mOverlayRenderer setData:nil];
-            [self updateViewImages];
             [self->mColortableSelect setEnabled:NO];
+            [self setRegionSelectionStates:(FIRST_REGION_SELECTION_MASK | SECOND_REGION_SELECTION_MASK) 
+                                        to:NO];
+            
+            [self updateViewImages];
             
         } else {
             [self showOverlay:selection];
             [self->mColortableSelect setEnabled:YES];
+            [self setColortable:self->mColortableSelect];
         }
     }
 }
@@ -432,7 +435,41 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
 -(IBAction)setColortable:(id)sender
 {
     if (sender == self->mColortableSelect) {
-        // TODO
+        NSInteger selectedIndex = [self->mColortableSelect indexOfSelectedItem];
+        
+        if (selectedIndex == 0) {
+            BAImageFilter* imageFilter = [[BASingleDomainColortableFilter alloc] init];
+            [self->mOverlayRenderer setImageFilter:imageFilter];
+            [imageFilter release];
+            
+            [self setRegionSelectionStates:FIRST_REGION_SELECTION_MASK to:YES];
+            [self setRegionSelectionStates:SECOND_REGION_SELECTION_MASK to:NO];
+        
+        } else if (selectedIndex == 1) {
+            BAImageFilter* imageFilter = [[BASingleDomainColortableFilter alloc] init];
+            [self->mOverlayRenderer setImageFilter:imageFilter];
+            [imageFilter release];
+            
+            [self setRegionSelectionStates:(FIRST_REGION_SELECTION_MASK | SECOND_REGION_SELECTION_MASK) to:YES];
+        }
+    }
+}
+
+-(void)setRegionSelectionStates:(NSUInteger)mask 
+                             to:(BOOL)enabled
+{
+    if ((mask & FIRST_REGION_SELECTION_MASK) == FIRST_REGION_SELECTION_MASK) {
+        [self->mRegion1LowerField   setEnabled:enabled];
+        [self->mRegion1LowerStepper setEnabled:enabled];
+        [self->mRegion1UpperField   setEnabled:enabled];
+        [self->mRegion1UpperStepper setEnabled:enabled];
+    }
+    
+    if ((mask & SECOND_REGION_SELECTION_MASK) == SECOND_REGION_SELECTION_MASK) {
+        [self->mRegion2LowerField   setEnabled:enabled];
+        [self->mRegion2LowerStepper setEnabled:enabled];
+        [self->mRegion2UpperField   setEnabled:enabled];
+        [self->mRegion2UpperStepper setEnabled:enabled];
     }
 }
 
