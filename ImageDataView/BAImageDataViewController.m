@@ -34,6 +34,11 @@ static NSString* COLORTABLE_TWO_TEXT  = @"Colortable 2";
 /** Initial size of the NSDictionary used to store overlays. */
 static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 
+/** Mask flag telling to use the min/max input elements for the first region. */
+static const NSUInteger FIRST_REGION_SELECTION_MASK  = 1 << 0;
+/** Mask flag telling to use the min/max input elements for the second region. */
+static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
+
 
 // ###############################
 // # Private method declarations #
@@ -52,8 +57,10 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 
 /**
  * Update the image filters applied to overlay with new min/max values.
+ *
+ * \param mask Mask telling region(s) which min/max ranges need to be updated.
  */
--(void)updateFilterBounds;
+-(void)updateFilterBounds:(NSUInteger)mask;
 
 /**
  * Methods to update view objects based on internal state changes.
@@ -274,7 +281,7 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
     if (overlay != nil) {
         [self->mOverlayRenderer setData:overlay slice:[self->mRenderer getCurrentSlice] timestep:[self->mRenderer getCurrentTimestep]];
         
-        [self updateFilterBounds];
+        [self updateFilterBounds:(FIRST_REGION_SELECTION_MASK | SECOND_REGION_SELECTION_MASK)];
         
         [self updateViewImages];
     }
@@ -447,7 +454,7 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
         [self->mRegion1UpperField setFloatValue:[self->mRegion1UpperStepper maxValue]];
     }
     
-    [self updateFilterBounds];
+    [self updateFilterBounds:FIRST_REGION_SELECTION_MASK];
 }
 
 -(IBAction)setRegion2Bounds:(id)sender
@@ -467,21 +474,37 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
     if (tfUpper > [self->mRegion2UpperStepper maxValue]) {
         [self->mRegion2UpperField setFloatValue:[self->mRegion2UpperStepper maxValue]];
     }
+    
+    [self updateFilterBounds:SECOND_REGION_SELECTION_MASK];
 }
 
--(void)updateFilterBounds
+-(void)updateFilterBounds:(NSUInteger)mask
 {
     // Update min/max in overlay filters
     BAImageFilter* filter = [self->mOverlayRenderer getImageFilter];
     if (filter != nil) {
-        float tfLower = [self->mRegion1LowerField floatValue];
-        float tfUpper = [self->mRegion1UpperField floatValue];
-        float min = [self->mRegion1LowerStepper minValue];
-        float max = [self->mRegion1LowerStepper maxValue];
         
-        // TODO: Compute exact normalized value respecting all signum cases of min/max
-        [filter setValue:[NSNumber numberWithFloat:tfLower / max] forKey:@"minimum"];
-        [filter setValue:[NSNumber numberWithFloat:tfUpper / max] forKey:@"maximum"];
+        if ((mask & FIRST_REGION_SELECTION_MASK) == FIRST_REGION_SELECTION_MASK) {
+            float tfLower = [self->mRegion1LowerField floatValue];
+            float tfUpper = [self->mRegion1UpperField floatValue];
+            float min = [self->mRegion1LowerStepper minValue];
+            float max = [self->mRegion1LowerStepper maxValue];
+            
+            // TODO: Compute exact normalized value respecting all signum cases of min/max
+            [filter setValue:[NSNumber numberWithFloat:tfLower / max] forKey:@"minimum"];
+            [filter setValue:[NSNumber numberWithFloat:tfUpper / max] forKey:@"maximum"];
+        }
+        
+        if ((mask & SECOND_REGION_SELECTION_MASK) == SECOND_REGION_SELECTION_MASK) {
+            float tfLower = [self->mRegion2LowerField floatValue];
+            float tfUpper = [self->mRegion2UpperField floatValue];
+            float min = [self->mRegion2LowerStepper minValue];
+            float max = [self->mRegion2LowerStepper maxValue];
+            
+            // TODO: Compute exact normalized value respecting all signum cases of min/max
+            [filter setValue:[NSNumber numberWithFloat:tfLower / max] forKey:@"minimum2"];
+            [filter setValue:[NSNumber numberWithFloat:tfUpper / max] forKey:@"maximum2"];
+        }
         
         [self updateViewImages];
     }
