@@ -46,9 +46,6 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
 
 @interface BAImageDataViewController (__privateMethods__)
 
-/** Initializes all GUI elements related to overlays/colortables. */
--(void)initOverlayColortableComponents;
-
 /**
  * Renders back- and foreground and passes the image objects to the view
  * class for display.
