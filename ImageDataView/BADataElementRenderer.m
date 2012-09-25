@@ -887,11 +887,7 @@
         ciImage = [self->mImageFilter apply:ciImage];
     }
     
-    NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
-    CGImageRef        cgImage = imageRep.CGImage;
-    
-    NSImage*          nsImage = [[[NSImage alloc] initWithCGImage:cgImage 
-                                                             size:ciImageSize] autorelease];
+    NSImage* nsImage = [self ciImageToNSImage:ciImage of:ciImageSize];
     
     if (self->mImageFilter == nil) {
         // If CIFilter based image filter is active, this caused a BadAccess
