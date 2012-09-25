@@ -65,6 +65,16 @@
                    height:(size_t)h;
 
 /**
+ * Creates a NSImage from a CIImage and its size.
+ *
+ * \param ciImage     Source image.
+ * \param ciImageSize Source image size.
+ * \return            NSImage created from the source image.
+ */
+-(NSImage*)ciImageToNSImage:(CIImage*)ciImage 
+                         of:(NSSize)ciImageSize;
+
+/**
  * Updates the size of a NSImage object based on the physical size of the
  * EDDataElement to be rendered. This respects voxel size and gap of the image.
  */
@@ -887,6 +897,18 @@
         // If CIFilter based image filter is active, this caused a BadAccess
         [ciImage release];
     }
+    
+    return nsImage;
+}
+
+-(NSImage*)ciImageToNSImage:(CIImage*)ciImage 
+                         of:(NSSize)ciImageSize
+{
+    NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
+    CGImageRef        cgImage = imageRep.CGImage;
+    
+    NSImage*          nsImage = [[[NSImage alloc] initWithCGImage:cgImage 
+                                                             size:ciImageSize] autorelease];
     
     return nsImage;
 }
