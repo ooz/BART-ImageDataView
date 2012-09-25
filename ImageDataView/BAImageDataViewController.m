@@ -453,6 +453,8 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
             
             [self setRegionSelectionStates:(FIRST_REGION_SELECTION_MASK | SECOND_REGION_SELECTION_MASK) to:YES];
         }
+        
+        [self updateFilterBounds:(FIRST_REGION_SELECTION_MASK | SECOND_REGION_SELECTION_MASK)];
     }
 }
 
