@@ -870,6 +870,7 @@
                                                       size:ciImageSize 
                                                     format:kCIFormatRGBAf 
                                                 colorSpace:colorSpace];
+    CGColorSpaceRelease(colorSpace);
     
     // Apply filter
     if (self->mImageFilter != nil) {
@@ -886,7 +887,6 @@
         // If CIFilter based image filter is active, this caused a BadAccess
         [ciImage release];
     }
-    CGColorSpaceRelease(colorSpace);
     
     return nsImage;
 }
