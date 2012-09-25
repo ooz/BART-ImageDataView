@@ -418,11 +418,10 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
         
         if ([selection isEqualToString:NO_OVERLAY_TEXT]) {
             [self->mOverlayRenderer setData:nil];
+            [self updateViewImages];
             [self->mColortableSelect setEnabled:NO];
             [self setRegionSelectionStates:(FIRST_REGION_SELECTION_MASK | SECOND_REGION_SELECTION_MASK) 
                                         to:NO];
-            
-            [self updateViewImages];
             
         } else {
             [self showOverlay:selection];
@@ -438,17 +437,19 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
         NSInteger selectedIndex = [self->mColortableSelect indexOfSelectedItem];
         
         if (selectedIndex == 0) {
-            BAImageFilter* imageFilter = [[BASingleDomainColortableFilter alloc] init];
-            [self->mOverlayRenderer setImageFilter:imageFilter];
-            [imageFilter release];
+            // Commented due to causing bad access
+//            BAImageFilter* imageFilter = [[BASingleDomainColortableFilter alloc] init];
+//            [self->mOverlayRenderer setImageFilter:imageFilter];
+//            [imageFilter release];
             
             [self setRegionSelectionStates:FIRST_REGION_SELECTION_MASK to:YES];
             [self setRegionSelectionStates:SECOND_REGION_SELECTION_MASK to:NO];
         
         } else if (selectedIndex == 1) {
-            BAImageFilter* imageFilter = [[BASingleDomainColortableFilter alloc] init];
-            [self->mOverlayRenderer setImageFilter:imageFilter];
-            [imageFilter release];
+            // Commented due to causing bad access
+//            BAImageFilter* imageFilter = [[BASingleDomainColortableFilter alloc] init];
+//            [self->mOverlayRenderer setImageFilter:imageFilter];
+//            [imageFilter release];
             
             [self setRegionSelectionStates:(FIRST_REGION_SELECTION_MASK | SECOND_REGION_SELECTION_MASK) to:YES];
         }
