@@ -65,14 +65,12 @@
                    height:(size_t)h;
 
 /**
- * Creates a NSImage from a CIImage and its size.
+ * Creates a NSImage from a CIImage.
  *
  * \param ciImage     Source image.
- * \param ciImageSize Source image size.
  * \return            NSImage created from the source image.
  */
--(NSImage*)ciImageToNSImage:(CIImage*)ciImage 
-                         of:(NSSize)ciImageSize;
+-(NSImage*)ciImageToNSImage:(CIImage*)ciImage;
 
 /**
  * Updates the size of a NSImage object based on the physical size of the
@@ -372,14 +370,14 @@
         renderedSlices = [self->mImageFilter apply:renderedSlices];
     }
     
-    BARTImageSize* imageSize = [self->mImage getImageSize];
-    NSSize ciImageSize = [renderedSlices extent].size;
-    NSImage* image = [self ciImageToNSImage:renderedSlices of:ciImageSize];
+    NSImage* image = [self ciImageToNSImage:renderedSlices];
+    
     if (self->mImageFilter == nil) {
         // If CIFilter based image filter is active, this caused a BadAccess
         [renderedSlices release];
     }
     
+    BARTImageSize* imageSize = [self->mImage getImageSize];
     image = [self fixSizeOf:image with:imageSize];
     
     return image;
@@ -900,9 +898,9 @@
     return ciImage;
 }
 
--(NSImage*)ciImageToNSImage:(CIImage*)ciImage 
-                         of:(NSSize)ciImageSize
+-(NSImage*)ciImageToNSImage:(CIImage*)ciImage
 {
+    NSSize ciImageSize = [ciImage extent].size;
     NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc] initWithCIImage:ciImage] autorelease];
     CGImageRef        cgImage = imageRep.CGImage;
     
