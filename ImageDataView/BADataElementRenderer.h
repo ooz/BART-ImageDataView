@@ -38,6 +38,8 @@
      * (Is used when filter attributes change, so no need to render raw EDDataElement again.)
      */
     CIImage*       mRenderCache;
+    /** Flag telling that EDDataElement mImage needs to be rendered as CIImage. */ 
+    BOOL           mNeedToRender;
     /** Image filter for the raw rendered image (e.g. a colortable filter). */
     BAImageFilter* mImageFilter;
     

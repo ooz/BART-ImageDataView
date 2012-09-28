@@ -37,28 +37,28 @@
 -(void)fetchRelevantSlices:(EDDataElement*)image;
 
 /**
- * Methods to render the NSImage object.
- * Regardless of single or multi slice grid only one NSImage object is rendered.
+ * Methods to render the CIImage object.
+ * Regardless of single or multi slice grid only one CIImage is rendered.
  */
--(NSImage*)renderIdenticalImage          :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
--(NSImage*)renderTurnUpImage             :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
--(NSImage*)renderTurnLeftRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
--(NSImage*)renderTurnLeftImage           :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
--(NSImage*)renderTurnUpRotateRightImage  :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+-(CIImage*)renderIdenticalImage          :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+-(CIImage*)renderTurnUpImage             :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+-(CIImage*)renderTurnLeftRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+-(CIImage*)renderTurnLeftImage           :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+-(CIImage*)renderTurnUpRotateRightImage  :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
 
 /**
  * Utility method for the render methods.
- * Constructs a NSImage object from a float vector. The vector is not freed in the process!
+ * Constructs a CIImage object from a float vector. The vector is not freed in the process!
  *
  * \param data Float array containing all needed bytes for all channels.
  * \param len  Length of the data float array.
  * \param bpr  Bytes per row in the resulting image. 
  *             This has to respect the size of the data type (float) as well as the number of channels.
- * \param w    Width  of the target NSImage in pixels.
- * \param h    Height of the target NSImage in pixels.
- * \return     Autoreleased NSImage rendering the float data.
+ * \param w    Width  of the target CIImage in pixels.
+ * \param h    Height of the target CIImage in pixels.
+ * \return     Autoreleased CIImage rendering the float data.
  */
--(NSImage*)imageFromFloat:(float*)data 
+-(CIImage*)imageFromFloat:(float*)data 
                    length:(size_t)len 
               bytesPerRow:(size_t)bpr
                     width:(size_t)w
@@ -107,7 +107,9 @@
                                                     , PROP_ROWVEC
                                                     , nil] retain];
         
-        self->mImageFilter = nil;
+        self->mRenderCache  = nil;
+        self->mNeedToRender = YES;
+        self->mImageFilter  = nil;
         
         self->mRelevantSliceFilter = [[BAImageSliceSelector alloc] init];
         self->mRelevantSlices = nil;
@@ -149,6 +151,7 @@
     
     if (self->mPropList != nil)    [self->mPropList release];
     
+    if (self->mRenderCache != nil) [self->mRenderCache release];
     if (self->mImageFilter != nil) [self->mImageFilter release];
     
     if (self->mRelevantSliceFilter != nil) [self->mRelevantSliceFilter release];
@@ -314,7 +317,7 @@
         return nil;
     }
     
-    NSImage* renderedSlices = nil;
+    CIImage* renderedSlices = nil;
     enum ImageDimension* dims = [self->mRelevantSliceFilter getDimensionsFrom:self->mImage
                                                                     alignedTo:self->mTargetOrientation];
     
@@ -364,13 +367,25 @@
     
     free(dims);
     
-    BARTImageSize* imageSize = [self->mImage getImageSize];
-    renderedSlices = [self fixSizeOf:renderedSlices with:imageSize];
+    // Apply filter
+    if (self->mImageFilter != nil) {
+        renderedSlices = [self->mImageFilter apply:renderedSlices];
+    }
     
-    return renderedSlices;
+    BARTImageSize* imageSize = [self->mImage getImageSize];
+    NSSize ciImageSize = [renderedSlices extent].size;
+    NSImage* image = [self ciImageToNSImage:renderedSlices of:ciImageSize];
+    if (self->mImageFilter == nil) {
+        // If CIFilter based image filter is active, this caused a BadAccess
+        [renderedSlices release];
+    }
+    
+    image = [self fixSizeOf:image with:imageSize];
+    
+    return image;
 }
 
--(NSImage*)renderIdenticalImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
+-(CIImage*)renderIdenticalImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
 {
     BARTImageSize* imageSize = [self->mImage getImageSize];
     
@@ -467,17 +482,17 @@
         }
     }
     
-    NSImage* nsImage = [self imageFromFloat:renderImageData 
+    CIImage* ciImage = [self imageFromFloat:renderImageData 
                                      length:renderImageDataLength 
                                 bytesPerRow:gridWidth * cols * NUMBER_OF_CHANNELS * sizeof(float)
                                       width:gridWidth * cols 
                                      height:gridHeight * rows];
     free(renderImageData);
     
-    return nsImage;
+    return ciImage;
 }
 
--(NSImage*)renderTurnUpImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
+-(CIImage*)renderTurnUpImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
 {
     // TODO: too much c&p from renderIdenticalImage ;)
     
@@ -562,17 +577,17 @@
         }
     }
     
-    NSImage* nsImage = [self imageFromFloat:renderImageData 
+    CIImage* ciImage = [self imageFromFloat:renderImageData 
                                      length:renderImageDataLength 
                                 bytesPerRow:gridWidth * cols * NUMBER_OF_CHANNELS * sizeof(float)
                                       width:gridWidth * cols 
                                      height:gridHeight * slices];
     free(renderImageData);
     
-    return nsImage;
+    return ciImage;
 }
 
--(NSImage*)renderTurnLeftRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
+-(CIImage*)renderTurnLeftRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
 {
     // TODO: too much c&p from renderIdenticalImage ;)
     
@@ -585,11 +600,11 @@
     size_t gridHeight = self->mGridSize.height;
     
     size_t renderImageDataLength =    rows
-    * slices 
-    * gridWidth
-    * gridHeight
-    * NUMBER_OF_CHANNELS
-    * sizeof(float);
+                                    * slices 
+                                    * gridWidth
+                                    * gridHeight
+                                    * NUMBER_OF_CHANNELS
+                                    * sizeof(float);
     float* renderImageData = malloc(renderImageDataLength);
     
     NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
@@ -662,17 +677,17 @@
         }
     }
     
-    NSImage* nsImage = [self imageFromFloat:renderImageData 
+    CIImage* ciImage = [self imageFromFloat:renderImageData 
                                      length:renderImageDataLength 
                                 bytesPerRow:gridWidth * rows * NUMBER_OF_CHANNELS * sizeof(float)
                                       width:gridWidth * rows
                                      height:gridHeight * slices];
     free(renderImageData);
     
-    return nsImage;
+    return ciImage;
 }
 
--(NSImage*)renderTurnLeftImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
+-(CIImage*)renderTurnLeftImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
 {
     // TODO: too much c&p from renderIdenticalImage ;)
     
@@ -758,17 +773,17 @@
         }
     }
     
-    NSImage* nsImage = [self imageFromFloat:renderImageData 
+    CIImage* ciImage = [self imageFromFloat:renderImageData 
                                      length:renderImageDataLength 
                                 bytesPerRow:gridWidth * slices * NUMBER_OF_CHANNELS * sizeof(float)
                                       width:gridWidth * slices 
                                      height:gridHeight * rows];
     free(renderImageData);
     
-    return nsImage;
+    return ciImage;
 }
 
--(NSImage*)renderTurnUpRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
+-(CIImage*)renderTurnUpRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
 {
     // TODO: too much c&p from renderIdenticalImage ;)
     
@@ -781,11 +796,11 @@
     size_t gridHeight = self->mGridSize.height;
     
     size_t renderImageDataLength =    slices
-    * cols
-    * gridWidth
-    * gridHeight
-    * NUMBER_OF_CHANNELS
-    * sizeof(float);
+                                    * cols
+                                    * gridWidth
+                                    * gridHeight
+                                    * NUMBER_OF_CHANNELS
+                                    * sizeof(float);
     float* renderImageData = malloc(renderImageDataLength);
     
     NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
@@ -854,17 +869,17 @@
         }
     }
     
-    NSImage* nsImage = [self imageFromFloat:renderImageData 
+    CIImage* ciImage = [self imageFromFloat:renderImageData 
                                      length:renderImageDataLength 
                                 bytesPerRow:gridWidth * slices * NUMBER_OF_CHANNELS * sizeof(float)
                                       width:gridWidth * slices 
                                      height:gridHeight * cols];
     free(renderImageData);
     
-    return nsImage;
+    return ciImage;
 }
 
--(NSImage*)imageFromFloat:(float*)data 
+-(CIImage*)imageFromFloat:(float*)data 
                    length:(size_t)len 
               bytesPerRow:(size_t)bpr
                     width:(size_t)w
@@ -882,19 +897,7 @@
                                                 colorSpace:colorSpace];
     CGColorSpaceRelease(colorSpace);
     
-    // Apply filter
-    if (self->mImageFilter != nil) {
-        ciImage = [self->mImageFilter apply:ciImage];
-    }
-    
-    NSImage* nsImage = [self ciImageToNSImage:ciImage of:ciImageSize];
-    
-    if (self->mImageFilter == nil) {
-        // If CIFilter based image filter is active, this caused a BadAccess
-        [ciImage release];
-    }
-    
-    return nsImage;
+    return ciImage;
 }
 
 -(NSImage*)ciImageToNSImage:(CIImage*)ciImage 
