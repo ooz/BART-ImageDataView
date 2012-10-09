@@ -77,7 +77,7 @@ extern CIFormat kCIFormatRGBAf;
                                keysAndValues: @"inputImage", on,
                                               @"colorTable", self->mColortable, nil];
     
-    int colortableMappingType = 0;
+    int colortableMappingType = 2;
     [(ColorMappingFilter*) self->mFilter setKernelToUse: colortableMappingType];
     
 //    float    filterMinimum = 0.0;
