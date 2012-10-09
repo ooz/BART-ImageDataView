@@ -61,9 +61,9 @@ kernel vec4 colorMappingFilterThree(sampler src, __table sampler colorTable, flo
 
 	value = (pix.r + pix.g + pix.b) / 3.0;
 
-	pix = (value < max ? (value > min ? getCTValue(colorTable, 255.0 / (max - min) * (value - min)) : vec4(0.0, 0.0, 0.0, 1.0)) : vec4(0.0, 0.0, 0.0, 1.0));
+	pix = (value < max ? (value > min ? getCTValue(colorTable, 255.0 / (max - min) * (value - min)) : vec4(0.0, 0.0, 0.0, 0.0)) : vec4(0.0, 0.0, 0.0, 0.0));
 
-	pix.a = 1.0;
+	pix.a = (value < max ? (value > min ? 1.0 : 0.0) : 0.0);
 
 	return premultiply(pix);
 }
