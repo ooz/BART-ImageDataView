@@ -23,8 +23,6 @@
 		47EC773A15FF625500A00C51 /* Axial.png in Resources */ = {isa = PBXBuildFile; fileRef = 47EC773715FF622E00A00C51 /* Axial.png */; };
 		47EC773B15FF625500A00C51 /* Coronal.png in Resources */ = {isa = PBXBuildFile; fileRef = 47EC773815FF622E00A00C51 /* Coronal.png */; };
 		47EC773C15FF625500A00C51 /* Sagittal.png in Resources */ = {isa = PBXBuildFile; fileRef = 47EC773915FF622E00A00C51 /* Sagittal.png */; };
-		47EC77401600CA7E00A00C51 /* ColorMappingFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = 47EC773D1600CA7D00A00C51 /* ColorMappingFilter.cikernel */; };
-		47EC77411600CA7E00A00C51 /* ColorMappingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 47EC773F1600CA7D00A00C51 /* ColorMappingFilter.m */; };
 		47EC7744160356B400A00C51 /* BAImageFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 47EC7743160356B300A00C51 /* BAImageFilter.m */; };
 		47EC774716035EDD00A00C51 /* BASingleDomainColortableFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 47EC774616035EDD00A00C51 /* BASingleDomainColortableFilter.m */; };
 		47F841451592195B00048830 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47F841441592195B00048830 /* Cocoa.framework */; };
@@ -33,6 +31,8 @@
 		47F841551592195B00048830 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 47F841531592195B00048830 /* Credits.rtf */; };
 		47F841581592195B00048830 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 47F841571592195B00048830 /* AppDelegate.m */; };
 		47F8415B1592195C00048830 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47F841591592195C00048830 /* MainMenu.xib */; };
+		47FDD3E516245F8B00B2C8B1 /* ColorMappingFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = 47FDD3E216245F8A00B2C8B1 /* ColorMappingFilter.cikernel */; };
+		47FDD3E616245F8B00B2C8B1 /* ColorMappingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FDD3E416245F8A00B2C8B1 /* ColorMappingFilter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,9 +62,6 @@
 		47EC773715FF622E00A00C51 /* Axial.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Axial.png; sourceTree = "<group>"; };
 		47EC773815FF622E00A00C51 /* Coronal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Coronal.png; sourceTree = "<group>"; };
 		47EC773915FF622E00A00C51 /* Sagittal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Sagittal.png; sourceTree = "<group>"; };
-		47EC773D1600CA7D00A00C51 /* ColorMappingFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ColorMappingFilter.cikernel; path = ../ColorMappingFilter.cikernel; sourceTree = "<group>"; };
-		47EC773E1600CA7D00A00C51 /* ColorMappingFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColorMappingFilter.h; path = ../ColorMappingFilter.h; sourceTree = "<group>"; };
-		47EC773F1600CA7D00A00C51 /* ColorMappingFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ColorMappingFilter.m; path = ../ColorMappingFilter.m; sourceTree = "<group>"; };
 		47EC7742160356B300A00C51 /* BAImageFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAImageFilter.h; sourceTree = "<group>"; };
 		47EC7743160356B300A00C51 /* BAImageFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAImageFilter.m; sourceTree = "<group>"; };
 		47EC774516035EDD00A00C51 /* BASingleDomainColortableFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BASingleDomainColortableFilter.h; sourceTree = "<group>"; };
@@ -82,6 +79,9 @@
 		47F841561592195B00048830 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		47F841571592195B00048830 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		47F8415A1592195C00048830 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		47FDD3E216245F8A00B2C8B1 /* ColorMappingFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ColorMappingFilter.cikernel; sourceTree = "<group>"; };
+		47FDD3E316245F8A00B2C8B1 /* ColorMappingFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorMappingFilter.h; sourceTree = "<group>"; };
+		47FDD3E416245F8A00B2C8B1 /* ColorMappingFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorMappingFilter.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,6 +168,9 @@
 		47F8414A1592195B00048830 /* ImageDataView */ = {
 			isa = PBXGroup;
 			children = (
+				47FDD3E216245F8A00B2C8B1 /* ColorMappingFilter.cikernel */,
+				47FDD3E316245F8A00B2C8B1 /* ColorMappingFilter.h */,
+				47FDD3E416245F8A00B2C8B1 /* ColorMappingFilter.m */,
 				47F841561592195B00048830 /* AppDelegate.h */,
 				47F841571592195B00048830 /* AppDelegate.m */,
 				47F841591592195C00048830 /* MainMenu.xib */,
@@ -185,9 +188,6 @@
 				47EC7743160356B300A00C51 /* BAImageFilter.m */,
 				47EC774516035EDD00A00C51 /* BASingleDomainColortableFilter.h */,
 				47EC774616035EDD00A00C51 /* BASingleDomainColortableFilter.m */,
-				47EC773D1600CA7D00A00C51 /* ColorMappingFilter.cikernel */,
-				47EC773E1600CA7D00A00C51 /* ColorMappingFilter.h */,
-				47EC773F1600CA7D00A00C51 /* ColorMappingFilter.m */,
 				47F8414B1592195B00048830 /* Supporting Files */,
 			);
 			path = ImageDataView;
@@ -265,7 +265,7 @@
 				4737CE06159230DD00E0D0FD /* EDDataElement.mm.orig in Resources */,
 				4737CE08159230DD00E0D0FD /* EDDataElementIsis.mm.orig in Resources */,
 				4737CE2415934F1F00E0D0FD /* BAImageDataView.xib in Resources */,
-				47EC77401600CA7E00A00C51 /* ColorMappingFilter.cikernel in Resources */,
+				47FDD3E516245F8B00B2C8B1 /* ColorMappingFilter.cikernel in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,9 +287,9 @@
 				4720DC4F15A7247900C5B981 /* BABrainImageView.m in Sources */,
 				474F0C4E15BEA96300AF1858 /* BAImageSliceSelector.m in Sources */,
 				47BB83FB15E781EB004E3B2F /* BADataElementRenderer.m in Sources */,
-				47EC77411600CA7E00A00C51 /* ColorMappingFilter.m in Sources */,
 				47EC7744160356B400A00C51 /* BAImageFilter.m in Sources */,
 				47EC774716035EDD00A00C51 /* BASingleDomainColortableFilter.m in Sources */,
+				47FDD3E616245F8B00B2C8B1 /* ColorMappingFilter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
