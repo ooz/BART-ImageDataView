@@ -3,7 +3,7 @@
 //  ImageDataView
 //
 //  Created by Oliver Zscheyge on 9/14/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 MPI CBS. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -14,11 +14,15 @@
  */
 @interface BAImageFilter : NSObject {
     
+    /** Wrapped CIFilter. */
     CIFilter* mFilter;
+    
+    /** Custom parameter map passed to mFilter. */
     NSMutableDictionary* mParams;
     
 }
 
+/** Getter. */
 -(CIFilter*)filter;
 
 /**

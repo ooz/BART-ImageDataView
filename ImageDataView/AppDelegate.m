@@ -3,7 +3,7 @@
 //  ImageDataView
 //
 //  Created by Oliver Zscheyge on 6/20/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 MPI CBS. All rights reserved.
 //
 
 #import "AppDelegate.h"
@@ -20,16 +20,16 @@
     [super dealloc];
 }
 
+// ###################################################
+// # Example context for embedding a BrainImageView. #
+// ###################################################
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     BAImageDataViewController* imageDataViewController = [[BAImageDataViewController alloc] initWithNibName:@"BAImageDataView" bundle:nil];
-//    system("pwd");
+    
     [imageDataViewController loadView];
     
     [self.window setContentView:[imageDataViewController view]];
-    
-    
-    
     
     // TODO: hardcoded image
     EDDataElement* background = [[EDDataElement alloc] initWithDataFile:@"/Users/olli/test/reg3d_test_scansoliver/14265.5c_ana_mdeft.nii" 
@@ -53,9 +53,6 @@
 //    [imageDataViewController release];
 //    [image release];
 //    [background release];
-    
-//    [imageDataViewController showImage:image];
-    
 }
 
 @end

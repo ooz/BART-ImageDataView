@@ -3,11 +3,12 @@
 //  ImageDataView
 //
 //  Created by Oliver Zscheyge on 9/14/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 MPI CBS. All rights reserved.
 //
 
 #import "BAImageFilter.h"
 
+/** Initial size of the dynamical resized parameter dictionary. */
 static const NSUInteger INITIAL_PARAMS_SIZE = 2;
 
 @implementation BAImageFilter

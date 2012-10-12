@@ -3,7 +3,7 @@
 //  ImageDataView
 //
 //  Created by Oliver Zscheyge on 7/6/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 MPI CBS. All rights reserved.
 //
 
 #import "BABrainImageView.h"
@@ -15,6 +15,8 @@
 
 @interface BABrainImageView (__privateMethods__)
 
+/** Method that is called whenever a new back-/foreground is set. 
+ * Renders the combined back- plus foreground image. */
 -(void)updateSetImage;
 
 @end

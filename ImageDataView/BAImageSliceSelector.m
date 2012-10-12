@@ -3,7 +3,7 @@
 //  ImageDataView
 //
 //  Created by Oliver Zscheyge on 7/24/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2012 MPI CBS. All rights reserved.
 //
 
 #import "BAImageSliceSelector.h"
@@ -16,12 +16,6 @@ const size_t RELEVANT_DIMENSIONS = 3;
 /** Index of the "slice dimension" in an array of dimensions. */
 const size_t SLICE_DIMENSION_INDEX = 2;
 
-
-//@interface BAImageSliceSelector (__privateMethods__)
-//
-//
-//
-//@end
 
 
 @implementation BAImageSliceSelector
