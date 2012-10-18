@@ -1,30 +1,26 @@
 //
-//  ColorMappingFilterOne.m
-//  CIFilter Test 001
+//  ColorMappingFilterTwoDomains.m
+//  ImageDataView
 //
-//  Created by Torsten Schlumm on 12/23/09.
-//  Copyright 2009 MPI CBS. All rights reserved.
+//  Created by Oliver Zscheyge on 10/18/12.
+//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "ColorMappingFilter.h"
+#import "ColorMappingFilterTwoDomains.h"
 
 #import <QuartzCore/CIKernel.h>
 #import <QuartzCore/CISampler.h>
 #import <Foundation/NSString.h>
 
-
-@implementation ColorMappingFilter
-
+@implementation ColorMappingFilterTwoDomains
 
 static NSArray* colorMappingFilterKernels = nil;
 
-
 @synthesize kernelToUse;
 
-
 // this method is called by [ColorMappingFilter class] to register our filter with the CIFilter class
-+ (void) initialize {
-    [CIFilter registerFilterName: @"ColorMappingFilter"
++(void)initialize {
+    [CIFilter registerFilterName: @"ColorMappingFilterTwoDomains"
 					 constructor: self
 				 classAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
 								   @"Color Mapping", kCIAttributeFilterDisplayName,
@@ -36,10 +32,9 @@ static NSArray* colorMappingFilterKernels = nil;
 }
 
 // this (static) method returns an instance of our filter
-+ (CIFilter*) filterWithName: (NSString*)name {
-    CIFilter* filter;
-	
-    filter = [[self alloc] init];
++(CIFilter*)filterWithName:(NSString*)name {
+    CIFilter* filter = [[self alloc] init];
+    
     return [filter autorelease];
 }
 
@@ -70,7 +65,7 @@ static NSArray* colorMappingFilterKernels = nil;
             
         }
         
-        self->kernelToUse = 0;
+        self->kernelToUse = 3;
         
     }
     
@@ -81,7 +76,7 @@ static NSArray* colorMappingFilterKernels = nil;
 {
     CISampler* src = [CISampler samplerWithImage: inputImage];
     CISampler* colTable = [CISampler samplerWithImage: colorTable];
-	CIImage *ret = [self apply: [colorMappingFilterKernels objectAtIndex:kernelToUse], src, colTable, minimum, maximum, kCIApplyOptionDefinition, [src definition], nil];
+	CIImage *ret = [self apply: [colorMappingFilterKernels objectAtIndex:kernelToUse], src, colTable, minimum, maximum, minimum2, maximum2, kCIApplyOptionDefinition, [src definition], nil];
 	
 	return ret;
 }
@@ -92,7 +87,9 @@ static NSArray* colorMappingFilterKernels = nil;
 	[colorTable release];
     [minimum release];
     [maximum release];
-
+    [minimum2 release];
+    [maximum2 release];
+    
 	[super dealloc];
 }
 

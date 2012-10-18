@@ -34,6 +34,7 @@
 		47FDD3E516245F8B00B2C8B1 /* ColorMappingFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = 47FDD3E216245F8A00B2C8B1 /* ColorMappingFilter.cikernel */; };
 		47FDD3E616245F8B00B2C8B1 /* ColorMappingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FDD3E416245F8A00B2C8B1 /* ColorMappingFilter.m */; };
 		47FDD3F116303AFE00B2C8B1 /* BATwoDomainColortableFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FDD3F016303AFE00B2C8B1 /* BATwoDomainColortableFilter.m */; };
+		47FDD3F516303E9700B2C8B1 /* ColorMappingFilterTwoDomains.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FDD3F416303E9700B2C8B1 /* ColorMappingFilterTwoDomains.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,6 +86,8 @@
 		47FDD3E416245F8A00B2C8B1 /* ColorMappingFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorMappingFilter.m; sourceTree = "<group>"; };
 		47FDD3EF16303AFE00B2C8B1 /* BATwoDomainColortableFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BATwoDomainColortableFilter.h; sourceTree = "<group>"; };
 		47FDD3F016303AFE00B2C8B1 /* BATwoDomainColortableFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BATwoDomainColortableFilter.m; sourceTree = "<group>"; };
+		47FDD3F316303E9600B2C8B1 /* ColorMappingFilterTwoDomains.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorMappingFilterTwoDomains.h; sourceTree = "<group>"; };
+		47FDD3F416303E9700B2C8B1 /* ColorMappingFilterTwoDomains.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorMappingFilterTwoDomains.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +177,8 @@
 				47FDD3E216245F8A00B2C8B1 /* ColorMappingFilter.cikernel */,
 				47FDD3E316245F8A00B2C8B1 /* ColorMappingFilter.h */,
 				47FDD3E416245F8A00B2C8B1 /* ColorMappingFilter.m */,
+				47FDD3F316303E9600B2C8B1 /* ColorMappingFilterTwoDomains.h */,
+				47FDD3F416303E9700B2C8B1 /* ColorMappingFilterTwoDomains.m */,
 				47F841561592195B00048830 /* AppDelegate.h */,
 				47F841571592195B00048830 /* AppDelegate.m */,
 				47F841591592195C00048830 /* MainMenu.xib */,
@@ -296,6 +301,7 @@
 				47EC774716035EDD00A00C51 /* BASingleDomainColortableFilter.m in Sources */,
 				47FDD3E616245F8B00B2C8B1 /* ColorMappingFilter.m in Sources */,
 				47FDD3F116303AFE00B2C8B1 /* BATwoDomainColortableFilter.m in Sources */,
+				47FDD3F516303E9700B2C8B1 /* ColorMappingFilterTwoDomains.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
