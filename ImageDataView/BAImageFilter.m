@@ -25,8 +25,6 @@ static const NSUInteger INITIAL_PARAMS_SIZE = 2;
 
 -(void)dealloc
 {
-    if (self->mFilter != nil) 
-        [self->mFilter release];
     [self->mParams release];
     
     [super dealloc];
