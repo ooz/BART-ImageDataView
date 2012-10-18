@@ -239,7 +239,11 @@
     if (self->mImageFilter != nil) 
         [self->mImageFilter release];
     
-    self->mImageFilter = [filter retain];
+    if (filter != nil) {
+        self->mImageFilter = [filter retain];
+    } else {
+        self->mImageFilter = nil;
+    }
 }
 
 
