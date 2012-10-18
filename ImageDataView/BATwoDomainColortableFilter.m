@@ -32,7 +32,7 @@ extern CIFormat kCIFormatRGBAf;
 {
     [ColorMappingFilter class];
     
-    self->mFilter = [CIFilter filterWithName: @"ColorMappingFilterTwoDomain"
+    self->mFilter = [CIFilter filterWithName: @"ColorMappingFilterTwoDomains"
                                keysAndValues: @"inputImage", on,
                                               @"colorTable", self->mColortable, nil];
     
