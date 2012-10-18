@@ -432,21 +432,19 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
 {
     if (sender == self->mColortableSelect) {
         NSInteger selectedIndex = [self->mColortableSelect indexOfSelectedItem];
-        
+ 
         if (selectedIndex == 0) {
-            // Commented due to causing bad access
-//            BAImageFilter* imageFilter = [[BASingleDomainColortableFilter alloc] init];
-//            [self->mOverlayRenderer setImageFilter:imageFilter];
-//            [imageFilter release];
+            BAImageFilter* imageFilter = [[BASingleDomainColortableFilter alloc] init];
+            [self->mOverlayRenderer setImageFilter:imageFilter];
+            [imageFilter release];
             
             [self setRegionSelectionStates:FIRST_REGION_SELECTION_MASK to:YES];
             [self setRegionSelectionStates:SECOND_REGION_SELECTION_MASK to:NO];
         
         } else if (selectedIndex == 1) {
-            // Commented due to causing bad access
-//            BAImageFilter* imageFilter = [[BASingleDomainColortableFilter alloc] init];
-//            [self->mOverlayRenderer setImageFilter:imageFilter];
-//            [imageFilter release];
+            BAImageFilter* imageFilter = [[BASingleDomainColortableFilter alloc] init];
+            [self->mOverlayRenderer setImageFilter:imageFilter];
+            [imageFilter release];
             
             [self setRegionSelectionStates:(FIRST_REGION_SELECTION_MASK | SECOND_REGION_SELECTION_MASK) to:YES];
         }
