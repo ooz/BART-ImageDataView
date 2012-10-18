@@ -10,9 +10,14 @@
 
 #import "BAImageDataViewConstants.h"
 #import "BABrainImageView.h"
-#import "BASingleDomainColortableFilter.h"
+
 #import "BAImageSliceSelector.h"
 #import "BADataElementRenderer.h"
+
+#import "BASingleDomainColortableFilter.h"
+#import "BATwoDomainColortableFilter.h"
+
+
 
 #include <math.h>
 
@@ -442,7 +447,7 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
             [self setRegionSelectionStates:SECOND_REGION_SELECTION_MASK to:NO];
         
         } else if (selectedIndex == 1) {
-            BAImageFilter* imageFilter = [[BASingleDomainColortableFilter alloc] init];
+            BAImageFilter* imageFilter = [[BATwoDomainColortableFilter alloc] init];
             [self->mOverlayRenderer setImageFilter:imageFilter];
             [imageFilter release];
             
