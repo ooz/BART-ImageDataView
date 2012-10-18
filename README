@@ -12,7 +12,6 @@ Integration notice
 TODO
 ====
 
- * Use information from column/row vector to flip images accordingly
  * Filter slices without relevant information. Such slice filters should be subclasses
    of BAImageSliceSelector (low priority)
 
