@@ -33,6 +33,7 @@
 		47F8415B1592195C00048830 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47F841591592195C00048830 /* MainMenu.xib */; };
 		47FDD3E516245F8B00B2C8B1 /* ColorMappingFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = 47FDD3E216245F8A00B2C8B1 /* ColorMappingFilter.cikernel */; };
 		47FDD3E616245F8B00B2C8B1 /* ColorMappingFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FDD3E416245F8A00B2C8B1 /* ColorMappingFilter.m */; };
+		47FDD3F116303AFE00B2C8B1 /* BATwoDomainColortableFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 47FDD3F016303AFE00B2C8B1 /* BATwoDomainColortableFilter.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -82,6 +83,8 @@
 		47FDD3E216245F8A00B2C8B1 /* ColorMappingFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ColorMappingFilter.cikernel; sourceTree = "<group>"; };
 		47FDD3E316245F8A00B2C8B1 /* ColorMappingFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorMappingFilter.h; sourceTree = "<group>"; };
 		47FDD3E416245F8A00B2C8B1 /* ColorMappingFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorMappingFilter.m; sourceTree = "<group>"; };
+		47FDD3EF16303AFE00B2C8B1 /* BATwoDomainColortableFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BATwoDomainColortableFilter.h; sourceTree = "<group>"; };
+		47FDD3F016303AFE00B2C8B1 /* BATwoDomainColortableFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BATwoDomainColortableFilter.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,6 +191,8 @@
 				47EC7743160356B300A00C51 /* BAImageFilter.m */,
 				47EC774516035EDD00A00C51 /* BASingleDomainColortableFilter.h */,
 				47EC774616035EDD00A00C51 /* BASingleDomainColortableFilter.m */,
+				47FDD3EF16303AFE00B2C8B1 /* BATwoDomainColortableFilter.h */,
+				47FDD3F016303AFE00B2C8B1 /* BATwoDomainColortableFilter.m */,
 				47F8414B1592195B00048830 /* Supporting Files */,
 			);
 			path = ImageDataView;
@@ -290,6 +295,7 @@
 				47EC7744160356B400A00C51 /* BAImageFilter.m in Sources */,
 				47EC774716035EDD00A00C51 /* BASingleDomainColortableFilter.m in Sources */,
 				47FDD3E616245F8B00B2C8B1 /* ColorMappingFilter.m in Sources */,
+				47FDD3F116303AFE00B2C8B1 /* BATwoDomainColortableFilter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
