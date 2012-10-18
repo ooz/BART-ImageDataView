@@ -14,11 +14,11 @@ TODO
 
  * Filter slices without relevant information. Such slice filters should be subclasses
    of BAImageSliceSelector (low priority)
-
-
-Overlay
--------
-
- * What happens if background/overlay are not in the same space?
+ * Overlay: What happens if background/overlay are not in the same space?
    (What happens to the slice/orientation selection tools?)
    
+Issues
+======
+
+ * It can happen that the CIFilter is not applied correctly.
+   (e.g. blue-red colortable: one color is missing)
