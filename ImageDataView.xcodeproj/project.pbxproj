@@ -373,7 +373,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-D_GLIBCXX_FULLY_DYNAMIC_STRING";
 				OTHER_LDFLAGS = (
-					"-lisis_core.0.4.5",
+					"-lisis_core.3.0.0",
 					"-lboost_date_time-mt",
 					"-lboost_filesystem-mt",
 					"-lboost_regex-mt",
@@ -417,7 +417,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "-D_GLIBCXX_FULLY_DYNAMIC_STRING";
 				OTHER_LDFLAGS = (
-					"-lisis_core.0.4.5",
+					"-lisis_core.3.0.0",
 					"-lboost_date_time-mt",
 					"-lboost_filesystem-mt",
 					"-lboost_regex-mt",
