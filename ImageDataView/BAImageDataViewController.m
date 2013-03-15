@@ -178,6 +178,8 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
     [self->mOrientationSelect setImage:iconImage forSegment:2];
     [iconImage release];
     
+    [self.mImageView setNextResponder:self];
+    
     [self updateViewImages];
 }
 
@@ -548,6 +550,16 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
         
         [self updateViewImages];
     }
+}
+
+
+// ################
+// # Mouse events #
+// ################
+
+-(void)mouseUp:(NSEvent*)theEvent {
+    NSPoint clickPoint = [theEvent locationInWindow];
+    NSLog(@"BAImageDataViewController received mouseUp event. Point: (%.1lf, %.1lf)", clickPoint.x, clickPoint.y);
 }
 
 @end
