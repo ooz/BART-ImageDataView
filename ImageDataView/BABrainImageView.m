@@ -156,4 +156,96 @@
     }
 }
 
+-(void)mouseUp:(NSEvent*)theEvent {
+    
+    NSImage* img = [self image];
+    
+    if (img != nil) {
+        NSArray* imgReps = [img representations];
+        NSImageRep* imgRep = nil;
+        NSSize bitmapSize = {0.0, 0.0};
+        
+        if ([imgReps count] > 0) {
+            NSSize viewSize = [self bounds].size;
+            NSLog(@"viewSize: (%lf, %lf)", viewSize.width, viewSize.height);
+            
+            imgRep = [imgReps objectAtIndex:0];
+            bitmapSize = [imgRep size];
+            NSLog(@"ImageRepSize: (%lf, %lf)", bitmapSize.width, bitmapSize.height);
+            
+//            NSSize actualRepSize;
+//            actualRepSize.width  = [imgRep pixelsWide];
+//            actualRepSize.height = [imgRep pixelsHigh];
+//            NSLog(@"Actual size: (%lf, %lf))", actualRepSize.width, actualRepSize.height);
+            
+            NSSize scaleFactors;
+            scaleFactors.width = bitmapSize.width / viewSize.width;
+            scaleFactors.height = bitmapSize.height / viewSize.height;
+            NSLog(@"Scale factors: (%lf, %lf)", scaleFactors.width, scaleFactors.height);
+            
+            NSPoint clickPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+            NSPoint clickPointImageSpace;
+            
+            if (scaleFactors.width > scaleFactors.height) {
+                clickPointImageSpace.x = scaleFactors.width * clickPoint.x;
+                clickPointImageSpace.y = (viewSize.height * scaleFactors.width)
+                                         - (clickPoint.y * scaleFactors.width) - ((viewSize.height * scaleFactors.width - bitmapSize.height) / 2)
+                                         - 1.0f;
+            } else {
+                clickPointImageSpace.x = (clickPoint.x * scaleFactors.height) - ((viewSize.width * scaleFactors.height - bitmapSize.width) / 2);
+                clickPointImageSpace.y = bitmapSize.height - (scaleFactors.height * clickPoint.y) - 1.0f;
+            }
+            
+            clickPointImageSpace.x = floor(clickPointImageSpace.x);
+            clickPointImageSpace.y = round(clickPointImageSpace.y);
+            
+            NSLog(@"ClickPoint in ImageSpace: (%.1lf, %.1lf)", clickPointImageSpace.x, clickPointImageSpace.y);
+
+            
+            // Draw clicked point directly into the view's image in red color.
+            // For debug/development purposes only!
+            NSSize imgSize = [img size];
+            [img setSize:bitmapSize];
+            [img lockFocus];
+            NSBitmapImageRep* bitmapRep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0.0, 0.0, [img size].width, [img size].height)];
+            [img unlockFocus];
+            
+            NSUInteger* pixelData = (NSUInteger*) malloc(sizeof(NSUInteger) * 4);
+            pixelData[0] = 255;
+            pixelData[1] = 0;
+            pixelData[2] = 0;
+            pixelData[3] = 255;
+            [bitmapRep setPixel:pixelData atX:clickPointImageSpace.x y:clickPointImageSpace.y];
+            free(pixelData);
+            
+            NSImage* newImg = [[NSImage alloc] initWithSize:bitmapSize];
+            [newImg addRepresentation:bitmapRep];
+            [newImg setSize:imgSize];
+            
+            [self setForegroundImage:newImg];
+            [newImg release];
+            [bitmapRep release];
+    
+            
+            // Propagate mouse event with corrected click coordinates (in image space)
+            NSEvent* correctedEvent = [NSEvent mouseEventWithType:[theEvent type]
+                                                         location:clickPointImageSpace
+                                                    modifierFlags:[theEvent modifierFlags]
+                                                        timestamp:[theEvent timestamp]
+                                                     windowNumber:[theEvent windowNumber]
+                                                          context:[theEvent context]
+                                                      eventNumber:[theEvent eventNumber]
+                                                       clickCount:[theEvent clickCount]
+                                                         pressure:[theEvent pressure]];
+            
+            [super mouseUp:correctedEvent];
+        }
+    }
+    
+//    NSRect viewFrame = self.frame; // Position und Größe im Fenster
+//    NSSize cellSize = [self.cell cellSize]; // bringt nichts
+    
+//    [self setNeedsDisplay:YES];
+}
+
 @end
