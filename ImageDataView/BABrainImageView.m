@@ -205,6 +205,8 @@
             // Draw clicked point directly into the view's image in red color.
             // For debug/development purposes only!
             NSSize imgSize = [img size];
+            NSLog(@"ImageSize: (%lf, %lf)", imgSize.width, imgSize.height);
+            
             [img setSize:bitmapSize];
             [img lockFocus];
             NSBitmapImageRep* bitmapRep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0.0, 0.0, [img size].width, [img size].height)];
@@ -220,9 +222,11 @@
             
             NSImage* newImg = [[NSImage alloc] initWithSize:bitmapSize];
             [newImg addRepresentation:bitmapRep];
+            [newImg setScalesWhenResized:YES];
             [newImg setSize:imgSize];
+            NSLog(@"NewImageSize: (%lf, %lf)", newImg.size.width, newImg.size.height);
             
-            [self setForegroundImage:newImg];
+            [self setImage:newImg];
             [newImg release];
             [bitmapRep release];
     
