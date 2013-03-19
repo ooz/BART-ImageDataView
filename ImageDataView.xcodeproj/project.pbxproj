@@ -19,6 +19,9 @@
 		4737CE2415934F1F00E0D0FD /* BAImageDataView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4737CE2215934F1F00E0D0FD /* BAImageDataView.xib */; };
 		4737CE26159371BE00E0D0FD /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4737CE25159371BE00E0D0FD /* Quartz.framework */; };
 		474F0C4E15BEA96300AF1858 /* BAImageSliceSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 474F0C4D15BEA96300AF1858 /* BAImageSliceSelector.m */; };
+		476D76D116F89E0800B798D6 /* BAROISelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 476D76D016F89E0800B798D6 /* BAROISelection.m */; };
+		476D76D916F89ED800B798D6 /* BAROIPointThresholdSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 476D76D816F89ED800B798D6 /* BAROIPointThresholdSelection.m */; };
+		476D76DC16F89F1500B798D6 /* BAROIPointSetSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 476D76DB16F89F1500B798D6 /* BAROIPointSetSelection.m */; };
 		47BB83FB15E781EB004E3B2F /* BADataElementRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 47BB83FA15E781EB004E3B2F /* BADataElementRenderer.m */; };
 		47EC773A15FF625500A00C51 /* Axial.png in Resources */ = {isa = PBXBuildFile; fileRef = 47EC773715FF622E00A00C51 /* Axial.png */; };
 		47EC773B15FF625500A00C51 /* Coronal.png in Resources */ = {isa = PBXBuildFile; fileRef = 47EC773815FF622E00A00C51 /* Coronal.png */; };
@@ -58,6 +61,12 @@
 		4737CE25159371BE00E0D0FD /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		474F0C4C15BEA96300AF1858 /* BAImageSliceSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAImageSliceSelector.h; sourceTree = "<group>"; };
 		474F0C4D15BEA96300AF1858 /* BAImageSliceSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAImageSliceSelector.m; sourceTree = "<group>"; };
+		476D76CF16F89E0800B798D6 /* BAROISelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAROISelection.h; path = ROI/BAROISelection.h; sourceTree = "<group>"; };
+		476D76D016F89E0800B798D6 /* BAROISelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAROISelection.m; path = ROI/BAROISelection.m; sourceTree = "<group>"; };
+		476D76D716F89ED800B798D6 /* BAROIPointThresholdSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAROIPointThresholdSelection.h; path = ROI/BAROIPointThresholdSelection.h; sourceTree = "<group>"; };
+		476D76D816F89ED800B798D6 /* BAROIPointThresholdSelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAROIPointThresholdSelection.m; path = ROI/BAROIPointThresholdSelection.m; sourceTree = "<group>"; };
+		476D76DA16F89F1500B798D6 /* BAROIPointSetSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAROIPointSetSelection.h; path = ROI/BAROIPointSetSelection.h; sourceTree = "<group>"; };
+		476D76DB16F89F1500B798D6 /* BAROIPointSetSelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAROIPointSetSelection.m; path = ROI/BAROIPointSetSelection.m; sourceTree = "<group>"; };
 		47BB83F915E781EB004E3B2F /* BADataElementRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BADataElementRenderer.h; sourceTree = "<group>"; };
 		47BB83FA15E781EB004E3B2F /* BADataElementRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BADataElementRenderer.m; sourceTree = "<group>"; };
 		47BB83FD15E7B16B004E3B2F /* BAImageDataViewConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAImageDataViewConstants.h; sourceTree = "<group>"; };
@@ -122,6 +131,19 @@
 			path = EDNA;
 			sourceTree = "<group>";
 		};
+		476D76D316F89E1A00B798D6 /* ROI */ = {
+			isa = PBXGroup;
+			children = (
+				476D76CF16F89E0800B798D6 /* BAROISelection.h */,
+				476D76D016F89E0800B798D6 /* BAROISelection.m */,
+				476D76D716F89ED800B798D6 /* BAROIPointThresholdSelection.h */,
+				476D76D816F89ED800B798D6 /* BAROIPointThresholdSelection.m */,
+				476D76DA16F89F1500B798D6 /* BAROIPointSetSelection.h */,
+				476D76DB16F89F1500B798D6 /* BAROIPointSetSelection.m */,
+			);
+			name = ROI;
+			sourceTree = "<group>";
+		};
 		47EC773615FF622E00A00C51 /* img */ = {
 			isa = PBXGroup;
 			children = (
@@ -174,6 +196,7 @@
 		47F8414A1592195B00048830 /* ImageDataView */ = {
 			isa = PBXGroup;
 			children = (
+				476D76D316F89E1A00B798D6 /* ROI */,
 				47FDD3E216245F8A00B2C8B1 /* ColorMappingFilter.cikernel */,
 				47FDD3E316245F8A00B2C8B1 /* ColorMappingFilter.h */,
 				47FDD3E416245F8A00B2C8B1 /* ColorMappingFilter.m */,
@@ -302,6 +325,9 @@
 				47FDD3E616245F8B00B2C8B1 /* ColorMappingFilter.m in Sources */,
 				47FDD3F116303AFE00B2C8B1 /* BATwoDomainColortableFilter.m in Sources */,
 				47FDD3F516303E9700B2C8B1 /* ColorMappingFilterTwoDomains.m in Sources */,
+				476D76D116F89E0800B798D6 /* BAROISelection.m in Sources */,
+				476D76D916F89ED800B798D6 /* BAROIPointThresholdSelection.m in Sources */,
+				476D76DC16F89F1500B798D6 /* BAROIPointSetSelection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
