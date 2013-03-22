@@ -332,7 +332,6 @@
         NSUInteger* relevantComps = [self->mRelevantSliceFilter getRowColVectorMainComponents:[self->mImage getMainOrientation]];
         float rowOrientComponent = [[self->mRowVec objectAtIndex:relevantComps[0]] floatValue];
         float colOrientComponent = [[self->mColumnVec objectAtIndex:relevantComps[1]] floatValue];
-        free(relevantComps);
     //    NSLog(@"Row/col components of row/col-vecs: (%f, %f)", rowOrientComponent, colOrientComponent);
         
         BOOL flipX = rowOrientComponent < ROW_FLIP_THRESHOLD;
@@ -343,6 +342,7 @@
         } else {
             flipY = colOrientComponent < COL_FLIP_THRESHOLD;
         }
+        free(relevantComps);
         
         CIImage* renderedSlices;
         switch (dims[0]) {
