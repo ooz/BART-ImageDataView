@@ -436,15 +436,15 @@
         float* sliceData = [self->mImage getSliceData:sliceNr
                                            atTimestep:self->mCurrentTimestep];
         
-        int srcRow;
-        int srcCol;
+        size_t srcRow;
+        size_t srcCol;
         int targetIndex = 0;
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
                 srcRow = (flipY) ? rows - row - 1 : row;
                 srcCol = (flipX) ? cols - col - 1 : col;
                 normalized = sliceData[srcRow * cols + srcCol] / [max floatValue];
-                renderImageData[targetIndex++]     = normalized;
+                renderImageData[targetIndex++] = normalized;
                 renderImageData[targetIndex++] = normalized;
                 renderImageData[targetIndex++] = normalized;
                 renderImageData[targetIndex++] = MAX_ALPHA;
@@ -461,7 +461,7 @@
         for (int gridRow = 0; gridRow < gridHeight; gridRow++) {
             for (int gridCol = 0; gridCol < gridWidth; gridCol++) {
                 
-                size_t sliceNr   = 0;
+                uint sliceNr   = 0;
                 float* sliceData = NULL;
                 if (sliceIndex >= 0
                     && sliceIndex < [self->mRelevantSlices count]) {
@@ -480,10 +480,10 @@
                     size_t sliceOffset = ((gridRow * gridWidth * cols * rows) + gridCol * cols) * NUMBER_OF_CHANNELS;
                     //                    NSLog(@"SliceNr: %ld, sliceOffset: %ld (rows: %ld, cols: %ld", sliceNr, sliceOffset, rows, cols);
                     
-                    int srcRow;
-                    int srcCol;
-                    for (int row = 0; row < rows; row++) {
-                        for (int col = 0; col < cols; col++) {
+                    size_t srcRow;
+                    size_t srcCol;
+                    for (size_t row = 0; row < rows; row++) {
+                        for (size_t col = 0; col < cols; col++) {
                             srcRow = (flipY) ? (rows - row - 1) : row;
                             srcCol = (flipX) ? (cols - col - 1) : col;
                             normalized = sliceData[srcRow * cols + srcCol] / [max floatValue];
@@ -534,20 +534,20 @@
     NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
     float normalized = 0.0f;
     
-    int srcSliceNr= 0;
+    size_t srcSliceNr = 0;
     if (   gridWidth == 1
         && gridHeight == 1) {
         // Single slice view
         
         int renderIndex = 0;
         int tarSliceNr = (flipZ) ? (self->mSliceCount - self->mCurrentSlice - 1) : self->mCurrentSlice;
-        for (int slice = 0; slice < slices; slice++) {
+        for (size_t slice = 0; slice < slices; slice++) {
             
             srcSliceNr = (flipY) ? slices - slice - 1 : slice;
             float* sliceData = [self->mImage getSliceData:srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
-            int srcCol;
-            for (int col = 0; col < cols; col++) {
+            size_t srcCol;
+            for (size_t col = 0; col < cols; col++) {
                 srcCol = (flipX) ? cols - col - 1 : col;
                 normalized = sliceData[tarSliceNr * cols + srcCol] / [max floatValue];
                 renderImageData[renderIndex++] = normalized;
@@ -563,16 +563,16 @@
         // Many slice view
         // TODO: much space for parallelization here
         
-        int renderIndex = 0;
-        int flippedGridIndex;
-        int relevantSlicesCount = [self->mRelevantSlices count];
+        size_t renderIndex = 0;
+        size_t flippedGridIndex;
+        NSUInteger relevantSlicesCount = [self->mRelevantSlices count];
         for (int slice = 0; slice < slices; slice++) {
             srcSliceNr = (flipY) ? slices - slice - 1 : slice;
             float* sliceData = [self->mImage getSliceData:srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
             
-            int srcCol;
-            for (int col = 0; col < cols; col++) {
+            size_t srcCol;
+            for (size_t col = 0; col < cols; col++) {
                 srcCol = (flipX) ? cols - col - 1 : col;
                 
                 for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
@@ -629,19 +629,19 @@
     NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
     float normalized = 0.0f;
     
-    int srcSliceNr;
+    size_t srcSliceNr;
     if (   gridWidth == 1
         && gridHeight == 1) {
         // Single slice view
         int renderIndex = 0;
-        for (int slice = 0; slice < slices; slice++) {
+        for (size_t slice = 0; slice < slices; slice++) {
             srcSliceNr = (flipY) ? slices - slice - 1 : slice;
             float* sliceData = [self->mImage getSliceData:srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
             
             int tarSliceNr = (flipZ) ? self->mSliceCount - self->mCurrentSlice - 1 : self->mCurrentSlice;
-            int srcRow;
-            for (int row = 0; row < rows; row++) {
+            size_t srcRow;
+            for (size_t row = 0; row < rows; row++) {
                 srcRow = (flipX) ? rows - row - 1 : row;
                 normalized = sliceData[srcRow * cols + tarSliceNr] / [max floatValue];
                 renderImageData[renderIndex++] = normalized;
@@ -657,19 +657,19 @@
         // Many slice view
         // TODO: much space for parallelization here
         
-        int renderIndex = 0;
-        int relevantSlicesCount = [self->mRelevantSlices count];
+        size_t renderIndex = 0;
+        NSUInteger relevantSlicesCount = [self->mRelevantSlices count];
         for (int slice = 0; slice < slices; slice++) {
             srcSliceNr = (flipY) ? slices - slice - 1 : slice;
             float* sliceData = [self->mImage getSliceData:srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
             
-            int srcRow;
-            for (int row = 0; row < rows; row++) {
+            size_t srcRow;
+            for (size_t row = 0; row < rows; row++) {
                 // the column number in the target (sagittal) image equals the row number in the source (axial) data
                 srcRow = (flipX) ? rows - row - 1 : row;
                 
-                int flippedGridIndex;
+                size_t flippedGridIndex;
                 for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
                     // gridIndex equals one column of data in the original axial slice data
                     
@@ -729,13 +729,13 @@
     NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
     float normalized = 0.0f;
     
-    int srcSliceNr;
-    int srcRow;
+    size_t srcSliceNr;
+    size_t srcRow;
     if (   gridWidth == 1
         && gridHeight == 1) {
         // Single slice view
         
-        int renderIndex = 0;
+        size_t renderIndex = 0;
         int tarSliceNr = (flipZ) ? (self->mSliceCount - self->mCurrentSlice - 1) : self->mCurrentSlice;
         for (int slice = 0; slice < slices; slice++) {
             
@@ -760,9 +760,9 @@
         // Many slice view
         // TODO: much space for parallelization here
         
-        int renderIndex = 0;
-        int relevantSlicesCount = [self->mRelevantSlices count];
-        int flippedGridIndex;
+        size_t renderIndex = 0;
+        NSUInteger relevantSlicesCount = [self->mRelevantSlices count];
+        size_t flippedGridIndex;
         for (int slice = 0; slice < slices; slice++) {
             srcSliceNr = (flipX) ? slices - slice - 1 : slice;
             float* sliceData = [self->mImage getSliceData:srcSliceNr
@@ -825,13 +825,13 @@
     NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
     float normalized = 0.0f;
     
-    int srcSliceNr;
-    int srcCol;
+    size_t srcSliceNr;
+    size_t srcCol;
     if (   gridWidth == 1
         && gridHeight == 1) {
         // Single slice view
         
-        int renderIndex;
+        size_t renderIndex;
         int tarSliceNr = (flipZ) ? (self->mSliceCount - self->mCurrentSlice - 1) : self->mCurrentSlice;
         for (int slice = 0; slice < slices; slice++) {
             
@@ -856,9 +856,9 @@
         // Many slice view
         // TODO: much space for parallelization here
         
-        int renderIndex = 0;
-        int relevantSlicesCount = [self->mRelevantSlices count];
-        int flippedGridIndex;
+        size_t renderIndex = 0;
+        NSUInteger relevantSlicesCount = [self->mRelevantSlices count];
+        size_t flippedGridIndex;
         for (int slice = 0; slice < slices; slice++) {
             srcSliceNr = (flipX) ? slices - slice - 1 : slice;
             float* sliceData = [self->mImage getSliceData:srcSliceNr

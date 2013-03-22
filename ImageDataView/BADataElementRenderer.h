@@ -60,7 +60,7 @@
     /** The timestep indicating the volume to render. */
     uint mCurrentTimestep;
     /** Total number of timesteps in mImage. */
-    uint mTimestepCount;
+    size_t mTimestepCount;
     
     
     /** Target orientation to which the image should be rendered. */
