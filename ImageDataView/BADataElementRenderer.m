@@ -39,11 +39,46 @@
 /**
  * Methods to render the CIImage object.
  * Regardless of single or multi slice grid only one CIImage is rendered.
+ *
+ * The flip flags indicate whether the respective axis should be flipped in the
+ * target image space (orientation).
+ *
+ * Renders the EDDataElement mImage directly according to its main orientation.
+ * Used in the following cases (source orientation --> target orientation):
+ *   sagittal --> sagittal
+ *   axial    --> axial
+ *   coronal  --> coronal
  */
 -(CIImage*)renderIdenticalImage          :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+/**
+ * Renders the EDDataElement mImage as if the voxel data cuboid would be turned up
+ * (rotated 90° along its x-axis).
+ * Used in the following cases (source orientation --> target orientation):
+ *   axial    --> coronal
+ *   coronal  --> axial
+ */
 -(CIImage*)renderTurnUpImage             :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+/**
+ * Renders the EDDataElement mImage as if the voxel data cuboid would be turned left
+ * (rotated 90° along its y-axis) and then rotated right (rotated 90° along its z'-axis).
+ * Used in the following case (source orientation --> target orientation):
+ *   axial    --> sagittal
+ */
 -(CIImage*)renderTurnLeftRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+/**
+ * Renders the EDDataElement mImage as if the voxel data cuboid would be turned left
+ * (rotated 90° along its y-axis).
+ * Used in the following cases (source orientation --> target orientation):
+ *   sagittal --> coronal
+ *   coronal  --> sagittal
+ */
 -(CIImage*)renderTurnLeftImage           :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+/**
+ * Renders the EDDataElement mImage as if the voxel data cuboid would be turned up
+ * (rotated 90° along its x-axis) and then rotated right (rotated 90° along its z'-axis).
+ * Used in the following case (source orientation --> target orientation):
+ *   sagittal --> axial
+ */
 -(CIImage*)renderTurnUpRotateRightImage  :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
 
 /**
