@@ -27,6 +27,8 @@
     NSArray*       mColumnVec;
     /** Row    vector indicating flips/rotations in the x-coord of \see{BAImageDataViewController#mImage}. */
     NSArray*       mRowVec;
+    /** x, y, z axis flipping state of the target (rendered) image determined by ColumnVec/RowVec of the source image. */
+    NSUInteger     mFlipMask;
     
     /** 
      * Property list used to query \see{BAImageDataViewController#mImage} for various traits
@@ -141,5 +143,17 @@
  */
 -(NSImage*)renderImage;
 
+/**
+ * Converts a point (e.g. a mouse click location) in the target (render) image space
+ * to a 4D location (x, y, slice, timestep) in the source data space (EDDataElement).
+ * This method takes all attributes (e.g. gridSize, flips resulting from row-/colVec)
+ * of the renderer object into consideration.
+ *
+ * \param p NSPoint in the target image space (rendered NSImage).
+ * \return  Four-dimensional NSArray of NSNumber objects representing coordinates 
+ *          in the source data space of the EDDataElement(x, y, slice, timestep).
+ *          Autoreleased.
+ */
+-(NSArray*)pointToVoxel:(NSPoint)p;
 
 @end

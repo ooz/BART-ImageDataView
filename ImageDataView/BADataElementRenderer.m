@@ -13,6 +13,16 @@
 #import "BAImageSliceSelector.h"
 
 
+// #############
+// # Constants #
+// #############
+
+const NSUInteger MASK_NO_FLIP = 0;
+const NSUInteger MASK_X_FLIP  = 1 << 0;
+const NSUInteger MASK_Y_FLIP  = 1 << 1;
+const NSUInteger MASK_Z_FLIP  = 1 << 2;
+
+
 // ###############################
 // # Private method declarations #
 // ###############################
@@ -40,16 +50,13 @@
  * Methods to render the CIImage object.
  * Regardless of single or multi slice grid only one CIImage is rendered.
  *
- * The flip flags indicate whether the respective axis should be flipped in the
- * target image space (orientation).
- *
  * Renders the EDDataElement mImage directly according to its main orientation.
  * Used in the following cases (source orientation --> target orientation):
  *   sagittal --> sagittal
  *   axial    --> axial
  *   coronal  --> coronal
  */
--(CIImage*)renderIdenticalImage          :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+-(CIImage*)renderIdenticalImage;
 /**
  * Renders the EDDataElement mImage as if the voxel data cuboid would be turned up
  * (rotated 90° along its x-axis).
@@ -57,14 +64,14 @@
  *   axial    --> coronal
  *   coronal  --> axial
  */
--(CIImage*)renderTurnUpImage             :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+-(CIImage*)renderTurnUpImage;
 /**
  * Renders the EDDataElement mImage as if the voxel data cuboid would be turned left
  * (rotated 90° along its y-axis) and then rotated right (rotated 90° along its z'-axis).
  * Used in the following case (source orientation --> target orientation):
  *   axial    --> sagittal
  */
--(CIImage*)renderTurnLeftRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+-(CIImage*)renderTurnLeftRotateRightImage;
 /**
  * Renders the EDDataElement mImage as if the voxel data cuboid would be turned left
  * (rotated 90° along its y-axis).
@@ -72,14 +79,14 @@
  *   sagittal --> coronal
  *   coronal  --> sagittal
  */
--(CIImage*)renderTurnLeftImage           :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+-(CIImage*)renderTurnLeftImage;
 /**
  * Renders the EDDataElement mImage as if the voxel data cuboid would be turned up
  * (rotated 90° along its x-axis) and then rotated right (rotated 90° along its z'-axis).
  * Used in the following case (source orientation --> target orientation):
  *   sagittal --> axial
  */
--(CIImage*)renderTurnUpRotateRightImage  :(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ;
+-(CIImage*)renderTurnUpRotateRightImage;
 
 /**
  * Utility method for the render methods.
@@ -133,6 +140,7 @@
         self->mVoxelSize   = nil;
         self->mColumnVec   = nil;
         self->mRowVec      = nil;
+        self->mFlipMask    = MASK_NO_FLIP;
         
         self->mPropList = [[NSArray arrayWithObjects: PROP_VOXELGAP
                                                     , PROP_VOXELSIZE
@@ -369,8 +377,8 @@
         float colOrientComponent = [[self->mColumnVec objectAtIndex:relevantComps[1]] floatValue];
     //    NSLog(@"Row/col components of row/col-vecs: (%f, %f)", rowOrientComponent, colOrientComponent);
         
-        BOOL flipX = rowOrientComponent < ROW_FLIP_THRESHOLD;
-        BOOL flipY;
+        BOOL flipX = rowOrientComponent < ROW_FLIP_THRESHOLD; // x flip in source space
+        BOOL flipY;                                           // y flip in source space
         if (relevantComps[1] == 2) {
             // y-axis is top-down in dicom images, while scanner z-axis is bottom-up in coronal images
             flipY = colOrientComponent > COL_FLIP_THRESHOLD; 
@@ -379,31 +387,37 @@
         }
         free(relevantComps);
         
+        self->mFlipMask = MASK_NO_FLIP;                       // flips in target space
         CIImage* renderedSlices;
         switch (dims[0]) {
             case DIM_SLICE:
                 switch (dims[1]) {
                     case DIM_HEIGHT:
-                        renderedSlices = [self renderTurnLeftImage :NO :flipY :flipX];
+                        self->mFlipMask = flipY << 1 | flipX << 2;
+                        renderedSlices = [self renderTurnLeftImage];
                         break;
                     default:
-                        renderedSlices = [self renderTurnUpRotateRightImage :NO :flipX :flipY];
+                        self->mFlipMask = flipX << 1 | flipY << 2;
+                        renderedSlices = [self renderTurnUpRotateRightImage];
                         break;
                 }
                 break;
             case DIM_HEIGHT:
                 if (dims[1] == DIM_SLICE) {
-                    renderedSlices = [self renderTurnLeftRotateRightImage :flipY :YES :flipX];
+                    self->mFlipMask = flipY << 0 | MASK_Y_FLIP | flipX << 2;
+                    renderedSlices = [self renderTurnLeftRotateRightImage];
                 }
                 break;
             default:
                 // DIM_WIDTH
                 switch (dims[1]) {
                     case DIM_SLICE:
-                        renderedSlices = [self renderTurnUpImage :flipX :YES :flipY];
+                        self->mFlipMask = flipX << 0 | MASK_Y_FLIP | flipY << 2;
+                        renderedSlices = [self renderTurnUpImage];
                         break;
                     default:
-                        renderedSlices = [self renderIdenticalImage :flipX :flipY :NO];
+                        self->mFlipMask = flipX << 0 | flipY << 1;
+                        renderedSlices = [self renderIdenticalImage];
                         break;
                 }
                 break;
@@ -439,7 +453,7 @@
     return image;
 }
 
--(CIImage*)renderIdenticalImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
+-(CIImage*)renderIdenticalImage
 {
     BARTImageSize* imageSize = [self->mImage getImageSize];
     
@@ -447,6 +461,10 @@
     size_t cols       = imageSize.columns;
     size_t gridWidth  = self->mGridSize.width;
     size_t gridHeight = self->mGridSize.height;
+    
+    BOOL flipX = (self->mFlipMask & MASK_X_FLIP) != 0;
+    BOOL flipY = (self->mFlipMask & MASK_Y_FLIP) != 0;
+    BOOL flipZ = (self->mFlipMask & MASK_Z_FLIP) != 0;
     
     size_t renderImageDataLength =   cols
     * rows 
@@ -546,7 +564,7 @@
     return ciImage;
 }
 
--(CIImage*)renderTurnUpImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
+-(CIImage*)renderTurnUpImage
 {
     // TODO: too much c&p from renderIdenticalImage ;)
     
@@ -557,6 +575,10 @@
     size_t slices     = imageSize.slices;
     size_t gridWidth  = self->mGridSize.width;
     size_t gridHeight = self->mGridSize.height;
+    
+    BOOL flipX = (self->mFlipMask & MASK_X_FLIP) != 0;
+    BOOL flipY = (self->mFlipMask & MASK_Y_FLIP) != 0;
+    BOOL flipZ = (self->mFlipMask & MASK_Z_FLIP) != 0;
     
     size_t renderImageDataLength =    cols
     * slices 
@@ -641,7 +663,7 @@
     return ciImage;
 }
 
--(CIImage*)renderTurnLeftRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
+-(CIImage*)renderTurnLeftRotateRightImage
 {
     // TODO: too much c&p from renderIdenticalImage ;)
     
@@ -652,6 +674,10 @@
     size_t slices     = imageSize.slices;
     size_t gridWidth  = self->mGridSize.width;
     size_t gridHeight = self->mGridSize.height;
+    
+    BOOL flipX = (self->mFlipMask & MASK_X_FLIP) != 0;
+    BOOL flipY = (self->mFlipMask & MASK_Y_FLIP) != 0;
+    BOOL flipZ = (self->mFlipMask & MASK_Z_FLIP) != 0;
     
     size_t renderImageDataLength =    rows
                                     * slices 
@@ -741,7 +767,7 @@
     return ciImage;
 }
 
--(CIImage*)renderTurnLeftImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
+-(CIImage*)renderTurnLeftImage
 {
     // TODO: too much c&p from renderIdenticalImage ;)
     
@@ -752,6 +778,10 @@
     size_t slices     = imageSize.slices;
     size_t gridWidth  = self->mGridSize.width;
     size_t gridHeight = self->mGridSize.height;
+    
+    BOOL flipX = (self->mFlipMask & MASK_X_FLIP) != 0;
+    BOOL flipY = (self->mFlipMask & MASK_Y_FLIP) != 0;
+    BOOL flipZ = (self->mFlipMask & MASK_Z_FLIP) != 0;
     
     size_t renderImageDataLength =    slices
     * rows 
@@ -837,7 +867,7 @@
     return ciImage;
 }
 
--(CIImage*)renderTurnUpRotateRightImage:(BOOL)flipX :(BOOL)flipY :(BOOL)flipZ
+-(CIImage*)renderTurnUpRotateRightImage
 {
     // TODO: too much c&p from renderIdenticalImage ;)
     
@@ -848,6 +878,10 @@
     size_t slices     = imageSize.slices;
     size_t gridWidth  = self->mGridSize.width;
     size_t gridHeight = self->mGridSize.height;
+    
+    BOOL flipX = (self->mFlipMask & MASK_X_FLIP) != 0;
+    BOOL flipY = (self->mFlipMask & MASK_Y_FLIP) != 0;
+    BOOL flipZ = (self->mFlipMask & MASK_Z_FLIP) != 0;
     
     size_t renderImageDataLength =    slices
                                     * cols
@@ -1090,6 +1124,12 @@
     [image setSize:minSize];
     
     return image;
+}
+
+
+-(NSArray*)pointToVoxel:(NSPoint)p
+{
+    return nil;
 }
 
 @end

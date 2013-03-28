@@ -560,6 +560,9 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
 -(void)mouseUp:(NSEvent*)theEvent {
     NSPoint clickPoint = [theEvent locationInWindow];
     NSLog(@"BAImageDataViewController received mouseUp event. Point: (%.1lf, %.1lf)", clickPoint.x, clickPoint.y);
+    
+    NSArray* clickInDataSpace = [self->mOverlayRenderer pointToVoxel:clickPoint];
+    NSLog(@"clickInDataSpace: %@", clickInDataSpace);
 }
 
 @end
