@@ -1129,7 +1129,79 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
 
 -(NSArray*)pointToVoxel:(NSPoint)p
 {
-    return nil;
+    NSUInteger x = 0;
+    NSUInteger y = 0;
+    NSUInteger slice = 0;
+    NSUInteger ts = 0;
+    
+    if (self->mImage != nil) {
+        
+        BARTImageSize* imageSize = [self->mImage getImageSize];
+        size_t cols = imageSize.columns;
+        size_t rows = imageSize.rows;
+        size_t slices = imageSize.slices;
+        size_t gridWidth  = self->mGridSize.width;
+        size_t gridHeight = self->mGridSize.height;
+    
+        BOOL flippedX = (self->mFlipMask & MASK_X_FLIP) != 0;
+        BOOL flippedY = (self->mFlipMask & MASK_Y_FLIP) != 0;
+        BOOL flippedZ = (self->mFlipMask & MASK_Z_FLIP) != 0;
+        
+        enum ImageDimension* dims = [self->mRelevantSliceFilter getDimensionsFrom:self->mImage alignedTo:self->mTargetOrientation];
+        switch (dims[0]) {
+            case DIM_WIDTH:
+                x = (flippedX) ? cols - p.x - 1 : p.x;
+                break;
+            case DIM_HEIGHT:
+                y = (flippedX) ? rows - p.x - 1 : p.x;
+                break;
+            default:
+                slice = (flippedX) ? slices - p.x - 1 : p.x;
+                break;
+        }
+        switch (dims[1]) {
+            case DIM_WIDTH:
+                x = (flippedY) ? cols - p.y - 1 : p.y;
+                break;
+            case DIM_HEIGHT:
+                y = (flippedY) ? rows - p.y - 1 : p.y;
+                break;
+            default:
+                slice = (flippedY) ? slices - p.y - 1 : p.y;
+                break;
+        }
+        switch (dims[2]) {
+            case DIM_WIDTH:
+                x = (flippedZ) ? cols - self->mCurrentSlice - 1 : self->mCurrentSlice;
+                break;
+            case DIM_HEIGHT:
+                y = (flippedZ) ? rows - self->mCurrentSlice - 1 : self->mCurrentSlice;
+                break;
+            default:
+                slice = (flippedZ) ? slices - self->mCurrentSlice - 1 : self->mCurrentSlice;
+                break;
+        }
+        
+        
+//        if (   gridWidth == 1
+//            && gridHeight == 1) {
+//            
+//        } else {
+//            // get slice info first
+//            
+//        }
+        
+        free(dims);
+        
+        ts = self->mCurrentTimestep;
+    }
+    
+    NSArray* ret = [NSArray arrayWithObjects:[NSNumber numberWithInteger:x],
+                                             [NSNumber numberWithInteger:y],
+                                             [NSNumber numberWithInteger:slice],
+                                             [NSNumber numberWithInteger:ts],
+                                             nil];
+    return ret;
 }
 
 @end
