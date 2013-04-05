@@ -36,6 +36,11 @@
      */
     NSArray*       mPropList;
     
+    /** Target orientation to which the image should be rendered. */
+    enum ImageOrientation mTargetOrientation;
+    /** Main orientation of \see{BAImageDataViewController#mImage}. */
+    enum ImageOrientation mMainOrientation;
+    
     /** 
      * Cache of rendered image in case the raw data (+ slice and orientation info) did not change.
      * (Is used when filter attributes change, so no need to render raw EDDataElement again.)
@@ -51,6 +56,15 @@
     /** An array containing the filtered slice indices as NSNumber objects. */
     NSArray* mRelevantSlices;
     
+    /** Number of columns in \see{BAImageDataViewController#mImage}.
+     * Depends on image size and current \see{BAImageDataViewController#mTargetOrientation}.
+     */
+    uint mColumnCount;
+    /** Number of rows in \see{BAImageDataViewController#mImage}.
+     * Depends on image size and current \see{BAImageDataViewController#mTargetOrientation}.
+     */
+    uint mRowCount;
+    
     /** Current slice index to render in a single slice image. 
      * Depends on image size and current \see{BAImageDataViewController#mTargetOrientation}. 
      */
@@ -59,16 +73,11 @@
      * Depends on image size and current \see{BAImageDataViewController#mTargetOrientation}. 
      */
     uint mSliceCount;
+    
     /** The timestep indicating the volume to render. */
     uint mCurrentTimestep;
     /** Total number of timesteps in mImage. */
     size_t mTimestepCount;
-    
-    
-    /** Target orientation to which the image should be rendered. */
-    enum ImageOrientation mTargetOrientation;
-    /** Main orientation of \see{BAImageDataViewController#mImage}. */
-    enum ImageOrientation mMainOrientation;
     
     /** Size of the multi slice grid. */
     NSSize mGridSize;

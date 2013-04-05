@@ -155,6 +155,9 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
         self->mRelevantSliceFilter = [[BAImageSliceSelector alloc] init];
         self->mRelevantSlices = nil;
         
+        self->mColumnCount  = 1;
+        self->mRowCount     = 1;
+        
         self->mCurrentSlice = 0;
         self->mSliceCount   = 1;
         self->mCurrentTimestep = 0;
@@ -271,8 +274,13 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
 {
     self->mTargetOrientation = o;
     
-    self->mSliceCount = [self->mRelevantSliceFilter getSliceDimensionSize:self->mImage 
-                                                                alignedTo:self->mTargetOrientation];
+    size_t* dimSizes = [self->mRelevantSliceFilter getDimensionSizes:self->mImage
+                                                           alignedTo:self->mTargetOrientation];
+    self->mColumnCount = dimSizes[0];
+    self->mRowCount    = dimSizes[1];
+    self->mSliceCount  = dimSizes[2];
+    free(dimSizes);
+    
     [self setSlice:self->mCurrentSlice];
     [self setGridSize:self->mGridSize];
 }
@@ -1134,63 +1142,80 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
     NSUInteger slice = 0;
     NSUInteger ts = 0;
     
-    if (self->mImage != nil) {
+    size_t gridWidth  = self->mGridSize.width;
+    size_t gridHeight = self->mGridSize.height;
+    
+    if (self->mImage != nil
+        && p.x >= 0.0f && p.x < self->mColumnCount * gridWidth
+        && p.y >= 0.0f && p.y < self->mRowCount    * gridHeight) {
+        
+        NSUInteger px = p.x;
+        NSUInteger py = p.y;
         
         BARTImageSize* imageSize = [self->mImage getImageSize];
         size_t cols = imageSize.columns;
         size_t rows = imageSize.rows;
         size_t slices = imageSize.slices;
-        size_t gridWidth  = self->mGridSize.width;
-        size_t gridHeight = self->mGridSize.height;
     
         BOOL flippedX = (self->mFlipMask & MASK_X_FLIP) != 0;
         BOOL flippedY = (self->mFlipMask & MASK_Y_FLIP) != 0;
         BOOL flippedZ = (self->mFlipMask & MASK_Z_FLIP) != 0;
         
-        enum ImageDimension* dims = [self->mRelevantSliceFilter getDimensionsFrom:self->mImage alignedTo:self->mTargetOrientation];
+        size_t tarSlice;
+        
+        if (   gridWidth == 1
+            && gridHeight == 1) {
+            tarSlice = self->mCurrentSlice;
+            
+        } else {
+            size_t gridIndex = (py / self->mRowCount) * gridWidth + px / self->mColumnCount;
+            NSUInteger relevantSlicesCount = [self->mRelevantSlices count];
+            // Need to flip target slice here already.
+            gridIndex = (flippedZ) ? relevantSlicesCount - gridIndex - 1 : gridIndex;
+            tarSlice = [[self->mRelevantSlices objectAtIndex:gridIndex] intValue];
+            
+            px = px % self->mColumnCount;
+            py = py % self->mRowCount;
+        }
+        
+        // Find source coordinates based on the image (its main orientation), the target orientation
+        // and point p (target coordinates)
+        enum ImageDimension* dims = [self->mRelevantSliceFilter getDimensionsFrom:self->mImage
+                                                                        alignedTo:self->mTargetOrientation];
         switch (dims[0]) {
             case DIM_WIDTH:
-                x = (flippedX) ? cols - p.x - 1 : p.x;
+                x = (flippedX) ? cols - px - 1 : px;
                 break;
             case DIM_HEIGHT:
-                y = (flippedX) ? rows - p.x - 1 : p.x;
+                y = (flippedX) ? rows - px - 1 : px;
                 break;
             default:
-                slice = (flippedX) ? slices - p.x - 1 : p.x;
+                slice = (flippedX) ? slices - px - 1 : px;
                 break;
         }
         switch (dims[1]) {
             case DIM_WIDTH:
-                x = (flippedY) ? cols - p.y - 1 : p.y;
+                x = (flippedY) ? cols - py - 1 : py;
                 break;
             case DIM_HEIGHT:
-                y = (flippedY) ? rows - p.y - 1 : p.y;
+                y = (flippedY) ? rows - py - 1 : py;
                 break;
             default:
-                slice = (flippedY) ? slices - p.y - 1 : p.y;
+                slice = (flippedY) ? slices - py - 1 : py;
                 break;
         }
         switch (dims[2]) {
+            // Only applying flips for single slice view here. Slice flips for grid view were applied earlier already. 
             case DIM_WIDTH:
-                x = (flippedZ) ? cols - self->mCurrentSlice - 1 : self->mCurrentSlice;
+                x     = (flippedZ && gridWidth == 1 && gridHeight == 1) ? cols - tarSlice - 1   : tarSlice;
                 break;
             case DIM_HEIGHT:
-                y = (flippedZ) ? rows - self->mCurrentSlice - 1 : self->mCurrentSlice;
+                y     = (flippedZ && gridWidth == 1 && gridHeight == 1) ? rows - tarSlice - 1   : tarSlice;
                 break;
             default:
-                slice = (flippedZ) ? slices - self->mCurrentSlice - 1 : self->mCurrentSlice;
+                slice = (flippedZ && gridWidth == 1 && gridHeight == 1) ? slices - tarSlice - 1 : tarSlice;
                 break;
         }
-        
-        
-//        if (   gridWidth == 1
-//            && gridHeight == 1) {
-//            
-//        } else {
-//            // get slice info first
-//            
-//        }
-        
         free(dims);
         
         ts = self->mCurrentTimestep;
