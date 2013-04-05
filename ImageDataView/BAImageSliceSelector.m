@@ -8,11 +8,15 @@
 
 #import "BAImageSliceSelector.h"
 
-/** Default size of the slice dimension. */
-const size_t DEFAULT_SLICE_DIMENSION_SIZE = 1;
+/** Default size of the slice dimension or other dimensions. */
+const size_t DEFAULT_DIMENSION_SIZE = 1;
 
 /** Number of dimensions in one volume. */
 const size_t RELEVANT_DIMENSIONS = 3;
+/** Index of the "column dimension" in an array of dimensions. */
+const size_t COLUMN_DIMENSION_INDEX = 0;
+/** Index of the "row dimension" in an array of dimensions. */
+const size_t ROW_DIMENSION_INDEX = 1;
 /** Index of the "slice dimension" in an array of dimensions. */
 const size_t SLICE_DIMENSION_INDEX = 2;
 
@@ -24,7 +28,7 @@ const size_t SLICE_DIMENSION_INDEX = 2;
                      alignedTo:(enum ImageOrientation)orientation
 {
     if (image == nil) {
-        return DEFAULT_SLICE_DIMENSION_SIZE;
+        return DEFAULT_DIMENSION_SIZE;
     }
     
     BARTImageSize* imageSize = [image getImageSize]; 
@@ -33,7 +37,7 @@ const size_t SLICE_DIMENSION_INDEX = 2;
     enum ImageDimension sliceDim = dims[SLICE_DIMENSION_INDEX];
     free(dims);
     
-    size_t relevantSize = DEFAULT_SLICE_DIMENSION_SIZE;
+    size_t relevantSize = DEFAULT_DIMENSION_SIZE;
     switch (sliceDim) {
         case DIM_WIDTH:
             relevantSize = imageSize.columns;
@@ -45,11 +49,75 @@ const size_t SLICE_DIMENSION_INDEX = 2;
             relevantSize = imageSize.slices;
             break;
         default:
-            NSLog(@"Error: could not find relevant slice dimension (someone extended the enum!) Defaulting to 0!");
+            NSLog(@"Error: could not find relevant slice dimension (someone extended the enum?) Defaulting to %zd!", DEFAULT_DIMENSION_SIZE);
             break;
     }
     
     return relevantSize;
+}
+
+-(size_t*)getDimensionSizes:(EDDataElement*)image
+                  alignedTo:(enum ImageOrientation)orientation
+{
+    size_t* dimSizes = malloc(sizeof(size_t) * RELEVANT_DIMENSIONS);
+    dimSizes[COLUMN_DIMENSION_INDEX] = DEFAULT_DIMENSION_SIZE;
+    dimSizes[ROW_DIMENSION_INDEX]    = DEFAULT_DIMENSION_SIZE;
+    dimSizes[SLICE_DIMENSION_INDEX]  = DEFAULT_DIMENSION_SIZE;
+    
+    if (image != nil) {
+        BARTImageSize* imageSize = [image getImageSize];
+        
+        enum ImageDimension* dims = [self getDimensionsFrom:image alignedTo:orientation];
+        
+        switch (dims[COLUMN_DIMENSION_INDEX]) {
+            case DIM_WIDTH:
+                dimSizes[COLUMN_DIMENSION_INDEX] = imageSize.columns;
+                break;
+            case DIM_HEIGHT:
+                dimSizes[COLUMN_DIMENSION_INDEX] = imageSize.rows;
+                break;
+            case DIM_SLICE:
+                dimSizes[COLUMN_DIMENSION_INDEX] = imageSize.slices;
+                break;
+            default:
+                NSLog(@"Error: could not find relevant column dimension (someone extended the enum?) Defaulting to %zd!", DEFAULT_DIMENSION_SIZE);
+                break;
+        }
+        
+        switch (dims[ROW_DIMENSION_INDEX]) {
+            case DIM_WIDTH:
+                dimSizes[ROW_DIMENSION_INDEX] = imageSize.columns;
+                break;
+            case DIM_HEIGHT:
+                dimSizes[ROW_DIMENSION_INDEX] = imageSize.rows;
+                break;
+            case DIM_SLICE:
+                dimSizes[ROW_DIMENSION_INDEX] = imageSize.slices;
+                break;
+            default:
+                NSLog(@"Error: could not find relevant row dimension (someone extended the enum?) Defaulting to %zd!", DEFAULT_DIMENSION_SIZE);
+                break;
+        }
+        
+        switch (dims[SLICE_DIMENSION_INDEX]) {
+            case DIM_WIDTH:
+                dimSizes[SLICE_DIMENSION_INDEX] = imageSize.columns;
+                break;
+            case DIM_HEIGHT:
+                dimSizes[SLICE_DIMENSION_INDEX] = imageSize.rows;
+                break;
+            case DIM_SLICE:
+                dimSizes[SLICE_DIMENSION_INDEX] = imageSize.slices;
+                break;
+            default:
+                NSLog(@"Error: could not find relevant slice dimension (someone extended the enum?) Defaulting to %zd!", DEFAULT_DIMENSION_SIZE);
+                break;
+        }
+        
+        free(dims);
+    }
+    
+    return dimSizes;
 }
 
 -(NSUInteger*)getRowColVectorMainComponents:(enum ImageOrientation)mainOrient

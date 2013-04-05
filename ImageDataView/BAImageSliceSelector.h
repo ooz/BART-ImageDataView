@@ -61,6 +61,8 @@ enum ImageDimension {
 /**
  * Returns the size of the "slice dimension" which is determined by the image's
  * main orientation and the target orientation.
+ * Special case of the \see{BAImageSliceSelector#getDimensionSizes:alignedTo:}
+ * method.
  *
  * \param image       EDDataElement whose "slice dimension" is of interest.
  * \param orientation Target orientation. Combined with the image main orientation
@@ -69,6 +71,27 @@ enum ImageDimension {
  */
 -(size_t)getSliceDimensionSize:(EDDataElement*)image
                      alignedTo:(enum ImageOrientation)orientation;
+
+/**
+ * Returns the size of the column, row and slice dimensions which are determined by
+ * the image's main orientation and the target orientation.
+ * More general version of the \see{BAImageSliceSelector#getSliceDimensionSize:alignedTo:}
+ * method.
+ *
+ * \param image       EDDataElement whose dimensions in a target orientation are of 
+ *                    interest.
+ * \param orientation Target orientation. Combined with the image main orientation
+ *                    it determines which source image dimensions to treat as the 
+ *                    target dimensions.
+ * \return            Three-dimensional array.
+ *                    1st component: size of the column dimension.
+ *                    2nd component: size of the row dimension.
+ *                    3rd component: size of the slice dimension.
+ *                    MEMORY MANAGEMENT: Caller is responsible to free the
+ *                                       allocated memory!
+ */
+-(size_t*)getDimensionSizes:(EDDataElement*)image
+                  alignedTo:(enum ImageOrientation)orientation;
 
 /** 
  * Select n slice indices from an EDDataElement viewed from a given
