@@ -230,19 +230,22 @@
             [newImg release];
             [bitmapRep release];
     
-            
-            // Propagate mouse event with corrected click coordinates (in image space)
-            NSEvent* correctedEvent = [NSEvent mouseEventWithType:[theEvent type]
-                                                         location:clickPointImageSpace
-                                                    modifierFlags:[theEvent modifierFlags]
-                                                        timestamp:[theEvent timestamp]
-                                                     windowNumber:[theEvent windowNumber]
-                                                          context:[theEvent context]
-                                                      eventNumber:[theEvent eventNumber]
-                                                       clickCount:[theEvent clickCount]
-                                                         pressure:[theEvent pressure]];
-            
-            [super mouseUp:correctedEvent];
+            if (   clickPointImageSpace.x >= 0 && clickPointImageSpace.x < bitmapSize.width
+                && clickPointImageSpace.y >= 0 && clickPointImageSpace.y < bitmapSize.height) {
+                // Propagate mouse event with corrected click coordinates (in image space)
+                // if it actually is inside the image.
+                NSEvent* correctedEvent = [NSEvent mouseEventWithType:[theEvent type]
+                                                             location:clickPointImageSpace
+                                                        modifierFlags:[theEvent modifierFlags]
+                                                            timestamp:[theEvent timestamp]
+                                                         windowNumber:[theEvent windowNumber]
+                                                              context:[theEvent context]
+                                                          eventNumber:[theEvent eventNumber]
+                                                           clickCount:[theEvent clickCount]
+                                                             pressure:[theEvent pressure]];
+                
+                [super mouseUp:correctedEvent];
+            }
         }
     }
     
