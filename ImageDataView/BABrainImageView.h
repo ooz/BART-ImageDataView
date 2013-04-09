@@ -41,4 +41,18 @@
  * \param newImage NSImage to set as background. Pass nil if no background is wanted. */
 -(void)setBackgroundImage:(NSImage*)newImage;
 
+
+/** Creates a new image being the composite of a foreground drawn on a background image.
+ * If one argument is nil and the other isn't, it returns a copy of the non nil argument.
+ * If both arguments are nil, this method returns nil.
+ *
+ * \param foreground Foreground NSImage. Pass nil if no foreground is wanted.
+ * \param background Background NSImage. Pass nil if no background is wanted.
+ * \return A new NSImage being the composite of foreground on background.
+ *         MEMORY MANAGEMENT: Caller is responsible for releasing the created NSImage object!
+ *         Nil if both foreground and background are nil.
+ */
+-(NSImage*)createCompositeImage:(NSImage*)foreground
+                             on:(NSImage*)background;
+
 @end

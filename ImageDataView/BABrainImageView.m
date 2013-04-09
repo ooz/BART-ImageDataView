@@ -99,6 +99,63 @@
     [self updateSetImage];
 }
 
+-(NSImage*)createCompositeImage:(NSImage*)foreground
+                             on:(NSImage*)background
+{
+    if (background == nil) {
+        if (foreground != nil) {
+            return [foreground copy];
+        } else {
+            return nil;
+        }
+    } else {
+        if (foreground == nil) {
+            return [background copy];
+        } else {
+            // Both arguments are not nil, actually draw composite
+            NSImage* drawArea = [background copy];
+            
+            // Determine actual (bitmap) sizes for drawing purposes
+            // http://borkware.com/quickies/one?topic=NSImage
+            NSArray* imageReps;
+            NSImageRep* imageRep;
+            
+            NSSize bgSize;
+            imageReps = [background representations];
+            imageRep  = [imageReps objectAtIndex:0];
+            bgSize.width  = [imageRep pixelsWide];
+            bgSize.height = [imageRep pixelsHigh];
+            
+            NSSize fgSize;
+            imageReps = [foreground representations];
+            imageRep  = [imageReps objectAtIndex:0];
+            fgSize.width  = [imageRep pixelsWide];
+            fgSize.height = [imageRep pixelsHigh];
+            
+            // Set actual (bitmap) representation sizes
+            [drawArea setSize:bgSize];
+            [foreground setSize:fgSize];
+            
+            // Use NSImage composite
+            // http://www.bdunagan.com/2010/01/25/cocoa-tip-nsimage-composites/
+            [drawArea lockFocus];
+            
+            [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationNone];
+            [foreground drawInRect:NSMakeRect(0, 0, bgSize.width, bgSize.height)
+                          fromRect:NSZeroRect
+                         operation:NSCompositeSourceOver
+                          fraction:1.0];
+            
+            [drawArea unlockFocus];
+            
+            // Restore size
+            [drawArea setSize:[background size]];
+            
+            return drawArea;
+        }
+    }
+}
+
 -(void)updateSetImage
 {
     if (self->mBackgroundImage == nil) {
@@ -111,47 +168,10 @@
             [self setImage:self->mBackgroundImage];
         
         } else {
-            // Both images set, draw composite
-            NSImage* drawArea = [self->mBackgroundImage copy];
-            
-            // Determine actual (bitmap) sizes for drawing purposes
-            // http://borkware.com/quickies/one?topic=NSImage
-            NSArray* imageReps;
-            NSImageRep* imageRep;
-            
-            NSSize bgSize;
-            imageReps = [self->mBackgroundImage representations];
-            imageRep  = [imageReps objectAtIndex:0];
-            bgSize.width  = [imageRep pixelsWide];
-            bgSize.height = [imageRep pixelsHigh];
-            
-            NSSize fgSize;
-            imageReps = [self->mForegroundImage representations];
-            imageRep  = [imageReps objectAtIndex:0];
-            fgSize.width  = [imageRep pixelsWide];
-            fgSize.height = [imageRep pixelsHigh];
-            
-            // Set actual (bitmap) representation sizes
-            [drawArea setSize:bgSize];
-            [self->mForegroundImage setSize:fgSize];
-            
-            // Use NSImage composite
-            // http://www.bdunagan.com/2010/01/25/cocoa-tip-nsimage-composites/
-            [drawArea lockFocus];
-            
-            [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationNone];
-            [self->mForegroundImage drawInRect:NSMakeRect(0, 0, bgSize.width, bgSize.height) 
-                                      fromRect:NSZeroRect 
-                                     operation:NSCompositeSourceOver
-                                      fraction:1.0];
-            
-            [drawArea unlockFocus];
-            
-            // Restore size
-            [drawArea setSize:[self->mBackgroundImage size]];
-            
-            [self setImage:drawArea];
-            [drawArea release];
+            NSImage* composite = [self createCompositeImage:self->mForegroundImage
+                                                         on:self->mBackgroundImage];
+            [self setImage:composite];
+            [composite release];
         }
     }
 }
