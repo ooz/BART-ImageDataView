@@ -137,7 +137,7 @@ enum ImagePropertyID{
 
 -(float)getFloatVoxelValueAtRow: (int)r col:(int)c slice:(int)s timestep:(int)t;
 
--(void)setVoxelValue:(NSNumber*)val atRow: (unsigned int)r col:(unsigned int)c slice:(unsigned int)s timestep:(unsigned int)t;
+-(void)setVoxelValue:(NSNumber*)val atRow: (NSUInteger)r col:(NSUInteger)c slice:(NSUInteger)s timestep:(NSUInteger)t;
 
 //-(EDDataElement*)CreateNewDataElement: withSize:(NSSize*)size andType:(NSString*)type; 
 

@@ -449,7 +449,7 @@
 	mIsisImage->print(std::cout, true);
 }
 
--(BOOL)sizeCheckRows:(uint)r Cols:(uint)c Slices:(uint)s Timesteps:(uint)t
+-(BOOL)sizeCheckRows:(NSUInteger)r Cols:(NSUInteger)c Slices:(NSUInteger)s Timesteps:(NSUInteger)t
 {
 	if (r < mImageSize.rows       and
 		c < mImageSize.columns    and

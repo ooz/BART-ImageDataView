@@ -24,7 +24,7 @@
 }
 
 -(void)appendVolume:(EDDataElement*)nextVolume;
--(BOOL)sizeCheckRows:(uint)r Cols:(uint)c Slices:(uint)s Timesteps:(uint)t;
+-(BOOL)sizeCheckRows:(NSUInteger)r Cols:(NSUInteger)c Slices:(NSUInteger)s Timesteps:(NSUInteger)t;
 -(id)initFromImage:(isis::data::Image)img ofImageType:(enum ImageType)imgType;
 
 
