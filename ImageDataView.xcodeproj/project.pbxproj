@@ -19,6 +19,7 @@
 		4737CE2415934F1F00E0D0FD /* BAImageDataView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4737CE2215934F1F00E0D0FD /* BAImageDataView.xib */; };
 		4737CE26159371BE00E0D0FD /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4737CE25159371BE00E0D0FD /* Quartz.framework */; };
 		474F0C4E15BEA96300AF1858 /* BAImageSliceSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 474F0C4D15BEA96300AF1858 /* BAImageSliceSelector.m */; };
+		47608D951717343A00146356 /* BAImageSelectionFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 47608D941717343A00146356 /* BAImageSelectionFilter.m */; };
 		476D76D116F89E0800B798D6 /* BAROISelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 476D76D016F89E0800B798D6 /* BAROISelection.m */; };
 		476D76D916F89ED800B798D6 /* BAROIPointThresholdSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 476D76D816F89ED800B798D6 /* BAROIPointThresholdSelection.m */; };
 		476D76DC16F89F1500B798D6 /* BAROIPointSetSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 476D76DB16F89F1500B798D6 /* BAROIPointSetSelection.m */; };
@@ -61,6 +62,8 @@
 		4737CE25159371BE00E0D0FD /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		474F0C4C15BEA96300AF1858 /* BAImageSliceSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BAImageSliceSelector.h; sourceTree = "<group>"; };
 		474F0C4D15BEA96300AF1858 /* BAImageSliceSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BAImageSliceSelector.m; sourceTree = "<group>"; };
+		47608D931717343A00146356 /* BAImageSelectionFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAImageSelectionFilter.h; path = ROI/BAImageSelectionFilter.h; sourceTree = "<group>"; };
+		47608D941717343A00146356 /* BAImageSelectionFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAImageSelectionFilter.m; path = ROI/BAImageSelectionFilter.m; sourceTree = "<group>"; };
 		476D76CF16F89E0800B798D6 /* BAROISelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAROISelection.h; path = ROI/BAROISelection.h; sourceTree = "<group>"; };
 		476D76D016F89E0800B798D6 /* BAROISelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAROISelection.m; path = ROI/BAROISelection.m; sourceTree = "<group>"; };
 		476D76D716F89ED800B798D6 /* BAROIPointThresholdSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAROIPointThresholdSelection.h; path = ROI/BAROIPointThresholdSelection.h; sourceTree = "<group>"; };
@@ -140,6 +143,8 @@
 				476D76D816F89ED800B798D6 /* BAROIPointThresholdSelection.m */,
 				476D76DA16F89F1500B798D6 /* BAROIPointSetSelection.h */,
 				476D76DB16F89F1500B798D6 /* BAROIPointSetSelection.m */,
+				47608D931717343A00146356 /* BAImageSelectionFilter.h */,
+				47608D941717343A00146356 /* BAImageSelectionFilter.m */,
 			);
 			name = ROI;
 			sourceTree = "<group>";
@@ -200,6 +205,8 @@
 				47FDD3E216245F8A00B2C8B1 /* ColorMappingFilter.cikernel */,
 				47FDD3E316245F8A00B2C8B1 /* ColorMappingFilter.h */,
 				47FDD3E416245F8A00B2C8B1 /* ColorMappingFilter.m */,
+				47EC774516035EDD00A00C51 /* BASingleDomainColortableFilter.h */,
+				47EC774616035EDD00A00C51 /* BASingleDomainColortableFilter.m */,
 				47FDD3F316303E9600B2C8B1 /* ColorMappingFilterTwoDomains.h */,
 				47FDD3F416303E9700B2C8B1 /* ColorMappingFilterTwoDomains.m */,
 				47F841561592195B00048830 /* AppDelegate.h */,
@@ -217,8 +224,6 @@
 				47BB83FD15E7B16B004E3B2F /* BAImageDataViewConstants.h */,
 				47EC7742160356B300A00C51 /* BAImageFilter.h */,
 				47EC7743160356B300A00C51 /* BAImageFilter.m */,
-				47EC774516035EDD00A00C51 /* BASingleDomainColortableFilter.h */,
-				47EC774616035EDD00A00C51 /* BASingleDomainColortableFilter.m */,
 				47FDD3EF16303AFE00B2C8B1 /* BATwoDomainColortableFilter.h */,
 				47FDD3F016303AFE00B2C8B1 /* BATwoDomainColortableFilter.m */,
 				47F8414B1592195B00048830 /* Supporting Files */,
@@ -328,6 +333,7 @@
 				476D76D116F89E0800B798D6 /* BAROISelection.m in Sources */,
 				476D76D916F89ED800B798D6 /* BAROIPointThresholdSelection.m in Sources */,
 				476D76DC16F89F1500B798D6 /* BAROIPointSetSelection.m in Sources */,
+				47608D951717343A00146356 /* BAImageSelectionFilter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
