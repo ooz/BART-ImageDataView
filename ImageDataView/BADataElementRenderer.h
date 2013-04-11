@@ -148,9 +148,17 @@
  *
  *  If a BAImageFilter is set it is applied to the image before returning.
  *
+ * \param force Force new render of the EDDataElement (= not using cache).
+ *              In most cases this should be set to NO.
+ *              If parameters that could affect the rendering result were changed
+ *              outside the renderer (e.g. setting voxel values on the original 
+ *              EDDataElement) this needs to be set to YES to propagate those changes
+ *              to the rendered result
+ *              (EDDataElement does not support observers yet)!
+ *
  * \return Autoreleased NSImage.
  */
--(NSImage*)renderImage;
+-(NSImage*)renderImage:(BOOL)force;
 
 /**
  * Converts a point (e.g. a mouse click location) in the target (render) image space

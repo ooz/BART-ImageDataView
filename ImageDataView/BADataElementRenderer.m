@@ -370,13 +370,13 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
 }
 
 
--(NSImage*)renderImage
+-(NSImage*)renderImage:(BOOL)force
 {
     if (self->mImage == nil) {
         return nil;
     }
     
-    if (self->mNeedToRender) {
+    if (self->mNeedToRender || force) {
         enum ImageDimension* dims = [self->mRelevantSliceFilter getDimensionsFrom:self->mImage
                                                                         alignedTo:self->mTargetOrientation];
         
