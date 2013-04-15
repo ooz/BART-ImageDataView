@@ -51,9 +51,18 @@
     [super drawRect:dirtyRect];
 }
 
--(void)setImages:(NSImage*)foreground 
+-(void)setImages:(NSImage*)selection
+              on:(NSImage*)foreground
               on:(NSImage*)background
 {
+    if (self->mSelectionImage != nil) [self->mSelectionImage release];
+    
+    if (selection != nil) {
+        self->mSelectionImage = [selection retain];
+    } else {
+        self->mSelectionImage = nil;
+    }
+    
     if (self->mForegroundImage != nil) [self->mForegroundImage release];
     
     if (foreground != nil) {
@@ -73,14 +82,14 @@
     [self updateSetImage];
 }
 
--(void)setBackgroundImage:(NSImage*)newImage
+-(void)setSelectionImage:(NSImage*)newImage
 {
-    if (self->mBackgroundImage != nil) [self->mBackgroundImage release];
+    if (self->mSelectionImage != nil) [self->mSelectionImage release];
     
     if (newImage != nil) {
-        self->mBackgroundImage = [newImage retain];
+        self->mSelectionImage = [newImage retain];
     } else {
-        self->mBackgroundImage = nil;
+        self->mSelectionImage = nil;
     }
     
     [self updateSetImage];
@@ -98,6 +107,20 @@
     
     [self updateSetImage];
 }
+
+-(void)setBackgroundImage:(NSImage*)newImage
+{
+    if (self->mBackgroundImage != nil) [self->mBackgroundImage release];
+    
+    if (newImage != nil) {
+        self->mBackgroundImage = [newImage retain];
+    } else {
+        self->mBackgroundImage = nil;
+    }
+    
+    [self updateSetImage];
+}
+
 
 -(NSImage*)createCompositeImage:(NSImage*)foreground
                              on:(NSImage*)background
@@ -158,21 +181,50 @@
 
 -(void)updateSetImage
 {
-    if (self->mBackgroundImage == nil) {
-        if (self->mForegroundImage != nil) {
-            [self setImage:self->mForegroundImage];
-        }
-        
-    } else {
-        if (self->mForegroundImage == nil) {
-            [self setImage:self->mBackgroundImage];
-        
-        } else {
-            NSImage* composite = [self createCompositeImage:self->mForegroundImage
-                                                         on:self->mBackgroundImage];
-            [self setImage:composite];
-            [composite release];
-        }
+    // All three images present.
+    if (self->mSelectionImage != nil && self->mForegroundImage != nil && self->mBackgroundImage != nil) {
+        NSImage* composite  = [self createCompositeImage:self->mSelectionImage
+                                                      on:self->mForegroundImage];
+        NSImage* composite2 = [self createCompositeImage:composite
+                                                      on:self->mBackgroundImage];
+        [self setImage:composite2];
+        [composite2 release];
+        [composite  release];
+        return;
+    }
+    
+    // Single image.
+    if (self->mSelectionImage != nil && self->mForegroundImage == nil && self->mBackgroundImage == nil) {
+        return [self setImage:self->mSelectionImage];
+    }
+    if (self->mSelectionImage == nil && self->mForegroundImage != nil && self->mBackgroundImage == nil) {
+        return [self setImage:self->mForegroundImage];
+    }
+    if (self->mSelectionImage == nil && self->mForegroundImage == nil && self->mBackgroundImage != nil) {
+        return [self setImage:self->mBackgroundImage];
+    }
+    
+    // Two images.
+    NSImage* fg = nil;
+    NSImage* bg = nil;
+    if (self->mSelectionImage != nil && self->mForegroundImage != nil && self->mBackgroundImage == nil) {
+        fg = self->mSelectionImage;
+        bg = self->mForegroundImage;
+    }
+    if (self->mSelectionImage == nil && self->mForegroundImage != nil && self->mBackgroundImage != nil) {
+        fg = self->mForegroundImage;
+        bg = self->mBackgroundImage;
+    }
+    if (self->mSelectionImage != nil && self->mForegroundImage == nil && self->mBackgroundImage != nil) {
+        fg = self->mSelectionImage;
+        bg = self->mBackgroundImage;
+    }
+    
+    if (fg != nil && bg != nil) {
+        NSImage* composite = [self createCompositeImage:fg
+                                                     on:bg];
+        [self setImage:composite];
+        [composite release];
     }
 }
 

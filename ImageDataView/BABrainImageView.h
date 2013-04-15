@@ -10,26 +10,42 @@
 
 #import "EDDataElement.h"
 
-/** Custom NSImageView for displaying brain images (with overlay support).
- * If just one image should be shown (no overlay) it does not matter if
- * it is set as foreground or as background image.
+/** Custom NSImageView for displaying brain images (with overlay and voxel selection support).
+ * If just one image should be shown (no overlay) it does not matter if it is set as 
+ * foreground or as background image.
+ *
+ * Another image can be set to mark a selection of voxels (shown on top of foreground and
+ * background images).
  *
  * Image interpolation is disabled!
  */
 @interface BABrainImageView : NSImageView {
     
-    NSImage* mBackgroundImage;
+    /** Image marking selected voxels (e.g. ROI). */
+    NSImage* mSelectionImage;
+    /** Foreground image. Usually an overlay of functional/activation or derived data. */
     NSImage* mForegroundImage;
+    /** Background image. Usually anatomical data or an anatomical reference image. */
+    NSImage* mBackgroundImage;
     
 }
 
-/** Convenience method to set both back- and foreground in one function call.
+/** Sets selection, foreground and background image in one function call.
  *
+ * \param selection  NSImage marking selected voxels. Pass nil for no voxel selection(s).
  * \param foreground Foreground NSImage. Pass nil if no foreground should be present.
  * \param background Background NSImage. Pass nil if no background should be present.
  */
--(void)setImages:(NSImage*)foreground 
+-(void)setImages:(NSImage*)selection
+              on:(NSImage*)foreground
               on:(NSImage*)background;
+
+/** Sets the selection NSImage.
+ * The selection image marks selected voxels (e.g. ROI) in the view.
+ *
+ * \param newImage NSImage representing selected voxels. Pass nil for no voxel selection(s).
+ */
+-(void)setSelectionImage:(NSImage*)newImage;
 
 /** Sets the foreground NSImage.
  *
