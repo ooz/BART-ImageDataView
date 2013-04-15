@@ -330,7 +330,8 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
 
 -(void)updateViewImages
 {
-    [self->mImageView setImages:[self->mOverlayRenderer renderImage:NO]
+    [self->mImageView setImages:nil
+                             on:[self->mOverlayRenderer renderImage:NO]
                              on:[self->mRenderer renderImage:NO]];
 
     [self updateSliceSelectors];
