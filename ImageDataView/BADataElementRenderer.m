@@ -151,6 +151,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
         self->mRenderCache  = nil;
         self->mNeedToRender = YES;
         self->mImageFilter  = nil;
+        self->mAlpha        = MAX_ALPHA;
         
         self->mRelevantSliceFilter = [[BAImageSliceSelector alloc] init];
         self->mRelevantSlices = nil;
@@ -297,6 +298,19 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
     }
 }
 
+-(void)setAlpha:(float)alpha
+{
+    if (alpha < 0.0f) {
+        self->mAlpha = MIN_ALPHA;
+    } else if (alpha > 1.0f) {
+        self->mAlpha = MAX_ALPHA;
+    } else {
+        self->mAlpha = alpha;
+    }
+    
+    self->mNeedToRender = YES;
+}
+
 
 -(void)fetchPropsIfUpdated:(EDDataElement*)image
 {
@@ -367,6 +381,11 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
 -(BAImageFilter*)getImageFilter
 {
     return self->mImageFilter;
+}
+
+-(float)getAlpha
+{
+    return self->mAlpha;
 }
 
 
@@ -508,7 +527,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                 renderImageData[targetIndex++] = normalized;
                 renderImageData[targetIndex++] = normalized;
                 renderImageData[targetIndex++] = normalized;
-                renderImageData[targetIndex++] = MAX_ALPHA;
+                renderImageData[targetIndex++] = self->mAlpha;
             }
         }
         
@@ -551,7 +570,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                             renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS]     = normalized;
                             renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 1] = normalized;
                             renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 2] = normalized;
-                            renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 3] = MAX_ALPHA;
+                            renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 3] = self->mAlpha;
                         }
                         
                     }
@@ -618,7 +637,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex++] = MAX_ALPHA;
+                renderImageData[renderIndex++] = self->mAlpha;
             }
             
             free(sliceData);
@@ -653,7 +672,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                     renderImageData[renderIndex++] = normalized;
                     renderImageData[renderIndex++] = normalized;
                     renderImageData[renderIndex++] = normalized;
-                    renderImageData[renderIndex]   = MAX_ALPHA;
+                    renderImageData[renderIndex]   = self->mAlpha;
                 }
             }
             
@@ -716,7 +735,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex++] = MAX_ALPHA;
+                renderImageData[renderIndex++] = self->mAlpha;
             }
             
             free(sliceData);
@@ -757,7 +776,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                     renderImageData[renderIndex++] = normalized;
                     renderImageData[renderIndex++] = normalized;
                     renderImageData[renderIndex++] = normalized;
-                    renderImageData[renderIndex]   = MAX_ALPHA;
+                    renderImageData[renderIndex]   = self->mAlpha;
                 }
             }
             
@@ -823,7 +842,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex] = MAX_ALPHA;
+                renderImageData[renderIndex] = self->mAlpha;
             }
             
             free(sliceData);
@@ -856,7 +875,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                         renderImageData[renderIndex++] = normalized;
                         renderImageData[renderIndex++] = normalized;
                         renderImageData[renderIndex++] = normalized;
-                        renderImageData[renderIndex]   = MAX_ALPHA;
+                        renderImageData[renderIndex]   = self->mAlpha;
                     }
                 }
             }
@@ -923,7 +942,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
-                renderImageData[renderIndex] = MAX_ALPHA;
+                renderImageData[renderIndex] = self->mAlpha;
             }
             
             free(sliceData);
@@ -956,7 +975,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                         renderImageData[renderIndex++] = normalized;
                         renderImageData[renderIndex++] = normalized;
                         renderImageData[renderIndex++] = normalized;
-                        renderImageData[renderIndex]   = MAX_ALPHA;
+                        renderImageData[renderIndex]   = self->mAlpha;
                     }
                 }
             }

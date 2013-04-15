@@ -14,6 +14,8 @@ static NSString* BUNDLE_ID = @"de.cbs.mpg.bart.ImageDataView";
 
 /** Number of channels in the rendered NSImage object (RGBA). */
 static const int   NUMBER_OF_CHANNELS = 4;
+/** Lowest alpha value. */
+static const float MIN_ALPHA = 0.0f;
 /** Highest alpha value. */
 static const float MAX_ALPHA = 1.0f;
 

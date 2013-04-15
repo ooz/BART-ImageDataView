@@ -50,6 +50,8 @@
     BOOL           mNeedToRender;
     /** Image filter for the raw rendered image (e.g. a colortable filter). */
     BAImageFilter* mImageFilter;
+    /** Alpha channel of the resulting image. */
+    float          mAlpha;
     
     /** Filter that decides which slices to render in the multi slice grid. */
     BAImageSliceSelector* mRelevantSliceFilter;
@@ -135,6 +137,12 @@
  * \param filter BAImageFilter to apply to the rendered image. */
 -(void)setImageFilter:(BAImageFilter*)filter;
 
+/** Sets the alpha channel value of the rendered image.
+ *
+ * \param alpha Float alpha channel value of the rendered image.
+ */
+-(void)setAlpha:(float)alpha;
+
 /** # Getters. # */
 -(EDDataElement*)getDataElement;
 -(NSArray*)getDataMinMax;
@@ -142,6 +150,7 @@
 -(uint)getSliceCount;
 -(uint)getCurrentTimestep;
 -(BAImageFilter*)getImageFilter;
+-(float)getAlpha;
 
 /** Renders the set EDDataElement (#mImage) to an autoreleased NSImage respecting 
  *  previously set parameters like slice/timestep numbers or the grid size.
