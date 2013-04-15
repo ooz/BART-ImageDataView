@@ -346,7 +346,7 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
 
 -(void)updateSliceTextField
 {
-    [self.mSliceSelect setStringValue:[NSString stringWithFormat:@"%d/%ld", 
+    [self.mSliceSelect setStringValue:[NSString stringWithFormat:@"%d/%d", 
                                        ([self->mRenderer getCurrentSlice] + 1),     // Display natural indices starting with 1
                                        [self->mRenderer getSliceCount]]];
 }
