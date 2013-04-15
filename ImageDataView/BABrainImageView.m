@@ -224,31 +224,31 @@
             
             // Draw clicked point directly into the view's image in red color.
             // For debug/development purposes only!
-            NSSize imgSize = [img size];
-            NSLog(@"ImageSize: (%lf, %lf)", imgSize.width, imgSize.height);
-            
-            [img setSize:bitmapSize];
-            [img lockFocus];
-            NSBitmapImageRep* bitmapRep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0.0, 0.0, [img size].width, [img size].height)];
-            [img unlockFocus];
-            
-            NSUInteger* pixelData = (NSUInteger*) malloc(sizeof(NSUInteger) * 4);
-            pixelData[0] = 255;
-            pixelData[1] = 0;
-            pixelData[2] = 0;
-            pixelData[3] = 255;
-            [bitmapRep setPixel:pixelData atX:clickPointImageSpace.x y:clickPointImageSpace.y];
-            free(pixelData);
-            
-            NSImage* newImg = [[NSImage alloc] initWithSize:bitmapSize];
-            [newImg addRepresentation:bitmapRep];
-            [newImg setScalesWhenResized:YES];
-            [newImg setSize:imgSize];
-            NSLog(@"NewImageSize: (%lf, %lf)", newImg.size.width, newImg.size.height);
-            
-            [self setImage:newImg];
-            [newImg release];
-            [bitmapRep release];
+//            NSSize imgSize = [img size];
+//            NSLog(@"ImageSize: (%lf, %lf)", imgSize.width, imgSize.height);
+//            
+//            [img setSize:bitmapSize];
+//            [img lockFocus];
+//            NSBitmapImageRep* bitmapRep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0.0, 0.0, [img size].width, [img size].height)];
+//            [img unlockFocus];
+//            
+//            NSUInteger* pixelData = (NSUInteger*) malloc(sizeof(NSUInteger) * 4);
+//            pixelData[0] = 255;
+//            pixelData[1] = 0;
+//            pixelData[2] = 0;
+//            pixelData[3] = 255;
+//            [bitmapRep setPixel:pixelData atX:clickPointImageSpace.x y:clickPointImageSpace.y];
+//            free(pixelData);
+//            
+//            NSImage* newImg = [[NSImage alloc] initWithSize:bitmapSize];
+//            [newImg addRepresentation:bitmapRep];
+//            [newImg setScalesWhenResized:YES];
+//            [newImg setSize:imgSize];
+//            NSLog(@"NewImageSize: (%lf, %lf)", newImg.size.width, newImg.size.height);
+//            
+//            [self setImage:newImg];
+//            [newImg release];
+//            [bitmapRep release];
     
             if (   clickPointImageSpace.x >= 0 && clickPointImageSpace.x < bitmapSize.width
                 && clickPointImageSpace.y >= 0 && clickPointImageSpace.y < bitmapSize.height) {
