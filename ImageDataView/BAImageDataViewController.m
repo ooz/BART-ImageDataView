@@ -330,8 +330,8 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
 
 -(void)updateViewImages
 {
-    [self->mImageView setImages:[self->mOverlayRenderer renderImage] 
-                             on:[self->mRenderer renderImage]];
+    [self->mImageView setImages:[self->mOverlayRenderer renderImage:NO]
+                             on:[self->mRenderer renderImage:NO]];
 
     [self updateSliceSelectors];
     [self updateControlEnabledStates];
@@ -559,10 +559,20 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
 
 -(void)mouseUp:(NSEvent*)theEvent {
     NSPoint clickPoint = [theEvent locationInWindow];
-    NSLog(@"BAImageDataViewController received mouseUp event. Point: (%.1lf, %.1lf)", clickPoint.x, clickPoint.y);
+    NSLog(@"BAImageDataViewController mouseUp event, p: (%.1lf, %.1lf)", clickPoint.x, clickPoint.y);
     
-    NSArray* clickInDataSpace = [self->mOverlayRenderer pointToVoxel:clickPoint];
-    NSLog(@"clickInDataSpace: %@", clickInDataSpace);
+    NSArray* clickInDataSpace = [self->mRenderer pointToVoxel:clickPoint];
+    NSLog(@"BAImageDataViewController clickInDataSpace: %@", clickInDataSpace);
+    
+    [[self->mRenderer getDataElement] setVoxelValue:[NSNumber numberWithFloat:1300.0]
+                                              atRow:[[clickInDataSpace objectAtIndex:1] unsignedIntegerValue]
+                                                col:[[clickInDataSpace objectAtIndex:0] unsignedIntegerValue]
+                                              slice:[[clickInDataSpace objectAtIndex:2] unsignedIntegerValue]
+                                           timestep:[[clickInDataSpace objectAtIndex:3] unsignedIntegerValue]];
+    
+    // Force rerender since original DataElement has changed
+    [self->mRenderer renderImage:YES];
+    [self updateViewImages];
 }
 
 @end
