@@ -12,7 +12,7 @@
  * Controller for BAROIToolboxView.xib
  * Manages selection of ROIs
  */
-@interface BAROIController : NSController {
+@interface BAROIController : NSViewController {
     
 }
 
