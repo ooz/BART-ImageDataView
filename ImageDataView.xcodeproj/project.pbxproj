@@ -21,6 +21,7 @@
 		474F0C4E15BEA96300AF1858 /* BAImageSliceSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = 474F0C4D15BEA96300AF1858 /* BAImageSliceSelector.m */; };
 		47608D951717343A00146356 /* BAImageSelectionFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 47608D941717343A00146356 /* BAImageSelectionFilter.m */; };
 		47608D98172033C600146356 /* BAROIController.m in Sources */ = {isa = PBXBuildFile; fileRef = 47608D97172033C600146356 /* BAROIController.m */; };
+		47608D9A172039A100146356 /* BAROIToolboxView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 47608D99172039A100146356 /* BAROIToolboxView.xib */; };
 		476D76D116F89E0800B798D6 /* BAROISelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 476D76D016F89E0800B798D6 /* BAROISelection.m */; };
 		476D76D916F89ED800B798D6 /* BAROIPointThresholdSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 476D76D816F89ED800B798D6 /* BAROIPointThresholdSelection.m */; };
 		476D76DC16F89F1500B798D6 /* BAROIPointSetSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 476D76DB16F89F1500B798D6 /* BAROIPointSetSelection.m */; };
@@ -67,6 +68,7 @@
 		47608D941717343A00146356 /* BAImageSelectionFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAImageSelectionFilter.m; path = ROI/BAImageSelectionFilter.m; sourceTree = "<group>"; };
 		47608D96172033C600146356 /* BAROIController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAROIController.h; path = ROI/BAROIController.h; sourceTree = "<group>"; };
 		47608D97172033C600146356 /* BAROIController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAROIController.m; path = ROI/BAROIController.m; sourceTree = "<group>"; };
+		47608D99172039A100146356 /* BAROIToolboxView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = BAROIToolboxView.xib; path = ROI/BAROIToolboxView.xib; sourceTree = "<group>"; };
 		476D76CF16F89E0800B798D6 /* BAROISelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAROISelection.h; path = ROI/BAROISelection.h; sourceTree = "<group>"; };
 		476D76D016F89E0800B798D6 /* BAROISelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAROISelection.m; path = ROI/BAROISelection.m; sourceTree = "<group>"; };
 		476D76D716F89ED800B798D6 /* BAROIPointThresholdSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAROIPointThresholdSelection.h; path = ROI/BAROIPointThresholdSelection.h; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 				47608D941717343A00146356 /* BAImageSelectionFilter.m */,
 				47608D96172033C600146356 /* BAROIController.h */,
 				47608D97172033C600146356 /* BAROIController.m */,
+				47608D99172039A100146356 /* BAROIToolboxView.xib */,
 			);
 			name = ROI;
 			sourceTree = "<group>";
@@ -309,6 +312,7 @@
 				4737CE08159230DD00E0D0FD /* EDDataElementIsis.mm.orig in Resources */,
 				4737CE2415934F1F00E0D0FD /* BAImageDataView.xib in Resources */,
 				47FDD3E516245F8B00B2C8B1 /* ColorMappingFilter.cikernel in Resources */,
+				47608D9A172039A100146356 /* BAROIToolboxView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
