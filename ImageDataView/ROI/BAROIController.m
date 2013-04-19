@@ -10,18 +10,16 @@
 
 @implementation BAROIController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil
-               bundle:(NSBundle *)nibBundleOrNil
+-(id)init
 {
-    if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
+    if (self = [super initWithNibName:@"BAROIToolboxView" bundle:nil]) {
     }
-    
     return self;
 }
 
 -(void)awakeFromNib
 {
-
+    NSLog(@"View loaded");
 }
 
 -(void)dealloc

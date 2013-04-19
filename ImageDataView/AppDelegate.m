@@ -25,7 +25,7 @@
 // ###################################################
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    BAImageDataViewController* imageDataViewController = [[BAImageDataViewController alloc] initWithNibName:@"BAImageDataView" bundle:nil];
+    BAImageDataViewController* imageDataViewController = [[BAImageDataViewController alloc] init];
     
     [imageDataViewController loadView];
     

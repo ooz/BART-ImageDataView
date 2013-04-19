@@ -130,11 +130,10 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
 
 @synthesize mROIToolboxButton;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil 
-               bundle:(NSBundle *)nibBundleOrNil
+-(id)init
 {
-    if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-        self->mROIController = [[BAROIController alloc] initWithNibName:@"BAROIToolboxView" bundle:nil];
+    if (self = [super initWithNibName:@"BAImageDataView" bundle:nil]) {
+        self->mROIController = [[BAROIController alloc] init];
         self->mROIToolboxWindow = nil;
         
         BAImageSliceSelector* sliceSelector = [[BAImageSliceSelector alloc] init];
@@ -152,7 +151,7 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
         self->mOverlays = [[NSMutableDictionary alloc] initWithCapacity:INITIAL_OVERLAY_CAPACITY];
         
         self->mGridSize = (NSSize) { DEFAULT_GRID_SIZE
-                                   , DEFAULT_GRID_SIZE };
+            , DEFAULT_GRID_SIZE };
     }
     
     return self;
