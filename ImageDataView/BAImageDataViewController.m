@@ -17,6 +17,8 @@
 #import "BASingleDomainColortableFilter.h"
 #import "BATwoDomainColortableFilter.h"
 
+#import "ROI/BAROIController.h"
+
 
 
 #include <math.h>
@@ -43,6 +45,9 @@ static const NSUInteger INITIAL_OVERLAY_CAPACITY = 8;
 static const NSUInteger FIRST_REGION_SELECTION_MASK  = 1 << 0;
 /** Mask flag telling to use the min/max input elements for the second region. */
 static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
+
+/** Title of the window containing the ROI toolbox. */
+static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
 
 
 // ###############################
@@ -123,10 +128,15 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
 @synthesize mRegion2UpperField;
 @synthesize mRegion2UpperStepper;
 
+@synthesize mROIToolboxButton;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil 
                bundle:(NSBundle *)nibBundleOrNil
 {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
+        self->mROIController = [[BAROIController alloc] initWithNibName:@"BAROIToolboxView" bundle:nil];
+        self->mROIToolboxWindow = nil;
+        
         BAImageSliceSelector* sliceSelector = [[BAImageSliceSelector alloc] init];
         self->mRenderer = [[BADataElementRenderer alloc] initWithSliceSelector:sliceSelector];
         [sliceSelector release];
@@ -189,6 +199,9 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
     if (self->mOverlayRenderer != nil) [self->mOverlayRenderer release];
     
     [self->mOverlays release];
+    
+    [self->mROIToolboxWindow release];
+    [self->mROIController release];
     
     [super dealloc];
 }
@@ -550,6 +563,34 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
         }
         
         [self updateViewImages];
+    }
+}
+
+
+// #######
+// # ROI #
+// #######
+
+-(IBAction)toggleROIToolbox:(id)sender
+{
+    if (sender == self->mROIToolboxButton) {
+        if (self->mROIToolboxWindow == nil) {
+            [self->mROIController loadView];
+            
+            NSSize roiViewSize = [[self->mROIController view] bounds].size;
+            self->mROIToolboxWindow = [[NSWindow alloc] initWithContentRect:NSMakeRect(0.0, 0.0, roiViewSize.width, roiViewSize.height)
+                                                                  styleMask:NSTitledWindowMask | NSClosableWindowMask
+                                                                    backing:NSBackingStoreBuffered
+                                                                      defer:YES];
+            [self->mROIToolboxWindow setTitle:ROI_TOOLBOX_WINDOW_TITLE];
+            [self->mROIToolboxWindow setContentView:[self->mROIController view]];
+            [self->mROIToolboxWindow setReleasedWhenClosed:NO];
+            [self->mROIToolboxWindow center];
+            [self->mROIToolboxWindow setIsVisible:YES];
+        
+        } else {
+            [self->mROIToolboxWindow setIsVisible:![self->mROIToolboxWindow isVisible]];
+        }
     }
 }
 

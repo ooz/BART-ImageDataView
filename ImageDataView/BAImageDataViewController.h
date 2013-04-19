@@ -10,6 +10,7 @@
 #import <Quartz/Quartz.h>
 #import "EDDataElement.h"
 
+@class BAROIController;
 @class BADataElementRenderer;
 @class BABrainImageView;
 @class BAImageSliceSelector;
@@ -20,6 +21,11 @@
  * in either a single slice view or multi slice grid.
  */
 @interface BAImageDataViewController : NSViewController {
+    
+    /** Subcontroller managing ROIs and ROI selection. */
+    BAROIController* mROIController;
+    /** Window containing the ROI selection view controlled by */
+    NSWindow* mROIToolboxWindow;
     
     /** Renderer used to convert an EDDataElement to a NSImage. */
     BADataElementRenderer* mRenderer;
@@ -45,8 +51,6 @@
 @property (readonly) IBOutlet NSTextField*        mSliceSelect;
 /** Slider used to select a slice. */
 @property (readonly) IBOutlet NSSlider*           mSliceSelectSlider;
-
-
 
 /** Basic (= non overlay related) view actions. */
 -(IBAction)setOrientation:(id)sender;
@@ -124,5 +128,17 @@
 -(IBAction)setColortable:(id)sender;
 -(IBAction)setRegion1Bounds:(id)sender;
 -(IBAction)setRegion2Bounds:(id)sender;
+
+
+
+// ###################################
+// # ROI related outlets and actions #
+// ###################################
+
+/** Binding for a button to show/hide the ROI toolbox window + view. */
+@property (readonly) IBOutlet id mROIToolboxButton;
+
+/** ROI related actions */
+-(IBAction)toggleROIToolbox:(id)sender;
 
 @end
