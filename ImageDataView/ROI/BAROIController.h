@@ -8,11 +8,13 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "BADataClickHandling.h"
+
 /** 
  * Controller for BAROIToolboxView.xib
  * Manages selection of ROIs
  */
-@interface BAROIController : NSViewController {
+@interface BAROIController : NSViewController <BADataClickHandling> {
     
 }
 

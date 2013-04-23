@@ -48,4 +48,13 @@
     
 }
 
+// ############################
+// # Protocol implementations #
+// ############################
+
+-(void)clickOn:(EDDataElement*)data at:(BADataVoxel*)p
+{
+    NSLog(@"ROIController received click: %@", p);
+}
+
 @end
