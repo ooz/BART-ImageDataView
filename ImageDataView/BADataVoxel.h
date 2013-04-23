@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+/** 
+ * Class representing a 4D point.
+ */
 @interface BADataVoxel : NSObject {
     
 }
