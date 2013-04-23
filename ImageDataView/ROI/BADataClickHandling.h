@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+@class EDDataElement;
+@class BADataVoxel;
+
 /**
  * Protocol for communicating with the ROIController.
  */
@@ -19,6 +22,6 @@
  * \param data EDDataElement defining that image space (main orientation and dimensions).
  * \param p    BADataVoxel (4D point) that was clicked in the space of the parameter data.
  */
--(void)clickOn:(EDDataElement*)data at:(BADataVoxel)p;
+-(void)clickOn:(EDDataElement*)data at:(BADataVoxel*)p;
 
 @end
