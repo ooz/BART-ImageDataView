@@ -82,9 +82,14 @@
     return nil;
 }
 
--(NSArray*)asPointSet
+-(EDDataElement*)addToBinaryMask:(EDDataElement*)mask
 {
-    return nil;
+    return mask;
 }
+
+//-(NSArray*)asPointSet
+//{
+//    return [NSArray array];
+//}
 
 @end

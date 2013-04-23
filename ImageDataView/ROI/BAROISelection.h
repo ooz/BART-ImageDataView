@@ -31,8 +31,27 @@
 -(void)removeChild:(BAROISelection*)child;
 
 
-// Converter methods
+// #####################
+// # Converter methods #
+// #####################
+
+/**
+ * Converts the ROI selection to a binary mask.
+ *
+ * \return Binary mask represented by an EDDataElement with voxel values of 0.0 and 1.0.
+ *         Autoreleased;
+ */
 -(EDDataElement*)asBinaryMask;
--(NSArray*)asPointSet;
+
+/**
+ * "Draws" the ROI selection on an existing binary mask.
+ *
+ * \param mask Binary mask (EDDataElement with 0.0 and 1.0 voxel values).
+ * \return     The same EDDataElement as the parameter mask with this additional
+ *             selection rendered onto it.
+ */
+-(EDDataElement*)addToBinaryMask:(EDDataElement*)mask;
+
+//-(NSArray*)asPointSet;
 
 @end
