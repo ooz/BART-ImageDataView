@@ -42,4 +42,9 @@
     return self;
 }
 
+-(NSString*)description {
+    return [NSString stringWithFormat: @"BADataVoxel(col=%ld, row=%ld, slice=%ld, ts=%ld)",
+            self->column, self->row, self->slice, self->timestep];
+}
+
 @end
