@@ -18,6 +18,7 @@
 #import "BATwoDomainColortableFilter.h"
 
 #import "ROI/BAROIController.h"
+#import "BADataVoxel.h"
 
 
 
@@ -602,14 +603,14 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
     NSPoint clickPoint = [theEvent locationInWindow];
     NSLog(@"BAImageDataViewController mouseUp event, p: (%.1lf, %.1lf)", clickPoint.x, clickPoint.y);
     
-    NSArray* clickInDataSpace = [self->mRenderer pointToVoxel:clickPoint];
+    BADataVoxel* clickInDataSpace = [self->mRenderer pointToVoxel:clickPoint];
     NSLog(@"BAImageDataViewController clickInDataSpace: %@", clickInDataSpace);
     
     [[self->mRenderer getDataElement] setVoxelValue:[NSNumber numberWithFloat:1300.0]
-                                              atRow:[[clickInDataSpace objectAtIndex:1] unsignedIntegerValue]
-                                                col:[[clickInDataSpace objectAtIndex:0] unsignedIntegerValue]
-                                              slice:[[clickInDataSpace objectAtIndex:2] unsignedIntegerValue]
-                                           timestep:[[clickInDataSpace objectAtIndex:3] unsignedIntegerValue]];
+                                              atRow:clickInDataSpace.row
+                                                col:clickInDataSpace.column
+                                              slice:clickInDataSpace.slice
+                                           timestep:clickInDataSpace.timestep];
     
     // Force rerender since original DataElement has changed
     [self->mRenderer renderImage:YES];

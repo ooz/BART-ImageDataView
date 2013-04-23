@@ -11,6 +11,7 @@
 
 @class BAImageFilter;
 @class BAImageSliceSelector;
+@class BADataVoxel;
 
 /** Class used to convert an EDDataElement to a displayable NSImage. */
 @interface BADataElementRenderer : NSObject {
@@ -176,10 +177,10 @@
  * of the renderer object into consideration.
  *
  * \param p NSPoint in the target image space (rendered NSImage).
- * \return  Four-dimensional NSArray of NSNumber objects representing coordinates 
- *          in the source data space of the EDDataElement(x, y, slice, timestep).
+ * \return  BADataVoxel representing coordinates in the source data space of the 
+ *          EDDataElement.
  *          Autoreleased.
  */
--(NSArray*)pointToVoxel:(NSPoint)p;
+-(BADataVoxel*)pointToVoxel:(NSPoint)p;
 
 @end

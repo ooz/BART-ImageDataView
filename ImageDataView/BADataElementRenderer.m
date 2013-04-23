@@ -11,6 +11,7 @@
 #import "BAImageDataViewConstants.h"
 #import "BAImageFilter.h"
 #import "BAImageSliceSelector.h"
+#import "BADataVoxel.h"
 
 
 // #############
@@ -1154,7 +1155,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
 }
 
 
--(NSArray*)pointToVoxel:(NSPoint)p
+-(BADataVoxel*)pointToVoxel:(NSPoint)p
 {
     NSUInteger x = 0;
     NSUInteger y = 0;
@@ -1240,11 +1241,10 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
         ts = self->mCurrentTimestep;
     }
     
-    NSArray* ret = [NSArray arrayWithObjects:[NSNumber numberWithInteger:x],
-                                             [NSNumber numberWithInteger:y],
-                                             [NSNumber numberWithInteger:slice],
-                                             [NSNumber numberWithInteger:ts],
-                                             nil];
+    BADataVoxel* ret = [[[BADataVoxel alloc] initWithColumn:x
+                                                       row:y
+                                                     slice:slice
+                                                  timestep:ts] autorelease];
     return ret;
 }
 
