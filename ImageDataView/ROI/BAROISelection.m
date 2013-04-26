@@ -11,7 +11,6 @@
 @interface BAROISelection (PrivateMutators)
 
 @property (assign) BAROISelection* parent;
--(void)setLabel:(NSString*)label;
 
 @end
 
@@ -25,9 +24,18 @@
 -(id)init
 {
     if (self = [super init]) {
-        self->mLabel  = nil;
+        self->mMode   = ADD;
         self->mParent = nil;
         self->mChildren = [[NSMutableArray alloc] init];
+    }
+    
+    return self;
+}
+
+-(id)initWithMode:(enum ROISelectionMode)m
+{
+    if (self = [self init]) {
+        self->mMode = m;
     }
     
     return self;
@@ -36,27 +44,14 @@
 -(void)dealloc
 {
     self->mParent = nil;
-    self.label = nil;
     [self->mChildren release];
     
     [super dealloc];
 }
 
-
--(NSString*)label
+-(enum ROISelectionMode)mode
 {
-    if (self->mLabel == nil && self.parent != nil) {
-        return self.parent.label;
-    }
-    
-    return self->mLabel;
-}
-
--(void)setLabel:(NSString*)label
-{
-    [label retain];
-    [self->mLabel release];
-    self->mLabel = label;
+    return self->mMode;
 }
 
 -(NSArray*)children

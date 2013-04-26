@@ -10,20 +10,32 @@
 
 @class EDDataElement;
 
+enum ROISelectionMode {
+    ADD = 0,
+    REMOVE
+};
+
 @interface BAROISelection : NSObject {
     
     BAROISelection* mParent;
     
     NSMutableArray* mChildren;
     
-    NSString* mLabel;
+    enum ROISelectionMode mMode;
     
 }
 
+/** Initializer.
+ *
+ * \param m ROISelectionMode indicating whether the selection should be
+ *          added or subtracted.
+ */
+-(id)initWithMode:(enum ROISelectionMode)m;
+
 // Properties
--(NSString*)label;
 @property (readonly) BAROISelection* parent;
 -(NSArray*)children;
+-(enum ROISelectionMode)mode;
 
 
 // Tree mutators
