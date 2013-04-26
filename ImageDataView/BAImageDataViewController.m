@@ -135,6 +135,7 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
 {
     if (self = [super initWithNibName:@"BAImageDataView" bundle:nil]) {
         self->mROIController = [[BAROIController alloc] init];
+        [self->mROIController loadView];
         self->mROIToolboxWindow = nil;
         
         BAImageSliceSelector* sliceSelector = [[BAImageSliceSelector alloc] init];
@@ -584,8 +585,6 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
 {
     if (sender == self->mROIToolboxButton) {
         if (self->mROIToolboxWindow == nil) {
-            [self->mROIController loadView];
-            
             NSSize roiViewSize = [[self->mROIController view] bounds].size;
             self->mROIToolboxWindow = [[NSWindow alloc] initWithContentRect:NSMakeRect(0.0, 0.0, roiViewSize.width, roiViewSize.height)
                                                                   styleMask:NSTitledWindowMask | NSClosableWindowMask
