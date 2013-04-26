@@ -79,6 +79,9 @@
 
 -(EDDataElement*)addToBinaryMask:(EDDataElement*)mask
 {
+    for (BAROISelection* sel in self->mChildren) {
+        mask = [sel addToBinaryMask:mask];
+    }
     return mask;
 }
 
