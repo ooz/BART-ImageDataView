@@ -150,4 +150,7 @@
 /** ROI related actions */
 -(IBAction)toggleROIToolbox:(id)sender;
 
+/** Getter. */
+-(BAROIController*)getROIController;
+
 @end

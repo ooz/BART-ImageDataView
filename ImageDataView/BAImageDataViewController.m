@@ -603,6 +603,11 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
     }
 }
 
+-(BAROIController*)getROIController
+{
+    return self->mROIController;
+}
+
 
 // ################
 // # Mouse events #
