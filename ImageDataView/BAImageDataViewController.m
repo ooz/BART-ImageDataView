@@ -317,6 +317,15 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
     return [self->mOverlays objectForKey:identifier];
 }
 
+-(EDDataElement*)getTopmostDataElement
+{
+    if ([self->mOverlayRenderer getDataElement] != nil) {
+        return [self->mOverlayRenderer getDataElement];
+    }
+    
+    return [self->mRenderer getDataElement];
+}
+
 -(NSArray*)overlayIDs
 {
     return [self->mOverlays allKeys];
@@ -606,11 +615,7 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
     BADataVoxel* clickInDataSpace = [self->mRenderer pointToVoxel:clickPoint];
     NSLog(@"BAImageDataViewController clickInDataSpace: %@", clickInDataSpace);
     
-    [[self->mRenderer getDataElement] setVoxelValue:[NSNumber numberWithFloat:1300.0]
-                                              atRow:clickInDataSpace.row
-                                                col:clickInDataSpace.column
-                                              slice:clickInDataSpace.slice
-                                           timestep:clickInDataSpace.timestep];
+    [self->mROIController clickOn:[self->mRenderer getDataElement] at:clickInDataSpace];
     
     // Force rerender since original DataElement has changed
     [self->mRenderer renderImage:YES];
