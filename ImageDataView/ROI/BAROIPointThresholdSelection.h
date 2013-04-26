@@ -10,18 +10,23 @@
 
 #import "BAROISelection.h"
 
+@class BADataVoxel;
+
 @interface BAROIPointThresholdSelection : BAROISelection {
 
-    // FIXME: introduce proper point type
-    NSObject* mPoint;
+    EDDataElement* mReference;
+    
+    BADataVoxel* mPoint;
     
     NSNumber* mThreshold;
     
 }
 
-@property (nonatomic, readonly) NSObject* point;
+@property (nonatomic, readonly) BADataVoxel* point;
 @property (nonatomic, readonly) NSNumber* threshold;
 
--(id)initWithPoint:(NSObject*)p andThreshold:(NSNumber*)thres;
+-(id)initWithReference:(EDDataElement*)data
+                 point:(BADataVoxel*)p
+          andThreshold:(NSNumber*)thres;
 
 @end

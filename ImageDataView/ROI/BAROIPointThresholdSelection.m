@@ -14,7 +14,7 @@
 @synthesize threshold = mThreshold;
 
 
--(id)initWithPoint:(NSObject*)p andThreshold:(NSNumber*)thres
+-(id)initWithPoint:(BADataVoxel*)p andThreshold:(NSNumber*)thres
 {
     if (self = [super init]) {
         self->mPoint     = [p retain];
