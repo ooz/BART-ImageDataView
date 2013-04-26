@@ -14,9 +14,13 @@
 @synthesize threshold = mThreshold;
 
 
--(id)initWithPoint:(BADataVoxel*)p andThreshold:(NSNumber*)thres
+-(id)initWithReference:(EDDataElement*)data
+                 point:(BADataVoxel*)p
+                  mode:(enum ROISelectionMode)m
+          andThreshold:(NSNumber*)thres;
 {
-    if (self = [super init]) {
+    if (self = [super initWithMode:m]) {
+        self->mReference = [data retain];
         self->mPoint     = [p retain];
         self->mThreshold = [thres retain];
     }
@@ -26,6 +30,8 @@
 
 -(void)dealloc
 {
+    [self->mReference release];
+    
     [self->mPoint release];
     self->mPoint = nil;
     

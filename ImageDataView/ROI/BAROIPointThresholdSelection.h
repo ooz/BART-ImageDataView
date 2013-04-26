@@ -16,8 +16,7 @@
 
     EDDataElement* mReference;
     
-    BADataVoxel* mPoint;
-    
+    BADataVoxel* mPoint;    
     NSNumber* mThreshold;
     
 }
@@ -27,6 +26,7 @@
 
 -(id)initWithReference:(EDDataElement*)data
                  point:(BADataVoxel*)p
+                  mode:(enum ROISelectionMode)m
           andThreshold:(NSNumber*)thres;
 
 @end
