@@ -7,6 +7,8 @@
 //
 
 #import "BAROIPointThresholdSelection.h"
+#import "EDDataElement.h"
+#import "BADataVoxel.h"
 
 @implementation BAROIPointThresholdSelection
 
@@ -39,6 +41,38 @@
     self->mThreshold = nil;
     
     [super dealloc];
+}
+
+-(EDDataElement*)asBinaryMask
+{
+    BARTImageSize* referenceSize = [self->mReference getImageSize];
+    BARTImageSize* maskSize = [[BARTImageSize alloc] initWithRows:referenceSize.rows
+                                                          andCols:referenceSize.columns
+                                                        andSlices:referenceSize.slices
+                                                     andTimesteps:1];
+    EDDataElement* mask = [[[EDDataElement alloc] initEmptyWithSize:maskSize
+                                                        ofImageType:[self->mReference getImageDataType]] autorelease];
+    
+    [maskSize release];
+    
+    mask = [self addToBinaryMask:mask];
+    
+    return mask;
+}
+
+-(EDDataElement*)addToBinaryMask:(EDDataElement*)mask
+{
+    float value = (self->mMode == ADD) ? 1.0f : 0.0f;
+    [mask setVoxelValue:[NSNumber numberWithFloat:value]
+                  atRow:self->mPoint.row
+                    col:self->mPoint.column
+                  slice:self->mPoint.slice
+               timestep:self->mPoint.timestep];
+    
+    for (BAROISelection* sel in self->mChildren) {
+        mask = [sel addToBinaryMask:mask];
+    }
+    return mask;
 }
 
 @end
