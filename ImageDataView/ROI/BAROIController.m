@@ -176,6 +176,11 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
 
 -(EDDataElement*)roiAsBinaryMask:(NSString*)roiLabel
 {
+    BAROISelection* sel = [self->mROIs valueForKey:roiLabel];
+    if (sel != nil) {
+        return [sel asBinaryMask];
+    }
+    
     return nil;
 }
 
