@@ -63,15 +63,15 @@
 -(EDDataElement*)addToBinaryMask:(EDDataElement*)mask
 {
     float value = (self->mMode == ADD) ? 1.0f : 0.0f;
-    [mask setVoxelValue:[NSNumber numberWithFloat:value]
-                  atRow:self->mPoint.row
-                    col:self->mPoint.column
-                  slice:self->mPoint.slice
-               timestep:self->mPoint.timestep];
-    
-    for (BAROISelection* sel in self->mChildren) {
-        mask = [sel addToBinaryMask:mask];
+    if (mask != nil) {
+        [mask setVoxelValue:[NSNumber numberWithFloat:value]
+                      atRow:self->mPoint.row
+                        col:self->mPoint.column
+                      slice:self->mPoint.slice
+                   timestep:self->mPoint.timestep];
     }
+    
+    [super addToBinaryMask:mask];
     return mask;
 }
 
