@@ -52,7 +52,8 @@ static const enum ImageOrientation DEFAULT_ORIENTATION = ORIENT_AXIAL;
                                                         andSlices:referenceSize.slices
                                                      andTimesteps:1];
     EDDataElement* mask = [[[EDDataElement alloc] initEmptyWithSize:maskSize
-                                                        ofImageType:[self->mReference getImageDataType]] autorelease];
+                                                        ofImageType:[self->mReference getImageDataType]
+                                                withOrientationFrom:self->mReference] autorelease];
     
     [maskSize release];
     
