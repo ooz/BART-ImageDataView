@@ -7,8 +7,9 @@
 //
 
 #import "BAROIPointThresholdSelection.h"
-#import "EDDataElement.h"
 #import "BADataVoxel.h"
+
+static const enum ImageOrientation DEFAULT_ORIENTATION = ORIENT_AXIAL;
 
 @implementation BAROIPointThresholdSelection
 
