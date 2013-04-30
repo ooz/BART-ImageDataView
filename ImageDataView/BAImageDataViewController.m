@@ -18,6 +18,7 @@
 #import "BATwoDomainColortableFilter.h"
 
 #import "ROI/BAROIController.h"
+#import "ROI/BAImageSelectionFilter.h"
 #import "BADataVoxel.h"
 
 
@@ -140,14 +141,16 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
         
         BAImageSliceSelector* sliceSelector = [[BAImageSliceSelector alloc] init];
         self->mRenderer = [[BADataElementRenderer alloc] initWithSliceSelector:sliceSelector];
-        [sliceSelector release];
-        
-        sliceSelector = [[BAImageSliceSelector alloc] init];
         self->mOverlayRenderer = [[BADataElementRenderer alloc] initWithSliceSelector:sliceSelector];
+        self->mSelectionRenderer = [[BADataElementRenderer alloc] initWithSliceSelector:sliceSelector];
         [sliceSelector release];
         
         BAImageFilter* imageFilter = [[BASingleDomainColortableFilter alloc] init];
         [self->mOverlayRenderer setImageFilter:imageFilter];
+        [imageFilter release];
+        
+        imageFilter = [[BAImageSelectionFilter alloc] init];
+        [self->mSelectionRenderer setImageFilter:imageFilter];
         [imageFilter release];
         
         self->mOverlays = [[NSMutableDictionary alloc] initWithCapacity:INITIAL_OVERLAY_CAPACITY];
@@ -198,7 +201,8 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
 {
     if (self->mRenderer != nil) [self->mRenderer release];
     if (self->mOverlayRenderer != nil) [self->mOverlayRenderer release];
-    
+    if (self->mSelectionRenderer != nil) [self->mSelectionRenderer release];
+        
     [self->mOverlays release];
     
     [self->mROIToolboxWindow release];
@@ -229,6 +233,7 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
 
         [self->mRenderer setTargetOrientation:viewOrientation];
         [self->mOverlayRenderer setTargetOrientation:viewOrientation];
+        [self->mSelectionRenderer setTargetOrientation:viewOrientation];
         
         [self updateViewImages];
     }
@@ -252,6 +257,7 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
         
         [self->mRenderer setGridSize:self->mGridSize];
         [self->mOverlayRenderer setGridSize:self->mGridSize];
+        [self->mSelectionRenderer setGridSize:self->mGridSize];
         
         [self updateViewImages];
     }
@@ -263,6 +269,7 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
     
     [self->mRenderer setSlice:sliceNr];
     [self->mOverlayRenderer setSlice:sliceNr];
+    [self->mSelectionRenderer setSlice:sliceNr];
     
     [self updateViewImages];
 }
@@ -353,7 +360,7 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
 
 -(void)updateViewImages
 {
-    [self->mImageView setImages:nil
+    [self->mImageView setImages:[self->mSelectionRenderer renderImage:NO]
                              on:[self->mOverlayRenderer renderImage:NO]
                              on:[self->mRenderer renderImage:NO]];
 

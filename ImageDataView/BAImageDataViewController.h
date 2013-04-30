@@ -33,6 +33,9 @@
     /** Renderer for overlays. */
     BADataElementRenderer* mOverlayRenderer;
     
+    /** Renderer for voxel selections (e.g. ROIs) on overlays or the background. */
+    BADataElementRenderer* mSelectionRenderer;
+    
     /** Dictionary mapping IDs to EDDataElement objects. */
     NSMutableDictionary* mOverlays;
     
