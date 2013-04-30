@@ -25,6 +25,7 @@
 {
     if (self = [super init]) {
         self->mImageSize = nil;
+//        self->mITKAdapter = NULL;
     }
     
     return self;    
@@ -107,8 +108,72 @@
     }
     return self;
 }
+
+
+-(id)initEmptyWithSize:(BARTImageSize*) imageSize ofImageType:(enum ImageType)iType withOrientationFrom:(EDDataElement*)inputData
+{
+    if ((self = [self init])) {
+		
+		mImageSize = [imageSize copy];
+        mDataTypeID = isis::data::ValueArray<float>::staticID;
+		mImageType = iType;
+        
+        NSArray *propsToCopy = [NSArray arrayWithObjects:
+                                @"voxelsize",
+                                @"voxelGap",
+                                @"rowVec",
+                                @"sliceVec",
+                                @"columnVec",
+                                @"indexOrigin",
+                                nil];
+        
+        NSDictionary* orientationProps = [inputData getProps:propsToCopy];
+        
+        
+        
+        // empty isis image
+        std::list<isis::data::Chunk> chList;
+        
+        // create it with each slice and each timestep as a chunk and with type float (loaded ones are converted)
+        for (size_t ts = 0; ts < mImageSize.timesteps; ts++){
+            for (size_t sl = 0; sl < mImageSize.slices; sl++){
+                isis::data::MemChunk<float> ch(mImageSize.columns, mImageSize.rows);
+                
+                ch.setPropertyAs<u_int32_t>("acquisitionNumber", sl+ts*mImageSize.slices);//sl+ts*mImageSize.slices
+                ch.setPropertyAs<u_int16_t>("sequenceNumber", 1);
+                for (NSString *str in [orientationProps allKeys]) {		// type is fvector3
+                    if ( [[str lowercaseString] isEqualToString:@"indexorigin"]
+                        or [[str lowercaseString] isEqualToString:@"rowvec"]
+                        or [[str lowercaseString] isEqualToString:@"columnvec"]
+                        or [[str lowercaseString] isEqualToString:@"slicevec"]
+                        or [[str lowercaseString] isEqualToString:@"voxelsize"]
+                        or [[str lowercaseString] isEqualToString:@"voxelgap"])
+                    {
+                        isis::util::fvector3 prop;
+                        if (YES == [[orientationProps valueForKey:str] isKindOfClass:[NSArray class]]){
+                            //fvector3 consists of 3 values - if array is longer will be ignored
+                            size_t maxCount = [[orientationProps valueForKey:str] count] < 3 ? [[orientationProps valueForKey:str] count] : 3;
+                            for (size_t i = 0; i < maxCount; i++){
+                                prop[i] = [[[orientationProps valueForKey:str] objectAtIndex:i] floatValue];}
+                            ch.setPropertyAs<isis::util::fvector3>([str cStringUsingEncoding:NSISOLatin1StringEncoding], prop);
+                        }
+                    }
+                }
+                chList.push_back(ch);
+            }
+        }
+        
+        mIsisImage = new isis::data::Image(chList);
+    }
+    return self;
+    	
+}
+
 -(void)dealloc
 {
+//    if (self->mITKAdapter != NULL) {
+//        delete self->mITKAdapter;
+//    }
     if (self->mIsisImage != NULL) {
         delete self->mIsisImage;
     }
@@ -667,6 +732,73 @@
     return ret;
 }
 
+//-(ITKImage::Pointer)asITKImage
+//{
+//    if (self->mITKAdapter != NULL)  {
+//        delete self->mITKAdapter;
+//    }
+//        
+//    self->mITKAdapter = new isis::adapter::itkAdapter;
+//    ITKImage::Pointer itkImage = self->mITKAdapter->makeItkImageObject<ITKImage>(*mIsisImage);
+//    return itkImage;
+//}
+//
+//-(ITKImage4D::Pointer)asITKImage4D
+//{
+//    if (self->mITKAdapter != NULL)  {
+//        delete self->mITKAdapter;
+//    }
+//    
+//    self->mITKAdapter = new isis::adapter::itkAdapter;
+//    ITKImage4D::Pointer itkImage = self->mITKAdapter->makeItkImageObject<ITKImage4D>(*mIsisImage);
+//    return itkImage;
+//}
+//
+//-(EDDataElement*)convertFromITKImage:(ITKImage::Pointer)itkImg
+//{
+//    if (self->mITKAdapter != NULL) {
+//        std::list<isis::data::Image> imgList = self->mITKAdapter->makeIsisImageObject<ITKImage>(itkImg);
+//
+//        if (imgList.size() > 0) {
+//            return [[[EDDataElementIsis alloc] initFromImage:imgList.front() 
+//                                                 ofImageType:IMAGE_ANADATA] 
+//                    autorelease];
+//        }
+//    }
+//    
+//    return nil;
+//}
+//
+//-(EDDataElement*)convertFromITKImage4D:(ITKImage4D::Pointer)itkImg4D
+//{
+//    if (self->mITKAdapter != NULL) {
+//        std::list<isis::data::Image> imgList = self->mITKAdapter->makeIsisImageObject<ITKImage4D>(itkImg4D);
+//        
+//        if (imgList.size() > 0) {
+//            return [[[EDDataElementIsis alloc] initFromImage:imgList.front() 
+//                                                 ofImageType:IMAGE_FCTDATA] 
+//                    autorelease];
+//        }
+//    }
+//    
+//    return nil;
+//}
+//
+//-(void)updateFromITKImage:(ITKImage::Pointer)itkImg
+//{
+//    // TODO
+//}
+//
+//-(void)updateFromITKImage4D:(ITKImage4D::Pointer)itkImg4D
+//{
+//    // TODO
+//}
+//
+//-(ITKImage::Pointer)asITKImage:(unsigned int)timestep
+//{
+//    return nil;
+//}
+
 -(enum ImageOrientation)getMainOrientation
 {
     switch (mIsisImage->getMainOrientation()){
@@ -695,5 +827,6 @@
     }
     
 }
+
 
 @end

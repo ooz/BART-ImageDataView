@@ -6,6 +6,9 @@
 //  Copyright 2010 MPI Cognitive and Human Brain Sciences Leipzig. All rights reserved.
 //
 
+#ifndef EDDATAELEMENTISIS_H
+#define EDDATAELEMENTISIS_H
+
 #import <Cocoa/Cocoa.h>
 #import "EDDataElement.h"
 #import "DataStorage/image.hpp"
@@ -29,3 +32,5 @@
 
 
 @end
+
+#endif // EDDATAELEMENTISIS_H

@@ -6,6 +6,9 @@
 //  Copyright 2009 MPI Cognitive and Human Brain Sciences Leipzig. All rights reserved.
 //
 
+#ifndef EDDATAELEMENT_H
+#define EDDATAELEMENT_H
+
 #import <Cocoa/Cocoa.h>
 
 //#ifdef __cplusplus
@@ -37,6 +40,7 @@ enum ImageOrientation {
     ORIENT_REVCORONAL,
     ORIENT_UNKNOWN
 };
+
 
 enum ImageDataType {
     IMAGE_DATA_FLOAT,
@@ -112,14 +116,16 @@ enum ImagePropertyID{
 
 -(id)initEmptyWithSize:(BARTImageSize*) imageSize ofImageType:(enum ImageType)iType;
 
+-(id)initEmptyWithSize:(BARTImageSize*) imageSize ofImageType:(enum ImageType)iType withOrientationFrom:(EDDataElement*)inputData;
+
 -(id)initForRealTimeTCPIPWithSize:(BARTImageSize*)s ofImageType:(enum ImageType)iType;
 
 -(void)dealloc;
 
 // DEPRECATED == VI stuff
--(id)initWithDatasetFile:(NSString*)path ofImageDataType:(enum ImageDataType)type;
+//-(id)initWithDatasetFile:(NSString*)path ofImageDataType:(enum ImageDataType)type;
 
--(id)initWithDataType:(enum ImageDataType)type andRows:(int) rows andCols:(int)cols andSlices:(int)slices andTimesteps:(int) tsteps;
+//-(id)initWithDataType:(enum ImageDataType)type andRows:(int) rows andCols:(int)cols andSlices:(int)slices andTimesteps:(int) tsteps;
 
 -(BARTImageSize*)getImageSize;
 
@@ -133,9 +139,9 @@ enum ImagePropertyID{
 
 -(id)initWithFile:(NSString*)path andSuffix:(NSString*)suffix andDialect:(NSString*)dialect ofImageType:(enum ImageType)iType;
 
--(short)getShortVoxelValueAtRow: (int)r col:(int)c slice:(int)s timestep:(int)t;
+-(short)getShortVoxelValueAtRow: (NSUInteger)r col:(NSUInteger)c slice:(NSUInteger)s timestep:(NSUInteger)t;
 
--(float)getFloatVoxelValueAtRow: (int)r col:(int)c slice:(int)s timestep:(int)t;
+-(float)getFloatVoxelValueAtRow: (NSUInteger)r col:(NSUInteger)c slice:(NSUInteger)s timestep:(NSUInteger)t;
 
 -(void)setVoxelValue:(NSNumber*)val atRow: (NSUInteger)r col:(NSUInteger)c slice:(NSUInteger)s timestep:(NSUInteger)t;
 
@@ -145,7 +151,7 @@ enum ImagePropertyID{
 
 -(BOOL)WriteDataElementToFile:(NSString*)path withOverwritingSuffix:(NSString*)suffix andDialect:(NSString*)dialect;
 
--(BOOL)sliceIsZero:(int)slice;
+-(BOOL)sliceIsZero:(NSUInteger)slice;
 
 -(void)setImageProperty:(enum ImagePropertyID)key withValue:(id) value;
 
@@ -188,5 +194,76 @@ enum ImagePropertyID{
 
 -(NSArray*)getMinMaxOfDataElement;
 
+//#ifdef __cplusplus
+//
+///**
+// * Converts the whole DataElement to an ITKImage.
+// *
+// * \return The DataElement as an ITKImage.
+// */
+//-(ITKImage::Pointer)asITKImage;
+//
+///**
+// * Converts the whole DataElement to an ITKImage4D.
+// *
+// * \return The DataElement as an ITKImage4D.
+// */
+//-(ITKImage4D::Pointer)asITKImage4D;
+//
+///**
+// * Converts a given 3D ITKImage to a new EDDataElement not altering
+// * this DataElement (in contrast to EDDataElement::updateFromITKImage:).
+// * Restores image attributes that were lost in the conversion 
+// * "DataElement to ITKImage" done by EDDataElement::asITKImage: in case
+// * the same DataElement is used for the backwards conversion.
+// * 
+// * \see asITKImage
+// * \see updateFromITKImage:
+// * \param itkImg Pointer to the 3D ITKImage which should be converted.
+// * \return       EDDataElement converted from itkImg.
+// */
+//-(EDDataElement*)convertFromITKImage:(ITKImage::Pointer)itkImg;
+//
+///**
+// * Converts a given 4D ITKImage to a new EDDataElement not altering
+// * this DataElement (in contrast to EDDataElement::updateFromITKImage4D:).
+// * Restores image attributes that were lost in the conversion 
+// * "DataElement to ITKImage4D" done by EDDataElement::asITKImage4D: in case
+// * the same DataElement is used for the backwards conversion.
+// * 
+// * \see asITKImage4D
+// * \see updateFromITKImage4D:
+// * \param itkImg Pointer to the ITKImage4D which should be converted.
+// * \return       EDDataElement converted from itkImg4D.
+// */
+//-(EDDataElement*)convertFromITKImage4D:(ITKImage4D::Pointer)itkImg4D;
+//
+///**
+// * Discard the current image data and refill the DataElement from
+// * an 3D ITKImage object.
+// *
+// * \param itkImg ITKImage from which to update this DataElement.
+// */
+//-(void)updateFromITKImage:(ITKImage::Pointer)itkImg;
+//
+///**
+// * Discard the current image data and refill the DataElement from
+// * an ITKImage4D object.
+// *
+// * \param itkImg4D ITKImage4D from which to update this DataElement.
+// */
+//-(void)updateFromITKImage4D:(ITKImage4D::Pointer)itkImg4D;
+//
+///**
+// * Converts a single timestep of the DataElement to an ITKImage.
+// *
+// * \param timestep The timestep of the volume to convert.
+// * \return         The ITKImage of the volume at timestep.
+// */
+//-(ITKImage::Pointer)asITKImage:(unsigned int)timestep;
+//
+//#endif
 
 @end
+
+#endif //EDDATAELEMENT_H
