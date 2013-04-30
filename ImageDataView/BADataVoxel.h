@@ -37,4 +37,15 @@
 -(void)convertFrom:(enum ImageOrientation)srcOrient
                 to:(enum ImageOrientation)tarOrient;
 
+/**
+ * Creates a new voxel by converting this voxel from one orientation to another.
+ *
+ * \param srcOrient The ImageOrientation this voxel is assumed to be in.
+ * \param tarOrient The ImageOrientation the new voxel shall be in.
+ * \return          A new BADataVoxel that contains the information of the original
+ *                  voxel in the new orientation tarOrient.
+ */
+-(id)createVoxelByConvertingFrom:(enum ImageOrientation)srcOrient
+                              to:(enum ImageOrientation)tarOrient;
+
 @end

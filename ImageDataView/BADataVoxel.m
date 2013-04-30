@@ -77,6 +77,17 @@
     }
 }
 
+-(id)createVoxelByConvertingFrom:(enum ImageOrientation)srcOrient
+                              to:(enum ImageOrientation)tarOrient
+{
+    BADataVoxel* newVoxel = [[BADataVoxel alloc] initWithColumn:self->column
+                                                            row:self->row
+                                                          slice:self->slice
+                                                       timestep:self->timestep];
+    [newVoxel convertFrom:srcOrient to:tarOrient];
+    return newVoxel;
+}
+
 -(NSString*)description {
     return [NSString stringWithFormat: @"BADataVoxel(col=%ld, row=%ld, slice=%ld, ts=%ld)",
             self->column, self->row, self->slice, self->timestep];
