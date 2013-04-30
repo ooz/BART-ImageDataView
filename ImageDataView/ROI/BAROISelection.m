@@ -62,13 +62,13 @@
 -(void)addChild:(BAROISelection*)child
 {
     [self->mChildren addObject:child];
-    child.parent = self;
+    child->mParent = self;
 }
 
 -(void)removeChild:(BAROISelection*)child
 {
     [self->mChildren removeObject:child];
-    child.parent = nil;
+    child->mParent = nil;
 }
 
 
