@@ -95,6 +95,10 @@
     return mask;
 }
 
+-(NSString*)description {
+    return [NSString stringWithFormat: @"BAROISelection(parent=%@, #children=%ld)", self->mParent, [self->mChildren count]];
+}
+
 //-(NSArray*)asPointSet
 //{
 //    return [NSArray array];
