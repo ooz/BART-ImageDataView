@@ -28,18 +28,18 @@ extern CIFormat kCIFormatRGBAf;
         //float colorTableData[256 * 4 * 2];
         float* colorTableData = malloc(sizeof(float) * 4 * 2);
         
-        // fully transparent, not selected
-        int i = 0;
-        colorTableData[i + 0] = 0.0;
-        colorTableData[i + 1] = 0.0;
-        colorTableData[i + 2] = 0.0;
-        colorTableData[i + 3] = 0.0;
-        i++;
+        
         // slightly transparent green, selected
-        colorTableData[i + 0] = 0.0;
-        colorTableData[i + 1] = 1.0;
-        colorTableData[i + 2] = 0.0;
-        colorTableData[i + 3] = 0.5;
+        int i = 0;
+        colorTableData[i++] = 0.0;
+        colorTableData[i++] = 1.0;
+        colorTableData[i++] = 0.0;
+        colorTableData[i++] = 0.3;
+        // fully transparent, not selected
+        colorTableData[i++] = 0.0;
+        colorTableData[i++] = 0.0;
+        colorTableData[i++] = 0.0;
+        colorTableData[i++] = 0.0;
         
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
         [self->mColortable release];
@@ -59,6 +59,25 @@ extern CIFormat kCIFormatRGBAf;
 -(void)dealloc
 {
     [super dealloc];
+}
+
+-(CIImage*)apply:(CIImage*)on
+{
+    [ColorMappingFilter class];
+    
+    self->mFilter = [CIFilter filterWithName: @"ColorMappingFilter"
+                               keysAndValues: @"inputImage", on,
+                     @"colorTable", self->mColortable, nil];
+    
+    int colortableMappingType = 4;
+    [(ColorMappingFilter*) self->mFilter setKernelToUse: colortableMappingType];
+    
+    [self->mFilter setValue: [self valueForKey:@"minimum"]
+                     forKey: @"minimum"];
+    [self->mFilter setValue: [self valueForKey:@"maximum"]
+                     forKey: @"maximum"];
+    
+    return [self->mFilter valueForKey:@"outputImage"];
 }
 
 @end

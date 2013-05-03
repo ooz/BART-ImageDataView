@@ -91,3 +91,22 @@ kernel vec4 colorMappingFilterFour(sampler src, __table sampler colorTable,
 
 	return premultiply(pix);
 }
+
+// Kernel for ROI selection
+kernel vec4 colorMappingFilterThree(sampler src, __table sampler colorTable, float min, float max) {
+	
+	vec4 pix;
+	
+	float value;
+	
+
+	pix = unpremultiply(sample(src, samplerCoord(src)));
+
+	value = (pix.r + pix.g + pix.b) / 3.0;
+
+	pix = (value < max ? (value > min ? getCTValue(colorTable, 255.0 / (max - min) * (value - min)) : vec4(0.0, 0.0, 0.0, 0.0)) : vec4(0.0, 0.0, 0.0, 0.0));
+
+	pix.a = (value <= min) ? 0.0 : 0.4;
+
+	return premultiply(pix);
+}
