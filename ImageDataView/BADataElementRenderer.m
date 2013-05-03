@@ -1248,4 +1248,8 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
     return ret;
 }
 
+-(NSString*)description {
+    return [NSString stringWithFormat: @"BADataElementRenderer(img=%@, mainOrient=%d, tarOrient=%d, cols=%d, rows=%d, slice=%d/%d, ts=%d/%zd)", self->mImage, self->mMainOrientation, self->mTargetOrientation, self->mColumnCount, self->mRowCount, self->mCurrentSlice, self->mSliceCount, self->mCurrentTimestep, self->mTimestepCount];
+}
+
 @end
