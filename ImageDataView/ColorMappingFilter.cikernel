@@ -93,7 +93,7 @@ kernel vec4 colorMappingFilterFour(sampler src, __table sampler colorTable,
 }
 
 // Kernel for ROI selection
-kernel vec4 colorMappingFilterThree(sampler src, __table sampler colorTable, float min, float max) {
+kernel vec4 colorMappingFilterFive(sampler src, __table sampler colorTable, float min, float max) {
 	
 	vec4 pix;
 	
