@@ -20,12 +20,12 @@ static const enum ImageOrientation DEFAULT_ORIENTATION = ORIENT_AXIAL;
 -(id)initWithReference:(EDDataElement*)data
                  point:(BADataVoxel*)p
                   mode:(enum ROISelectionMode)m
-          andThreshold:(NSNumber*)thres;
+          andThreshold:(float)thres;
 {
     if (self = [super initWithMode:m]) {
         self->mReference = [data retain];
         self->mPoint     = [p retain];
-        self->mThreshold = [thres retain];
+        self->mThreshold = thres;
     }
     
     return self;
@@ -37,9 +37,6 @@ static const enum ImageOrientation DEFAULT_ORIENTATION = ORIENT_AXIAL;
     
     [self->mPoint release];
     self->mPoint = nil;
-    
-    [self->mThreshold release];
-    self->mThreshold = nil;
     
     [super dealloc];
 }

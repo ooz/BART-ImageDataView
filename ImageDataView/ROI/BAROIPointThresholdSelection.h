@@ -17,16 +17,16 @@
     EDDataElement* mReference;
     
     BADataVoxel* mPoint;    
-    NSNumber* mThreshold;
+    float mThreshold;
     
 }
 
 @property (nonatomic, readonly) BADataVoxel* point;
-@property (nonatomic, readonly) NSNumber* threshold;
+@property (nonatomic, readonly) float threshold;
 
 -(id)initWithReference:(EDDataElement*)data
                  point:(BADataVoxel*)p
                   mode:(enum ROISelectionMode)m
-          andThreshold:(NSNumber*)thres;
+          andThreshold:(float)thres;
 
 @end
