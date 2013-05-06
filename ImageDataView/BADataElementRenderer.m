@@ -629,7 +629,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
         for (size_t slice = 0; slice < slices; slice++) {
             
             srcSliceNr = (flipY) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
+            float* sliceData = [self->mImage getSliceData:(uint) srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
             size_t srcCol;
             for (size_t col = 0; col < cols; col++) {
@@ -653,7 +653,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
         NSUInteger relevantSlicesCount = [self->mRelevantSlices count];
         for (int slice = 0; slice < slices; slice++) {
             srcSliceNr = (flipY) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
+            float* sliceData = [self->mImage getSliceData:(uint) srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
             
             size_t srcCol;
@@ -725,7 +725,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
         int renderIndex = 0;
         for (size_t slice = 0; slice < slices; slice++) {
             srcSliceNr = (flipY) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
+            float* sliceData = [self->mImage getSliceData:(uint) srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
             
             int tarSliceNr = (flipZ) ? self->mSliceCount - self->mCurrentSlice - 1 : self->mCurrentSlice;
@@ -750,7 +750,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
         NSUInteger relevantSlicesCount = [self->mRelevantSlices count];
         for (int slice = 0; slice < slices; slice++) {
             srcSliceNr = (flipY) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
+            float* sliceData = [self->mImage getSliceData:(uint) srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
             
             size_t srcRow;
@@ -833,7 +833,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
         for (int slice = 0; slice < slices; slice++) {
             
             srcSliceNr = (flipX) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
+            float* sliceData = [self->mImage getSliceData:(uint) srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
             
             for (int row = 0; row < rows; row++) {
@@ -858,7 +858,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
         size_t flippedGridIndex;
         for (int slice = 0; slice < slices; slice++) {
             srcSliceNr = (flipX) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
+            float* sliceData = [self->mImage getSliceData:(uint) srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
             
             for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
@@ -933,7 +933,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
         for (int slice = 0; slice < slices; slice++) {
             
             srcSliceNr = (flipX) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
+            float* sliceData = [self->mImage getSliceData:(uint) srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
             
             for (int col = 0; col < cols; col++) {
@@ -958,7 +958,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
         size_t flippedGridIndex;
         for (int slice = 0; slice < slices; slice++) {
             srcSliceNr = (flipX) ? slices - slice - 1 : slice;
-            float* sliceData = [self->mImage getSliceData:srcSliceNr
+            float* sliceData = [self->mImage getSliceData:(uint) srcSliceNr
                                                atTimestep:self->mCurrentTimestep];
             
             for (int gridIndex = 0; gridIndex < gridWidth * gridHeight; gridIndex++) {
