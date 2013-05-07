@@ -278,9 +278,9 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
     
     size_t* dimSizes = [self->mRelevantSliceFilter getDimensionSizes:self->mImage
                                                            alignedTo:self->mTargetOrientation];
-    self->mColumnCount = dimSizes[0];
-    self->mRowCount    = dimSizes[1];
-    self->mSliceCount  = dimSizes[2];
+    self->mColumnCount = (uint) dimSizes[0];
+    self->mRowCount    = (uint) dimSizes[1];
+    self->mSliceCount  = (uint) dimSizes[2];
     free(dimSizes);
     
     [self setSlice:self->mCurrentSlice];
