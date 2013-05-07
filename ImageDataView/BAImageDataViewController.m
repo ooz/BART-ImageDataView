@@ -471,12 +471,25 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
 {
     if (sender == self->mColortableSelect) {
         NSInteger selectedIndex = [self->mColortableSelect indexOfSelectedItem];
+        
+        NSArray* minMax = [self->mOverlayRenderer getDataMinMax];
+        float min = 0;
+        float max = 0;
+        if (minMax != nil && [minMax count] == 2) {
+            min = [[minMax objectAtIndex:0] floatValue];
+            max = [[minMax objectAtIndex:1] floatValue];
+        }
  
         if (selectedIndex == 0) {
             BAImageFilter* imageFilter = [[BASingleDomainColortableFilter alloc] init];
             [self->mOverlayRenderer setImageFilter:imageFilter];
             [imageFilter release];
             
+            [self->mRegion1LowerField setFloatValue:min];
+            [self->mRegion1LowerStepper setFloatValue:min];
+            [self->mRegion1UpperField setFloatValue:max];
+            [self->mRegion1UpperStepper setFloatValue:max];
+        
             [self setRegionSelectionStates:FIRST_REGION_SELECTION_MASK to:YES];
             [self setRegionSelectionStates:SECOND_REGION_SELECTION_MASK to:NO];
         
@@ -484,6 +497,15 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
             BAImageFilter* imageFilter = [[BATwoDomainColortableFilter alloc] init];
             [self->mOverlayRenderer setImageFilter:imageFilter];
             [imageFilter release];
+            
+            [self->mRegion1LowerField   setFloatValue:min];
+            [self->mRegion1LowerStepper setFloatValue:min];
+            [self->mRegion1UpperField   setFloatValue:max / 2.0f];
+            [self->mRegion1UpperStepper setFloatValue:max / 2.0f];
+            [self->mRegion2LowerField   setFloatValue:max / 2.0f];
+            [self->mRegion2LowerStepper setFloatValue:max / 2.0f];
+            [self->mRegion2UpperField   setFloatValue:max];
+            [self->mRegion2UpperStepper setFloatValue:max];
             
             [self setRegionSelectionStates:(FIRST_REGION_SELECTION_MASK | SECOND_REGION_SELECTION_MASK) to:YES];
         }
