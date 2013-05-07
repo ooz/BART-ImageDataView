@@ -72,20 +72,20 @@
 }
 
 
--(EDDataElement*)asBinaryMask
-{
-    if ([self->mChildren count] > 0) {
-        EDDataElement* mask = [[self->mChildren objectAtIndex:0] asBinaryMask];
-        
-        for (NSUInteger i = 1; i < [self->mChildren count]; i++) {
-            mask = [[self->mChildren objectAtIndex:i] addToBinaryMask:mask];
-        }
-        
-        return mask;
-    }
-    
-    return nil;
-}
+//-(EDDataElement*)asBinaryMask
+//{
+//    if ([self->mChildren count] > 0) {
+//        EDDataElement* mask = [[self->mChildren objectAtIndex:0] asBinaryMask];
+//        
+//        for (NSUInteger i = 1; i < [self->mChildren count]; i++) {
+//            mask = [[self->mChildren objectAtIndex:i] addToBinaryMask:mask];
+//        }
+//        
+//        return mask;
+//    }
+//    
+//    return nil;
+//}
 
 -(EDDataElement*)addToBinaryMask:(EDDataElement*)mask
 {

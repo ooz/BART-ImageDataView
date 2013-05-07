@@ -47,13 +47,13 @@ enum ROISelectionMode {
 // # Converter methods #
 // #####################
 
-/**
- * Converts the ROI selection to a binary mask.
- *
- * \return Binary mask represented by an EDDataElement with voxel values of 0.0 and 1.0.
- *         Autoreleased;
- */
--(EDDataElement*)asBinaryMask;
+///**
+// * Converts the ROI selection to a binary mask.
+// *
+// * \return Binary mask represented by an EDDataElement with voxel values of 0.0 and 1.0.
+// *         Autoreleased;
+// */
+//-(EDDataElement*)asBinaryMask;
 
 /**
  * "Draws" the ROI selection on an existing binary mask.
