@@ -135,9 +135,6 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
 -(id)init
 {
     if (self = [super initWithNibName:@"BAImageDataView" bundle:nil]) {
-        self->mROIController = [[BAROIController alloc] init];
-        [self->mROIController loadView];
-        self->mROIToolboxWindow = nil;
         
         BAImageSliceSelector* sliceSelector = [[BAImageSliceSelector alloc] init];
         self->mRenderer = [[BADataElementRenderer alloc] initWithSliceSelector:sliceSelector];
@@ -156,7 +153,11 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
         self->mOverlays = [[NSMutableDictionary alloc] initWithCapacity:INITIAL_OVERLAY_CAPACITY];
         
         self->mGridSize = (NSSize) { DEFAULT_GRID_SIZE
-            , DEFAULT_GRID_SIZE };
+                                   , DEFAULT_GRID_SIZE };
+        
+        self->mROIController = [[BAROIController alloc] initWithROISelectionRenderer:self->mSelectionRenderer];
+        [self->mROIController loadView];
+        self->mROIToolboxWindow = nil;
     }
     
     return self;
@@ -620,6 +621,7 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
 // ################
 
 -(void)mouseUp:(NSEvent*)theEvent {
+//    [self->mSelectionRenderer setAlpha:0.5f];
     NSPoint clickPoint = [theEvent locationInWindow];
     NSLog(@"BAImageDataViewController mouseUp event, p: (%.1lf, %.1lf)", clickPoint.x, clickPoint.y);
     
@@ -628,8 +630,6 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
     
     [self->mROIController clickOn:[self->mRenderer getDataElement] at:clickInDataSpace];
     
-    // Force rerender since original DataElement has changed
-    [self->mRenderer renderImage:YES];
     [self updateViewImages];
 }
 

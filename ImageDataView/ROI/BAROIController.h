@@ -11,21 +11,33 @@
 #import "BADataClickHandling.h"
 #import "BAROISelection.h"
 
+@class BADataElementRenderer;
+
 /** 
  * Controller for BAROIToolboxView.xib
- * Manages selection of ROIs
+ * Manages selection of ROIs and updates on the renderer used to display the ROI selection
+ * in the view.
  */
 @interface BAROIController : NSViewController <BADataClickHandling> {
     
-    NSMutableDictionary* mROIs;
+    /** Renderer used to convert the ROI mask (EDDataElement) to a displayable NSImage. */
+    BADataElementRenderer* mROISelectionRenderer;
+    
+    /** Key: ROI name, value: BAROISelection */
+    NSMutableDictionary* mROISelections;
+    /** Key: ROI name, value: rendered mask (EDDataElement) */
+    NSMutableDictionary* mROIMasks;
+    
     enum ROISelectionMode mMode;
     float mThreshold;
     
 }
 
+
 // ###################################
 // # GUI related outlets and actions #
 // ###################################
+
 @property (readonly) IBOutlet NSSegmentedControl* mToolSelect;
 @property (readonly) IBOutlet NSSegmentedControl* mModeSelect;
 @property (readonly) IBOutlet id                  mROISelect;
@@ -40,11 +52,24 @@
 -(IBAction)setThreshold:(id)sender;
 
 
+// ################
+// # Initializers #
+// ################
+
+/** Initializer.
+ * Acknowledges the renderer used to convert the ROI mask (EDDataElement)
+ * to a displayable NSImage.
+ *
+ * \param r BADataElementRenderer.
+ */
+-(id)initWithROISelectionRenderer:(BADataElementRenderer*)r;
+
+
 // ###################
 // # Regular methods #
 // ###################
 
-/** Acknowledges a new ROI label to the controller.
+/** Adds a new ROI label to the controller.
  *
  * \param label NSString name of the new ROI.
  */

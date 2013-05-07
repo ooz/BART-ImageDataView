@@ -10,6 +10,7 @@
 #import "EDDataElement.h"
 #import "BADataVoxel.h"
 #import "BAROIPointThresholdSelection.h"
+#import "BADataElementRenderer.h"
 
 
 // #############
@@ -28,6 +29,18 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
 
 /** Updates the enabled state of view components. */
 -(void)updateViewStates;
+
+/**
+ * Checks dimensions, main orientation and voxel attributes (e.g. spacing, size)
+ * of two EDDataElements.
+ *
+ * \param data  EDDataElement to check against other.
+ * \param other EDDataElement to check against data.
+ * \return      Boolean indictating whether both data elements have the same size,
+ *              spacing etc. attributes (= are compatible).
+ */
+-(BOOL)isCompatible:(EDDataElement*)data
+               with:(EDDataElement*)other;
 
 /** Creates a BAROISelection object from the given parameters and 
  *  the current view state.
@@ -59,10 +72,21 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
 -(id)init
 {
     if (self = [super initWithNibName:@"BAROIToolboxView" bundle:nil]) {
-        self->mROIs = [[NSMutableDictionary alloc] init];
+        self->mROISelectionRenderer = nil;
+        self->mROISelections = [[NSMutableDictionary alloc] init];
+        self->mROIMasks      = [[NSMutableDictionary alloc] init];
         self->mMode = ADD;
         self->mThreshold = 0.0f;
     }
+    return self;
+}
+
+-(id)initWithROISelectionRenderer:(BADataElementRenderer*)r
+{
+    if (self = [self init]) {
+        self->mROISelectionRenderer = [r retain];
+    }
+    
     return self;
 }
 
@@ -76,7 +100,10 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
 
 -(void)dealloc
 {
-    [self->mROIs release];
+    [self->mROISelectionRenderer release];
+    [self->mROISelections release];
+    [self->mROIMasks release];
+    
     [super dealloc];
 }
 
@@ -112,7 +139,10 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
 
 -(IBAction)setROI:(id)sender
 {
-    
+    if (sender == self->mROISelect) {
+        NSString* currentROI = [[self->mROISelect selectedItem] title];
+        [self->mROISelectionRenderer setData:[self->mROIMasks valueForKey:currentROI]];
+    }
 }
 
 -(IBAction)setThreshold:(id)sender
@@ -122,7 +152,7 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
 
 -(void)updateViewStates
 {
-    if ([self->mROIs count] == 0) {
+    if ([self->mROISelections count] == 0) {
         [self->mROISelect setEnabled:NO];
         [self->mToolSelect setEnabled:NO];
         [self->mModeSelect setEnabled:NO];
@@ -136,7 +166,7 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
         [self->mThresholdStepper setEnabled:YES];
     }
     
-    NSLog(@"ROIs: %@", self->mROIs);
+    NSLog(@"ROIs: %@", self->mROISelections);
 }
 
 
@@ -147,12 +177,13 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
 -(void)addROI:(NSString*)label
 {
     if (label != nil) {
-        if ([self->mROIs count] == 0) {
+        if ([self->mROISelections count] == 0) {
             [self->mROISelect removeAllItems];
         }
         
         BAROISelection* roiSelection = [[BAROISelection alloc] init];
-        [self->mROIs setValue:roiSelection forKey:label];
+        [self->mROISelections setValue:roiSelection forKey:label];
+        [self->mROIMasks      setValue:nil          forKey:label];
         [self->mROISelect addItemWithTitle:label];
         [roiSelection release];
         
@@ -162,9 +193,10 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
 
 -(void)removeROI:(NSString*)label
 {
-    [self->mROIs removeObjectForKey:label];
+    [self->mROISelections removeObjectForKey:label];
+    [self->mROIMasks      removeObjectForKey:label];
     
-    if ([self->mROIs count] == 0) {
+    if ([self->mROISelections count] == 0) {
         [self->mROISelect removeAllItems];
         [self->mROISelect addItemWithTitle:DEFAULT_ROI_TEXT];
     } else {
@@ -176,12 +208,29 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
 
 -(EDDataElement*)roiAsBinaryMask:(NSString*)roiLabel
 {
-    BAROISelection* sel = [self->mROIs valueForKey:roiLabel];
-    if (sel != nil) {
-        return [sel asBinaryMask];
+    EDDataElement* maskCache = [self->mROIMasks valueForKey:roiLabel];
+    return [[self->mROISelections valueForKey:roiLabel] addToBinaryMask:maskCache];
+}
+
+-(BOOL)isCompatible:(EDDataElement*)data
+               with:(EDDataElement*)other
+{
+    if (data == nil || other == nil) {
+        return data == nil && other == nil;
     }
     
-    return nil;
+    enum ImageOrientation dOrient = [data  getMainOrientation];
+    enum ImageOrientation oOrient = [other getMainOrientation];
+    
+    BARTImageSize* dSize = [data getImageSize];
+    BARTImageSize* oSize = [other getImageSize];
+    
+    // TODO: compare voxel size+spacing, row and col vector too!
+    
+    return dOrient       == oOrient
+        && dSize.columns == oSize.columns
+        && dSize.rows    == oSize.rows
+        && dSize.slices  == oSize.slices;
 }
 
 -(BAROISelection*)makeSelectionFrom:(EDDataElement*)data
@@ -194,7 +243,10 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
         selection = [[BAROIPointThresholdSelection alloc] initWithReference:data
                                                                       point:clickPoint
                                                                        mode:self->mMode
-                                                               andThreshold:nil]; // TODO: pass proper threshold!
+                                                               andThreshold:[data getFloatVoxelValueAtRow:clickPoint.row
+                                                                                                      col:clickPoint.column
+                                                                                                    slice:clickPoint.slice
+                                                                                                 timestep:clickPoint.timestep]];
     }
     
     return selection;
@@ -208,21 +260,46 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
 {
     NSLog(@"ROIController received click: %@", p);
     
-    if (data != nil && [self->mROIs count] > 0) {
+    if (data != nil && p != nil && [self->mROISelections count] > 0) {
         NSString* currentROI = [[self->mROISelect selectedItem] title];
         NSLog(@"selected ROI: %@", currentROI);
-        [data setVoxelValue:[NSNumber numberWithFloat:1300.0]
-                      atRow:p.row
-                        col:p.column
-                      slice:p.slice
-                   timestep:p.timestep];
+        
+        EDDataElement* currentMask = [self->mROIMasks valueForKey:currentROI];
+        if (![self isCompatible:currentMask with:data]) {
+            BARTImageSize* maskSize = [data getImageSize];
+            maskSize.timesteps = 1;
+            EDDataElement* newMask = [[EDDataElement alloc] initEmptyWithSize:maskSize
+                                                                  ofImageType:data.mImageType
+                                                          withOrientationFrom:data];
+            
+            [self->mROIMasks setValue:newMask forKey:currentROI];
+            
+            // Small hack: before setting the mask to the renderer
+            // Set one value to 1.0 so (min, max) is (0.0, 1.0) instead of (0.0, 0.0)
+            // The renderer only checks for (min, max) once: when the data is set
+            // If (min, max) change later due to changes to the data, it is not recognized!
+            [newMask setVoxelValue:[NSNumber numberWithFloat:1.0f] atRow:0 col:0 slice:0 timestep:0];
+            NSLog(@"MinMax mask: %@", [newMask getMinMaxOfDataElement]);
+            [self->mROISelectionRenderer setData:newMask];
+            [newMask setVoxelValue:[NSNumber numberWithFloat:0.0f] atRow:0 col:0 slice:0 timestep:0]; // revert
+            
+            NSLog(@"data orient: %d, mask orient: %d", [data getMainOrientation], [newMask getMainOrientation]);
+            currentMask = newMask;
+            
+            [newMask release];
+        }
         
         BAROISelection* selection = [self makeSelectionFrom:data and:p];
         if (selection != nil) {
-            BAROISelection* parentSelection = [self->mROIs valueForKey:currentROI];
+            BAROISelection* parentSelection = [self->mROISelections valueForKey:currentROI];
             [parentSelection addChild:selection];
+            NSLog(@"Current ROI (%@) selection: %@", currentROI, selection);
+            [selection addToBinaryMask:currentMask];
             [selection release];
         }
+        
+        // Force rerender since original DataElement has changed
+        [self->mROISelectionRenderer renderImage:YES];
     }
 }
 

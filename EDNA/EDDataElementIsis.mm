@@ -113,10 +113,10 @@
 -(id)initEmptyWithSize:(BARTImageSize*) imageSize ofImageType:(enum ImageType)iType withOrientationFrom:(EDDataElement*)inputData
 {
     if ((self = [self init])) {
-		
-		mImageSize = [imageSize copy];
+        
+        mImageSize = [imageSize copy];
         mDataTypeID = isis::data::ValueArray<float>::staticID;
-		mImageType = iType;
+        mImageType = iType;
         
         NSArray *propsToCopy = [NSArray arrayWithObjects:
                                 @"voxelsize",
@@ -124,7 +124,6 @@
                                 @"rowVec",
                                 @"sliceVec",
                                 @"columnVec",
-                                @"indexOrigin",
                                 nil];
         
         NSDictionary* orientationProps = [inputData getProps:propsToCopy];
@@ -141,9 +140,9 @@
                 
                 ch.setPropertyAs<u_int32_t>("acquisitionNumber", sl+ts*mImageSize.slices);//sl+ts*mImageSize.slices
                 ch.setPropertyAs<u_int16_t>("sequenceNumber", 1);
-                for (NSString *str in [orientationProps allKeys]) {		// type is fvector3
-                    if ( [[str lowercaseString] isEqualToString:@"indexorigin"]
-                        or [[str lowercaseString] isEqualToString:@"rowvec"]
+                ch.setPropertyAs<isis::util::fvector3>("indexOrigin", isis::util::fvector3(0,0,sl));//sl
+                for (NSString *str in [orientationProps allKeys]) {             // type is fvector3
+                    if (   [[str lowercaseString] isEqualToString:@"rowvec"]
                         or [[str lowercaseString] isEqualToString:@"columnvec"]
                         or [[str lowercaseString] isEqualToString:@"slicevec"]
                         or [[str lowercaseString] isEqualToString:@"voxelsize"]
@@ -164,9 +163,12 @@
         }
         
         mIsisImage = new isis::data::Image(chList);
+        NSArray *propsToCopyForComplImage = [NSArray arrayWithObjects:
+                                             @"voxelsize",@"indexOrigin", nil];
+        [self copyProps:propsToCopyForComplImage fromDataElement:inputData];
+        //[[str lowercaseString] isEqualToString:@"indexorigin"]
     }
     return self;
-    	
 }
 
 -(void)dealloc

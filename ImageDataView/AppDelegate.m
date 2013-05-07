@@ -8,8 +8,10 @@
 
 #import "AppDelegate.h"
 #import "BAImageDataViewController.h"
+#import "BAROIController.h"
 
 #import "EDDataElement.h"
+
 
 @implementation AppDelegate
 
@@ -49,6 +51,12 @@
     
     [imageDataViewController setBackgroundImage:background];
     [imageDataViewController addOverlayImage:image withID:@"funData"];
+    
+    [[imageDataViewController getROIController] addROI:@"TestROI"];
+    [[imageDataViewController getROIController] addROI:@"ROI2"];
+    [[imageDataViewController getROIController] addROI:@"TestoROI"];
+    [[imageDataViewController getROIController] removeROI:@"ROI2"];
+    
     
 //    [imageDataViewController release];
 //    [image release];
