@@ -19,6 +19,15 @@
  * Renders the combined back- plus foreground image. */
 -(void)updateSetImage;
 
+/** Return the NSImage that is "closest" to the viewer. Ignoring the selection image!
+ *
+ * \return The topmost NSImage. Ignoring the selection image.
+ *         If a foreground is active, it is returned.
+ *         If no foreground is active, but a background is set, the background is returned.
+ *         Nil if neither fore- or background are set.
+ */
+-(NSImage*)getTopmostImage;
+
 @end
 
 
@@ -228,6 +237,15 @@
     }
 }
 
+-(NSImage*)getTopmostImage
+{
+    if (self->mForegroundImage != nil) {
+        return self->mForegroundImage;
+    }
+    
+    return self->mBackgroundImage;
+}
+
 -(void)observeValueForKeyPath:(NSString *)keyPath
                      ofObject:(id)object
                        change:(NSDictionary *)change
@@ -246,7 +264,7 @@
 
 -(void)mouseUp:(NSEvent*)theEvent {
     
-    NSImage* img = [self image];
+    NSImage* img = [self getTopmostImage];
     
     if (img != nil) {
         NSArray* imgReps = [img representations];
