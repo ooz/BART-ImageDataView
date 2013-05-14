@@ -102,6 +102,15 @@ static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
 /** Updates the min/max values of the NSStepper components used for the colortable regions. */
 -(void)updateStepperMinMax;
 
+/** Returns the renderer associated with the topmost EDDataElement.
+ *
+ * \return The BADataElementRenderer whose EDDataElement is "closest" to the viewer.
+ *         If an overlay is active the renderer associated with the overlay is returned.
+ *         If no overlay is active the "background" renderer is returned.
+ *         Nil if no EDDataElement is set at all.
+ */
+-(BADataElementRenderer*)getTopmostRenderer;
+
 @end
 
 
@@ -339,15 +348,6 @@ static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
     return [self->mOverlays objectForKey:identifier];
 }
 
--(EDDataElement*)getTopmostDataElement
-{
-    if ([self->mOverlayRenderer getDataElement] != nil) {
-        return [self->mOverlayRenderer getDataElement];
-    }
-    
-    return [self->mRenderer getDataElement];
-}
-
 -(NSArray*)overlayIDs
 {
     return [self->mOverlays allKeys];
@@ -453,6 +453,18 @@ static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
     [self->mRegion2LowerStepper setMaxValue:max];
     [self->mRegion2UpperStepper setMinValue:min];
     [self->mRegion2UpperStepper setMaxValue:max];
+}
+
+-(BADataElementRenderer*)getTopmostRenderer;
+{
+    if ([self->mOverlayRenderer getDataElement] != nil) {
+        return self->mOverlayRenderer;
+    }
+    if ([self->mRenderer getDataElement] != nil) {
+        return  self->mRenderer;
+    }
+    
+    return nil;
 }
 
 
@@ -660,10 +672,16 @@ static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
     NSPoint clickPoint = [theEvent locationInWindow];
     NSLog(@"BAImageDataViewController mouseUp event, p: (%.1lf, %.1lf)", clickPoint.x, clickPoint.y);
     
-    BADataVoxel* clickInDataSpace = [self->mRenderer pointToVoxel:clickPoint];
-    NSLog(@"BAImageDataViewController clickInDataSpace: %@", clickInDataSpace);
+    BADataElementRenderer* topmostRenderer = [self getTopmostRenderer];
+    if (topmostRenderer != nil) {
+        BADataVoxel* clickInDataSpace = [topmostRenderer pointToVoxel:clickPoint];
+        NSLog(@"BAImageDataViewController clickInDataSpace: %@", clickInDataSpace);
     
-    [self->mROIController clickOn:[self->mRenderer getDataElement] at:clickInDataSpace];
+        [self->mROIController clickOn:[topmostRenderer getDataElement]
+                                   at:clickInDataSpace
+                              inRange:self.mRegion1Lower
+                                  and:self.mRegion1Upper];
+    }
 }
 
 @end

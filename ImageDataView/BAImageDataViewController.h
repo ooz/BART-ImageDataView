@@ -97,15 +97,6 @@
 /** Gets the EDDataElement for an overlay ID. */
 -(EDDataElement*)getOverlayBy:(NSString*)identifier;
 
-/** Returns the topmost EDDataElement.
- *
- * \return The EDDataElement that is "closest" to the viewer.
- *         If an overlay is active the EDDataElement associated with the overlay is returned.
- *         If no overlay is active the "background" EDDataElement is returned.
- *         Nil if no EDDataElement is set at all.
- */
--(EDDataElement*)getTopmostDataElement;
-
 
 
 // ################################################

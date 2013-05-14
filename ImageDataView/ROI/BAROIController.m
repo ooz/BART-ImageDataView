@@ -9,7 +9,7 @@
 #import "BAROIController.h"
 #import "EDDataElement.h"
 #import "BADataVoxel.h"
-#import "BAROIPointThresholdSelection.h"
+#import "BAROIPointRangeSelection.h"
 #import "BADataElementRenderer.h"
 
 
@@ -47,11 +47,15 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
  *
  * \param data       EDDataElement defining the image space
  * \param clickPoint 4D point that was clicked within the parameter data.
+ * \param min        Float minimum voxel value of data that should be selected.
+ * \param max        Float maximum voxel value of data that should be selected.
  * \return           BAROISelection taking both given paraemters and the 
  *                   current view state into account.
  */
 -(BAROISelection*)makeSelectionFrom:(EDDataElement*)data
-                                and:(BADataVoxel*)clickPoint;
+                                 at:(BADataVoxel*)clickPoint
+                            inRange:(float)min
+                                and:(float)max;
 
 @end
 
@@ -221,19 +225,19 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
 }
 
 -(BAROISelection*)makeSelectionFrom:(EDDataElement*)data
-                                and:(BADataVoxel*)clickPoint
+                                 at:(BADataVoxel*)clickPoint
+                            inRange:(float)min
+                                and:(float)max;
 {
     BAROISelection* selection = nil;
     long toolIndex = [self->mToolSelect selectedSegment];
     if (toolIndex == 0) {
-        // PointThreshold
-        selection = [[BAROIPointThresholdSelection alloc] initWithReference:data
-                                                                      point:clickPoint
-                                                                       mode:self->mMode
-                                                               andThreshold:[data getFloatVoxelValueAtRow:clickPoint.row
-                                                                                                      col:clickPoint.column
-                                                                                                    slice:clickPoint.slice
-                                                                                                 timestep:clickPoint.timestep]];
+        // PointRange ("MagicCluster")
+        selection = [[BAROIPointRangeSelection alloc] initWithReference:data
+                                                                  point:clickPoint
+                                                                   mode:self->mMode
+                                                                inRange:min
+                                                                    and:max];
     }
     
     return selection;
@@ -245,8 +249,14 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
 
 -(void)clickOn:(EDDataElement*)data at:(BADataVoxel*)p
 {
-    NSLog(@"ROIController received click: %@", p);
-    
+    NSLog(@"ROIController received click at: %@. No range given. Ignoring", p);
+}
+
+-(void)clickOn:(EDDataElement*)data
+            at:(BADataVoxel*)p
+       inRange:(float)min
+           and:(float)max
+{
     if (data != nil && p != nil && [self->mROISelections count] > 0) {
         NSString* currentROI = [[self->mROISelect selectedItem] title];
         NSLog(@"selected ROI: %@", currentROI);
@@ -276,7 +286,7 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
             [newMask release];
         }
         
-        BAROISelection* selection = [self makeSelectionFrom:data and:p];
+        BAROISelection* selection = [self makeSelectionFrom:data at:p inRange:min and:max];
         if (selection != nil) {
             BAROISelection* parentSelection = [self->mROISelections valueForKey:currentROI];
             [parentSelection addChild:selection];

@@ -108,7 +108,9 @@
         [stack release];
     }
     
-    [super addToBinaryMask:mask];
+    for (BAROISelection* sel in self->mChildren) {
+        mask = [sel addToBinaryMask:mask];
+    }
     return mask;
 }
 
