@@ -66,9 +66,6 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
 @synthesize mModeSelect;
 @synthesize mROISelect;
 
-@synthesize mThresholdField;
-@synthesize mThresholdStepper;
-
 -(id)init
 {
     if (self = [super initWithNibName:@"BAROIToolboxView" bundle:nil]) {
@@ -146,25 +143,16 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
     }
 }
 
--(IBAction)setThreshold:(id)sender
-{
-    
-}
-
 -(void)updateViewStates
 {
     if ([self->mROISelections count] == 0) {
         [self->mROISelect setEnabled:NO];
         [self->mToolSelect setEnabled:NO];
         [self->mModeSelect setEnabled:NO];
-        [self->mThresholdField setEnabled:NO];
-        [self->mThresholdStepper setEnabled:NO];
     } else {
         [self->mROISelect setEnabled:YES];
         [self->mToolSelect setEnabled:YES];
         [self->mModeSelect setEnabled:YES];
-        [self->mThresholdField setEnabled:YES];
-        [self->mThresholdStepper setEnabled:YES];
     }
 }
 
