@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4707D1BE174274D1005F2C28 /* BAROIPointRangeSelection.m in Sources */ = {isa = PBXBuildFile; fileRef = 4707D1BD174274D0005F2C28 /* BAROIPointRangeSelection.m */; };
 		4720DC4F15A7247900C5B981 /* BABrainImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4720DC4E15A7247900C5B981 /* BABrainImageView.m */; };
 		4737CE05159230DD00E0D0FD /* EDDataElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4737CDF8159230DD00E0D0FD /* EDDataElement.mm */; };
 		4737CE06159230DD00E0D0FD /* EDDataElement.mm.orig in Resources */ = {isa = PBXBuildFile; fileRef = 4737CDF9159230DD00E0D0FD /* EDDataElement.mm.orig */; };
@@ -45,6 +46,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4707D1BC174274D0005F2C28 /* BAROIPointRangeSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAROIPointRangeSelection.h; path = ROI/BAROIPointRangeSelection.h; sourceTree = "<group>"; };
+		4707D1BD174274D0005F2C28 /* BAROIPointRangeSelection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BAROIPointRangeSelection.m; path = ROI/BAROIPointRangeSelection.m; sourceTree = "<group>"; };
 		4720DC4D15A7247900C5B981 /* BABrainImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BABrainImageView.h; sourceTree = "<group>"; };
 		4720DC4E15A7247900C5B981 /* BABrainImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BABrainImageView.m; sourceTree = "<group>"; };
 		4737CDF7159230DD00E0D0FD /* EDDataElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EDDataElement.h; sourceTree = "<group>"; };
@@ -158,6 +161,8 @@
 				47608D97172033C600146356 /* BAROIController.m */,
 				47608D99172039A100146356 /* BAROIToolboxView.xib */,
 				47608D9C1726B3EF00146356 /* BADataClickHandling.h */,
+				4707D1BC174274D0005F2C28 /* BAROIPointRangeSelection.h */,
+				4707D1BD174274D0005F2C28 /* BAROIPointRangeSelection.m */,
 			);
 			name = ROI;
 			sourceTree = "<group>";
@@ -352,6 +357,7 @@
 				47608D951717343A00146356 /* BAImageSelectionFilter.m in Sources */,
 				47608D98172033C600146356 /* BAROIController.m in Sources */,
 				47608D9F1726B49900146356 /* BADataVoxel.m in Sources */,
+				4707D1BE174274D1005F2C28 /* BAROIPointRangeSelection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
