@@ -679,8 +679,8 @@ static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
     
         [self->mROIController clickOn:[topmostRenderer getDataElement]
                                    at:clickInDataSpace
-                              inRange:self.mRegion1Lower
-                                  and:self.mRegion1Upper];
+                              inRange:[self->mRegion1LowerField floatValue]
+                                  and:[self->mRegion1UpperField floatValue]];
     }
 }
 
