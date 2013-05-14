@@ -142,6 +142,7 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
     if (sender == self->mROISelect) {
         NSString* currentROI = [[self->mROISelect selectedItem] title];
         [self->mROISelectionRenderer setData:[self->mROIMasks valueForKey:currentROI]];
+        [self->mROISelectionRenderer renderImage:NO];
     }
 }
 
@@ -165,8 +166,6 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
         [self->mThresholdField setEnabled:YES];
         [self->mThresholdStepper setEnabled:YES];
     }
-    
-    NSLog(@"ROIs: %@", self->mROISelections);
 }
 
 

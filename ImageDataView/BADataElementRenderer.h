@@ -13,7 +13,10 @@
 @class BAImageSliceSelector;
 @class BADataVoxel;
 
-/** Class used to convert an EDDataElement to a displayable NSImage. */
+/** Class used to convert an EDDataElement to a displayable NSImage.
+ *
+ * This class is KVO compliant for the property "renderedImage".
+ */
 @interface BADataElementRenderer : NSObject {
     
     /** The volume data to be rendered. */
@@ -86,6 +89,9 @@
     NSSize mGridSize;
     
 }
+
+/** Rendered EDDataElement as NSImage. Ready for display. KVO compliant. */
+@property (retain) NSImage* renderedImage;
 
 /** Initializer.
  *

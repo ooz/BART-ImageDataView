@@ -51,6 +51,11 @@ static const NSUInteger SECOND_REGION_SELECTION_MASK = 1 << 1;
 /** Title of the window containing the ROI toolbox. */
 static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
 
+/** Keypath for the observed property in the renderer object(s). */
+static NSString* OBSERVED_KEYPATH = @"renderedImage";
+/** Context for observing the selection renderer object. */
+static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
+
 
 // ###############################
 // # Private method declarations #
@@ -195,11 +200,19 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
     
     [self.mImageView setNextResponder:self];
     
+    [self->mSelectionRenderer addObserver:self->mImageView
+                               forKeyPath:OBSERVED_KEYPATH
+                                  options:NSKeyValueObservingOptionNew
+                                  context:OBSERVING_SELECTION_CONTEXT];
+    
     [self updateViewImages];
 }
 
 -(void)dealloc
 {
+    [self->mSelectionRenderer removeObserver:self->mImageView
+                                  forKeyPath:OBSERVED_KEYPATH];
+    
     if (self->mRenderer != nil) [self->mRenderer release];
     if (self->mOverlayRenderer != nil) [self->mOverlayRenderer release];
     if (self->mSelectionRenderer != nil) [self->mSelectionRenderer release];
@@ -651,8 +664,6 @@ static NSString* ROI_TOOLBOX_WINDOW_TITLE = @"ROI Selection Toolbox";
     NSLog(@"BAImageDataViewController clickInDataSpace: %@", clickInDataSpace);
     
     [self->mROIController clickOn:[self->mRenderer getDataElement] at:clickInDataSpace];
-    
-    [self updateViewImages];
 }
 
 @end

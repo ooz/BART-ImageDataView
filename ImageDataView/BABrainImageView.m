@@ -223,8 +223,24 @@
     if (fg != nil && bg != nil) {
         NSImage* composite = [self createCompositeImage:fg
                                                      on:bg];
-        [self setImage:composite];
+        [self setImage:(NSImage*) composite];
         [composite release];
+    }
+}
+
+-(void)observeValueForKeyPath:(NSString *)keyPath
+                     ofObject:(id)object
+                       change:(NSDictionary *)change
+                      context:(void *)context
+{
+    if ([keyPath isEqualToString:@"renderedImage"]) {
+        if ([(NSString*) context isEqualToString:@"selection"]) {
+            id newVal = [change objectForKey:NSKeyValueChangeNewKey];
+            if (newVal == [NSNull null]) {
+                newVal = nil;
+            }
+            [self setSelectionImage:newVal];
+        }
     }
 }
 

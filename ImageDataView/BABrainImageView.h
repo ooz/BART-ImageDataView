@@ -16,6 +16,9 @@
  *
  * Another image can be set to mark a selection of voxels (shown on top of foreground and
  * background images).
+ * The view offers support for observing the keypath "renderedImage" in the context "selection"
+ * meaning it updates its selection image if an observed object's renderedImage property is
+ * changed.
  *
  * Image interpolation is disabled!
  */

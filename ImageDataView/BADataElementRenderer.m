@@ -132,6 +132,8 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
 
 @implementation BADataElementRenderer
 
+@synthesize renderedImage;
+
 -(id)init
 {
     if (self = [super init]) {
@@ -169,6 +171,8 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
         self->mMainOrientation   = ORIENT_UNKNOWN;
         
         self->mGridSize    = (NSSize) {DEFAULT_GRID_SIZE, DEFAULT_GRID_SIZE};
+        
+        self->renderedImage = nil;
     }
     
     return self;
@@ -202,6 +206,8 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
     
     if (self->mRelevantSliceFilter != nil) [self->mRelevantSliceFilter release];
     if (self->mRelevantSlices      != nil) [self->mRelevantSlices      release];
+    
+    [self->renderedImage release];
     
     [super dealloc];
 }
@@ -238,6 +244,8 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
         
         [self setGridSize:self->mGridSize];
     }
+    
+    self->mNeedToRender = YES;
 }
 
 -(void)setSlice:(uint)sliceNr
@@ -393,6 +401,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
 -(NSImage*)renderImage:(BOOL)force
 {
     if (self->mImage == nil) {
+        [self setRenderedImage:nil];
         return nil;
     }
     
@@ -458,7 +467,6 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
         
         self->mRenderCache = [renderedSlices retain];
         [renderedSlices release];
-        self->mNeedToRender = NO;
     }
     
     CIImage* ciImage = [self->mRenderCache copy];
@@ -477,6 +485,11 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
     
     BARTImageSize* imageSize = [self->mImage getImageSize];
     image = [self fixSizeOf:image with:imageSize];
+    
+    if (self->mNeedToRender || force) {
+        [self setRenderedImage:image];
+        self->mNeedToRender = NO;
+    }
     
     return image;
 }
