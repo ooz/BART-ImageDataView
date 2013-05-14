@@ -153,6 +153,8 @@
 				476D76D016F89E0800B798D6 /* BAROISelection.m */,
 				476D76D716F89ED800B798D6 /* BAROIPointThresholdSelection.h */,
 				476D76D816F89ED800B798D6 /* BAROIPointThresholdSelection.m */,
+				4707D1BC174274D0005F2C28 /* BAROIPointRangeSelection.h */,
+				4707D1BD174274D0005F2C28 /* BAROIPointRangeSelection.m */,
 				476D76DA16F89F1500B798D6 /* BAROIPointSetSelection.h */,
 				476D76DB16F89F1500B798D6 /* BAROIPointSetSelection.m */,
 				47608D931717343A00146356 /* BAImageSelectionFilter.h */,
@@ -161,8 +163,6 @@
 				47608D97172033C600146356 /* BAROIController.m */,
 				47608D99172039A100146356 /* BAROIToolboxView.xib */,
 				47608D9C1726B3EF00146356 /* BADataClickHandling.h */,
-				4707D1BC174274D0005F2C28 /* BAROIPointRangeSelection.h */,
-				4707D1BD174274D0005F2C28 /* BAROIPointRangeSelection.m */,
 			);
 			name = ROI;
 			sourceTree = "<group>";
