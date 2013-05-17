@@ -515,7 +515,13 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
     * sizeof(float);
     float* renderImageData = malloc(renderImageDataLength);
     
-    NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
+    float min = [[self->mImageMinMax objectAtIndex:0] floatValue];
+    float max = [[self->mImageMinMax objectAtIndex:1] floatValue];
+    if (min == max) {
+        // Avoid division by 0 later on
+        min = 0.0f;
+        if (max == 0.0f) max = FLT_MAX;
+    }
     float normalized = 0.0f;
     
     if (   gridWidth == 1
@@ -537,7 +543,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
             for (int col = 0; col < cols; col++) {
                 srcRow = (flipY) ? rows - row - 1 : row;
                 srcCol = (flipX) ? cols - col - 1 : col;
-                normalized = sliceData[srcRow * cols + srcCol] / [max floatValue];
+                normalized = (sliceData[srcRow * cols + srcCol] - min) / (max - min);
                 renderImageData[targetIndex++] = normalized;
                 renderImageData[targetIndex++] = normalized;
                 renderImageData[targetIndex++] = normalized;
@@ -580,7 +586,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                         for (size_t col = 0; col < cols; col++) {
                             srcRow = (flipY) ? (rows - row - 1) : row;
                             srcCol = (flipX) ? (cols - col - 1) : col;
-                            normalized = sliceData[srcRow * cols + srcCol] / [max floatValue];
+                            normalized = (sliceData[srcRow * cols + srcCol] - min) / (max - min);
                             renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS]     = normalized;
                             renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 1] = normalized;
                             renderImageData[sliceOffset + (row * gridWidth * cols + col) * NUMBER_OF_CHANNELS + 2] = normalized;
@@ -629,7 +635,13 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
     * sizeof(float);
     float* renderImageData = malloc(renderImageDataLength);
     
-    NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
+    float min = [[self->mImageMinMax objectAtIndex:0] floatValue];
+    float max = [[self->mImageMinMax objectAtIndex:1] floatValue];
+    if (min == max) {
+        // Avoid division by 0 later on
+        min = 0.0f;
+        if (max == 0.0f) max = FLT_MAX;
+    }
     float normalized = 0.0f;
     
     size_t srcSliceNr = 0;
@@ -647,7 +659,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
             size_t srcCol;
             for (size_t col = 0; col < cols; col++) {
                 srcCol = (flipX) ? cols - col - 1 : col;
-                normalized = sliceData[tarSliceNr * cols + srcCol] / [max floatValue];
+                normalized = (sliceData[tarSliceNr * cols + srcCol] - min) / (max - min);
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
@@ -677,7 +689,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                     if (gridIndex < relevantSlicesCount) {
                         flippedGridIndex = (flipZ) ? relevantSlicesCount - gridIndex - 1 : gridIndex;
                         size_t relevantRow = [[self->mRelevantSlices objectAtIndex:flippedGridIndex] intValue];
-                        normalized = sliceData[relevantRow * cols + srcCol] / [max floatValue];
+                        normalized = (sliceData[relevantRow * cols + srcCol] - min) / (max - min);
                     } else {
                         normalized = 0.0f;
                     }
@@ -728,7 +740,13 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                                     * sizeof(float);
     float* renderImageData = malloc(renderImageDataLength);
     
-    NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
+    float min = [[self->mImageMinMax objectAtIndex:0] floatValue];
+    float max = [[self->mImageMinMax objectAtIndex:1] floatValue];
+    if (min == max) {
+        // Avoid division by 0 later on
+        min = 0.0f;
+        if (max == 0.0f) max = FLT_MAX;
+    }
     float normalized = 0.0f;
     
     size_t srcSliceNr;
@@ -745,7 +763,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
             size_t srcRow;
             for (size_t row = 0; row < rows; row++) {
                 srcRow = (flipX) ? rows - row - 1 : row;
-                normalized = sliceData[srcRow * cols + tarSliceNr] / [max floatValue];
+                normalized = (sliceData[srcRow * cols + tarSliceNr] - min) / (max - min);
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
@@ -778,7 +796,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                     if (gridIndex < relevantSlicesCount) {
                         flippedGridIndex = (flipZ) ? relevantSlicesCount - gridIndex - 1 : gridIndex;
                         size_t relevantCol = [[self->mRelevantSlices objectAtIndex:flippedGridIndex] intValue];
-                        normalized = sliceData[srcRow * cols + relevantCol] / [max floatValue];
+                        normalized = (sliceData[srcRow * cols + relevantCol] - min) / (max - min);
                     } else {
                         normalized = 0.0f;
                     }
@@ -832,7 +850,13 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
     * sizeof(float);
     float* renderImageData = malloc(renderImageDataLength);
     
-    NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
+    float min = [[self->mImageMinMax objectAtIndex:0] floatValue];
+    float max = [[self->mImageMinMax objectAtIndex:1] floatValue];
+    if (min == max) {
+        // Avoid division by 0 later on
+        min = 0.0f;
+        if (max == 0.0f) max = FLT_MAX;
+    }
     float normalized = 0.0f;
     
     size_t srcSliceNr;
@@ -851,7 +875,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
             
             for (int row = 0; row < rows; row++) {
                 srcRow = (flipY) ? rows - row - 1 : row;
-                normalized  = sliceData[srcRow * cols + tarSliceNr] / [max floatValue];
+                normalized  = (sliceData[srcRow * cols + tarSliceNr] - min) / (max - min);
                 renderIndex = (row * slices + slice) * NUMBER_OF_CHANNELS;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
@@ -881,7 +905,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                     
                     for (int row = 0; row < rows; row++) {
                         srcRow = (flipY) ? rows - row - 1 : row;
-                        normalized = sliceData[srcRow * cols + relevantCol] / [max floatValue];
+                        normalized = (sliceData[srcRow * cols + relevantCol] - min) / (max - min);
                         renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * rows // Grid row
                                        + (gridIndex % gridWidth) * slices                  // Grid col
                                        + (row * gridWidth * slices + slice)                // Position in grid tile
@@ -932,7 +956,13 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                                     * sizeof(float);
     float* renderImageData = malloc(renderImageDataLength);
     
-    NSNumber* max    = [self->mImageMinMax objectAtIndex:1];
+    float min = [[self->mImageMinMax objectAtIndex:0] floatValue];
+    float max = [[self->mImageMinMax objectAtIndex:1] floatValue];
+    if (min == max) {
+        // Avoid division by 0 later on
+        min = 0.0f;
+        if (max == 0.0f) max = FLT_MAX;
+    }
     float normalized = 0.0f;
     
     size_t srcSliceNr;
@@ -951,7 +981,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
             
             for (int col = 0; col < cols; col++) {
                 srcCol = (flipY) ? cols - col - 1 : col;
-                normalized  = sliceData[tarSliceNr * cols + srcCol] / [max floatValue];
+                normalized  = (sliceData[tarSliceNr * cols + srcCol] - min) / (max - min);
                 renderIndex = (col * slices + slice) * NUMBER_OF_CHANNELS;
                 renderImageData[renderIndex++] = normalized;
                 renderImageData[renderIndex++] = normalized;
@@ -981,7 +1011,7 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
                     
                     for (int col = 0; col < cols; col++) {
                         srcCol = (flipY) ? cols - col - 1: col; 
-                        normalized = sliceData[relevantRow * cols + srcCol] / [max floatValue];
+                        normalized = (sliceData[relevantRow * cols + srcCol] - min) / (max - min);
                         renderIndex = ((gridIndex / gridWidth) * gridWidth * slices * cols // Grid row
                                        + (gridIndex % gridWidth) * slices                  // Grid col
                                        + (col * gridWidth * slices + slice)                // Position in grid tile

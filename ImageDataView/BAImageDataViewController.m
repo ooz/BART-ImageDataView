@@ -610,10 +610,14 @@ static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
             float tfUpper = [self->mRegion1UpperField floatValue];
             float min = [self->mRegion1LowerStepper minValue];
             float max = [self->mRegion1LowerStepper maxValue];
+            if (min == max) {
+                // Avoid division by 0 later on
+                min = 0.0f;
+                if (max == 0.0f) max = FLT_MAX;
+            }
             
-            // TODO: Compute exact normalized value respecting all signum cases of min/max
-            [filter setValue:[NSNumber numberWithFloat:tfLower / max] forKey:@"minimum"];
-            [filter setValue:[NSNumber numberWithFloat:tfUpper / max] forKey:@"maximum"];
+            [filter setValue:[NSNumber numberWithFloat:(tfLower - min) / (max - min)] forKey:@"minimum"];
+            [filter setValue:[NSNumber numberWithFloat:(tfUpper - min) / (max - min)] forKey:@"maximum"];
         }
         
         if ((mask & SECOND_REGION_SELECTION_MASK) == SECOND_REGION_SELECTION_MASK) {
@@ -621,10 +625,14 @@ static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
             float tfUpper = [self->mRegion2UpperField floatValue];
             float min = [self->mRegion2LowerStepper minValue];
             float max = [self->mRegion2LowerStepper maxValue];
+            if (min == max) {
+                // Avoid division by 0 later on
+                min = 0.0f;
+                if (max == 0.0f) max = FLT_MAX;
+            }
             
-            // TODO: Compute exact normalized value respecting all signum cases of min/max
-            [filter setValue:[NSNumber numberWithFloat:tfLower / max] forKey:@"minimum2"];
-            [filter setValue:[NSNumber numberWithFloat:tfUpper / max] forKey:@"maximum2"];
+            [filter setValue:[NSNumber numberWithFloat:(tfLower - min) / (max - min)] forKey:@"minimum2"];
+            [filter setValue:[NSNumber numberWithFloat:(tfUpper - min) / (max - min)] forKey:@"maximum2"];
         }
         
         [self updateViewImages];
