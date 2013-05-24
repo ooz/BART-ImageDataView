@@ -1047,14 +1047,14 @@ const NSUInteger MASK_Z_FLIP  = 1 << 2;
     NSSize ciImageSize;
     ciImageSize.width  = w;
     ciImageSize.height = h;
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+//    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CIImage* ciImage = [[CIImage alloc] initWithBitmapData:[NSData dataWithBytes:data
                                                                           length:len]
                                                bytesPerRow:bpr
                                                       size:ciImageSize 
-                                                    format:kCIFormatRGBAf 
-                                                colorSpace:colorSpace];
-    CGColorSpaceRelease(colorSpace);
+                                                    format:kCIFormatRGBAf
+                                                colorSpace:nil]; //colorSpace];
+//    CGColorSpaceRelease(colorSpace);
     
     return ciImage;
 }
