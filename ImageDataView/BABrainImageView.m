@@ -273,39 +273,45 @@
         
         if ([imgReps count] > 0) {
             NSSize viewSize = [self bounds].size;
-            NSLog(@"viewSize: (%lf, %lf)", viewSize.width, viewSize.height);
+            NSLog(@"###########################################################");
+            NSLog(@"ViewSize:      (%lf, %lf)", viewSize.width, viewSize.height);
+            NSSize imgSize = [img size];
+            NSLog(@"ImgSize:       (%lf, %lf)", imgSize.width , imgSize.height);
             
             imgRep = [imgReps objectAtIndex:0];
             bitmapSize = [imgRep size];
-            NSLog(@"ImageRepSize: (%lf, %lf)", bitmapSize.width, bitmapSize.height);
+            NSLog(@"ImageRepSize:  (%lf, %lf)", bitmapSize.width, bitmapSize.height);
             
-//            NSSize actualRepSize;
-//            actualRepSize.width  = [imgRep pixelsWide];
-//            actualRepSize.height = [imgRep pixelsHigh];
-//            NSLog(@"Actual size: (%lf, %lf))", actualRepSize.width, actualRepSize.height);
+            NSSize imgScaleFactors;
+            imgScaleFactors.width  = imgSize.width  / viewSize.width;
+            imgScaleFactors.height = imgSize.height / viewSize.height;
+            NSLog(@"ImgScaleFactors: (%lf, %lf)", imgScaleFactors.width, imgScaleFactors.height);
             
             NSSize scaleFactors;
-            scaleFactors.width = bitmapSize.width / viewSize.width;
+            scaleFactors.width  = bitmapSize.width  / viewSize.width;
             scaleFactors.height = bitmapSize.height / viewSize.height;
-            NSLog(@"Scale factors: (%lf, %lf)", scaleFactors.width, scaleFactors.height);
+            NSLog(@"RepScalefactors: (%lf, %lf)", scaleFactors.width, scaleFactors.height);
             
             NSPoint clickPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
             NSPoint clickPointImageSpace;
             
-            if (scaleFactors.width > scaleFactors.height) {
-                clickPointImageSpace.x = scaleFactors.width * clickPoint.x;
-                clickPointImageSpace.y = (viewSize.height * scaleFactors.width)
-                                         - (clickPoint.y * scaleFactors.width) - ((viewSize.height * scaleFactors.width - bitmapSize.height) / 2)
-                                         - 1.0f;
+            if (imgScaleFactors.width > imgScaleFactors.height) {
+                clickPointImageSpace.x = imgScaleFactors.width * clickPoint.x;
+                clickPointImageSpace.y = (viewSize.height * imgScaleFactors.width)
+                                         - (clickPoint.y * imgScaleFactors.width) - ((viewSize.height * imgScaleFactors.width - imgSize.height) / 2.0f);
             } else {
-                clickPointImageSpace.x = (clickPoint.x * scaleFactors.height) - ((viewSize.width * scaleFactors.height - bitmapSize.width) / 2);
-                clickPointImageSpace.y = bitmapSize.height - (scaleFactors.height * clickPoint.y) - 1.0f;
+                clickPointImageSpace.x = (clickPoint.x * imgScaleFactors.height) - ((viewSize.width * imgScaleFactors.height - imgSize.width) / 2.0f);
+                clickPointImageSpace.y = imgSize.height - (imgScaleFactors.height * clickPoint.y);
             }
             
-            clickPointImageSpace.x = floor(clickPointImageSpace.x);
-            clickPointImageSpace.y = round(clickPointImageSpace.y);
+            // Scale from NSImage size to NSImageRep size
+            clickPointImageSpace.x = (clickPointImageSpace.x / imgSize.width ) * bitmapSize.width;
+            clickPointImageSpace.y = (clickPointImageSpace.y / imgSize.height) * bitmapSize.height;
             
-            NSLog(@"ClickPoint in ImageSpace: (%.1lf, %.1lf)", clickPointImageSpace.x, clickPointImageSpace.y);
+            clickPointImageSpace.x = floor(clickPointImageSpace.x);
+            clickPointImageSpace.y = floor(clickPointImageSpace.y);
+            NSLog(@"ClickPoint original:    (%.1lf, %.1lf)", clickPoint.x          , clickPoint.y          );
+            NSLog(@"ClickPoint in ImgSpace: (%.1lf, %.1lf)", clickPointImageSpace.x, clickPointImageSpace.y);
 
             
             // Draw clicked point directly into the view's image in red color.
