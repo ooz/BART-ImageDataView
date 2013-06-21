@@ -10,11 +10,21 @@
 
 @class EDDataElement;
 
+/**
+ * Enum describing whether to add or to remove a ROI selection from
+ * the previous selection.
+ */
 enum ROISelectionMode {
     ADD = 0,
     REMOVE
 };
 
+
+
+/** Superclass for all ROISelection classes.
+ * Allows construction of a hierarchical ROI selection tree and the
+ * conversion to a binary mask (EDDataElement).
+ */
 @interface BAROISelection : NSObject {
     
     BAROISelection* mParent;

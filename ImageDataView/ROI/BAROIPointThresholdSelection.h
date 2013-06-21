@@ -12,6 +12,12 @@
 
 @class BADataVoxel;
 
+/**
+ * ROI selection based on a voxel (determined e.g. by clicking a point)
+ * and a given threshold.
+ * All adjacent voxels whose values are above the threshold will be
+ * selected.
+ */
 @interface BAROIPointThresholdSelection : BAROISelection {
 
     EDDataElement* mReference;
