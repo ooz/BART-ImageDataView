@@ -42,3 +42,7 @@ ROI
     2. Switch back to the slice you wanted to select the ROI on
     3. Select ROI as normal
 
+ * If background image and overlay aren't in the same space (should not be!),
+   ROI selection might be 1 or more voxel off the point that was actually
+   clicked. 
+
