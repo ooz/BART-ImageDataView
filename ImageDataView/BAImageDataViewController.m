@@ -56,6 +56,12 @@ static NSString* OBSERVED_KEYPATH = @"renderedImage";
 /** Context for observing the selection renderer object. */
 static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
 
+/** Key codes for up/down arrow. */
+static const unsigned int KEY_J          = 38;
+static const unsigned int KEY_K          = 40;
+static const unsigned int KEY_DOWN_ARROW = 125;
+static const unsigned int KEY_UP_ARROW   = 126;
+
 
 // ###############################
 // # Private method declarations #
@@ -210,6 +216,7 @@ static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
     [iconImage release];
     
     [self.mImageView setNextResponder:self];
+    [self.mSliceSelect setNextResponder:self];
     
     [self->mSelectionRenderer addObserver:self->mImageView
                                forKeyPath:OBSERVED_KEYPATH
@@ -704,6 +711,28 @@ static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
                                       and:[self->mRegion1UpperField floatValue]];
         }
     }
+}
+
+
+// ##############
+// # Key events #
+// ##############
+
+-(void)keyUp:(NSEvent*)theEvent
+{
+    unsigned int kc = [theEvent keyCode];
+    
+    // Next and previous slice
+    if (kc == KEY_UP_ARROW          || kc == KEY_K) {
+        [self->mSliceSelectSlider setIntValue:[self->mSliceSelectSlider intValue] + 1];
+        [self selectSlice:self->mSliceSelectSlider];
+        
+    } else if (kc == KEY_DOWN_ARROW || kc == KEY_J) {
+        [self->mSliceSelectSlider setIntValue:[self->mSliceSelectSlider intValue] - 1];
+        [self selectSlice:self->mSliceSelectSlider];
+    }
+    
+//    NSLog(@"Received key event. KeyCode: %d", kc);
 }
 
 @end
