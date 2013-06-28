@@ -34,15 +34,15 @@
     [self.window setContentView:[imageDataViewController view]];
     
     // TODO: hardcoded image
-    EDDataElement* background = [[EDDataElement alloc] initWithDataFile:@"/Users/olli/test/reg3d_test_scansoliver/14265.5c_ana_mdeft.nii" 
-                                                              andSuffix:@"" 
-                                                             andDialect:@"" 
-                                                            ofImageType:IMAGE_ANADATA];
-    
-//    EDDataElement* background = [[EDDataElement alloc] initWithDataFile:@"/Users/olli/test/reg3d_test_scansoliver/14265.5c_fun_coronar_64x64.nii" 
+//    EDDataElement* background = [[EDDataElement alloc] initWithDataFile:@"/Users/olli/test/reg3d_test_scansoliver/14265.5c_ana_mdeft.nii" 
 //                                                              andSuffix:@"" 
 //                                                             andDialect:@"" 
-//                                                            ofImageType:IMAGE_FCTDATA];
+//                                                            ofImageType:IMAGE_ANADATA];
+    
+    EDDataElement* background = [[EDDataElement alloc] initWithDataFile:@"/Users/olli/test/reg3d_test_scansoliver/14265.5c_fun_sagittal_64x64.nii" 
+                                                              andSuffix:@"" 
+                                                             andDialect:@"" 
+                                                            ofImageType:IMAGE_FCTDATA];
     
     EDDataElement* image = [[EDDataElement alloc] initWithDataFile:@"/Users/olli/test/reg3d_test_scansoliver/14265.5c_fun_sagittal_64x64.nii" 
                                                          andSuffix:@"" 
@@ -52,11 +52,11 @@
     [imageDataViewController setBackgroundImage:background];
     [imageDataViewController addOverlayImage:image withID:@"funData"];
     
+    // For ROI testing purposes
     [[imageDataViewController getROIController] addROI:@"TestROI"];
     [[imageDataViewController getROIController] addROI:@"ROI2"];
     [[imageDataViewController getROIController] addROI:@"TestoROI"];
     [[imageDataViewController getROIController] removeROI:@"ROI2"];
-    
     
 //    [imageDataViewController release];
 //    [image release];
