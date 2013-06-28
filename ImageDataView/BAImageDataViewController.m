@@ -179,6 +179,8 @@ static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
 
 -(void)awakeFromNib
 {
+    [self->mSliceSelectSlider setMinValue:1.0];
+    
     [self->mOverlaySelect addItemWithTitle:DEFAULT_OVERLAY_TEXT];
     [self->mOverlaySelect setEnabled:NO];
     
@@ -397,7 +399,7 @@ static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
 
 -(void)updateSliceSlider
 {
-    [self.mSliceSelectSlider setIntValue:[self->mRenderer getCurrentSlice]];        // Same thing with the slider
+    [self.mSliceSelectSlider setIntValue:[self->mRenderer getCurrentSlice] + 1];    // Same thing with the slider
     [self.mSliceSelectSlider setMaxValue:[self->mRenderer getSliceCount]];
 }
 
