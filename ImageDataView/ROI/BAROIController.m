@@ -140,11 +140,9 @@ static NSString* DEFAULT_ROI_TEXT = @"No ROI available";
 
 -(IBAction)setROI:(id)sender
 {
-    if (sender == self->mROISelect) {
-        NSString* currentROI = [[self->mROISelect selectedItem] title];
-        [self->mROISelectionRenderer setData:[self->mROIMasks valueForKey:currentROI]];
-        [self->mROISelectionRenderer renderImage:NO];
-    }
+    NSString* currentROI = [[self->mROISelect selectedItem] title];
+    [self->mROISelectionRenderer setData:[self->mROIMasks valueForKey:currentROI]];
+    [self->mROISelectionRenderer renderImage:NO];
 }
 
 -(void)updateViewStates

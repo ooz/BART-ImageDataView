@@ -660,7 +660,17 @@ static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
             [self->mROIToolboxWindow setIsVisible:YES];
         
         } else {
+            bool tbIsActive = [self->mROIToolboxWindow isVisible];
+            
+            if (tbIsActive) {
+                [self->mImageView setSelectionImage:nil];
+            } else {
+                [self->mROIController setROI:self];
+            }
+            
             [self->mROIToolboxWindow setIsVisible:![self->mROIToolboxWindow isVisible]];
+            
+            
         }
     }
 }
@@ -680,15 +690,17 @@ static NSString* OBSERVING_SELECTION_CONTEXT = @"selection";
     NSPoint clickPoint = [theEvent locationInWindow];
     NSLog(@"BAImageDataViewController mouseUp event, p: (%.1lf, %.1lf)", clickPoint.x, clickPoint.y);
     
-    BADataElementRenderer* topmostRenderer = [self getTopmostRenderer];
-    if (topmostRenderer != nil) {
-        BADataVoxel* clickInDataSpace = [topmostRenderer pointToVoxel:clickPoint];
-        NSLog(@"BAImageDataViewController clickInDataSpace: %@", clickInDataSpace);
-    
-        [self->mROIController clickOn:[topmostRenderer getDataElement]
-                                   at:clickInDataSpace
-                              inRange:[self->mRegion1LowerField floatValue]
-                                  and:[self->mRegion1UpperField floatValue]];
+    if (self->mROIToolboxWindow != nil && [self->mROIToolboxWindow isVisible]) {    
+        BADataElementRenderer* topmostRenderer = [self getTopmostRenderer];
+        if (topmostRenderer != nil) {
+            BADataVoxel* clickInDataSpace = [topmostRenderer pointToVoxel:clickPoint];
+            NSLog(@"BAImageDataViewController clickInDataSpace: %@", clickInDataSpace);
+        
+            [self->mROIController clickOn:[topmostRenderer getDataElement]
+                                       at:clickInDataSpace
+                                  inRange:[self->mRegion1LowerField floatValue]
+                                      and:[self->mRegion1UpperField floatValue]];
+        }
     }
 }
 
